@@ -1,36 +1,57 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getDb, type Movie, type Favorite } from "@/lib/db";
+import { z } from "zod";
+import { getDb } from "@/lib/db";
+import {
+  favoriteListRowSchema,
+  favoriteRowSchema,
+  movieRowSchema,
+} from "@/lib/db-rows";
+import { postFavoriteBodySchema } from "@/lib/pages-api-schemas";
+import {
+  pagesRouter,
+  validatePagesBody,
+} from "@/lib/validate-api";
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+function getFavorites(_req: NextApiRequest, res: NextApiResponse) {
   const db = getDb();
-
-  if (req.method === "GET") {
-    const favorites = db
-      .prepare(
-        `SELECT f.id as favorite_id, f.note, f.created_at as favorited_at, m.*
-         FROM favorites f JOIN movies m ON m.id = f.movie_id
-         ORDER BY f.created_at DESC`
-      )
-      .all() as (Movie & { favorite_id: number; note: string | null; favorited_at: string })[];
-    return res.json(favorites);
+  const raw = db
+    .prepare(
+      `SELECT f.id as favorite_id, f.note, f.created_at as favorited_at, m.*
+       FROM favorites f JOIN movies m ON m.id = f.movie_id
+       ORDER BY f.created_at DESC`
+    )
+    .all();
+  const favorites = z.array(favoriteListRowSchema).safeParse(raw);
+  if (!favorites.success) {
+    return res.status(500).json({ error: z.prettifyError(favorites.error) });
   }
+  return res.json(favorites.data);
+}
 
-  if (req.method === "POST") {
-    const { movieId, note } = req.body;
-    if (!movieId) {
-      return res.status(400).json({ error: "movieId is required" });
-    }
+const postFavorite = validatePagesBody(
+  postFavoriteBodySchema,
+  async (_req, res, { movieId, note }) => {
+    const db = getDb();
 
-    const movie = db.prepare("SELECT * FROM movies WHERE id = ?").get(movieId) as Movie | undefined;
-    if (!movie) {
+    const movieRaw = db
+      .prepare("SELECT * FROM movies WHERE id = ?")
+      .get(movieId);
+    const movie = movieRowSchema.safeParse(movieRaw);
+    if (!movie.success) {
       return res.status(404).json({ error: "Movie not found" });
     }
 
-    const existing = db
+    const existingRaw = db
       .prepare("SELECT * FROM favorites WHERE movie_id = ?")
-      .get(movieId) as Favorite | undefined;
-    if (existing) {
-      return res.json({ message: "Already in favorites", favorite: existing });
+      .get(movieId);
+    if (existingRaw) {
+      const existing = favoriteRowSchema.safeParse(existingRaw);
+      if (!existing.success) {
+        return res
+          .status(500)
+          .json({ error: z.prettifyError(existing.error) });
+      }
+      return res.json({ message: "Already in favorites", favorite: existing.data });
     }
 
     const result = db
@@ -39,6 +60,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
     return res.status(201).json({ id: result.lastInsertRowid, movieId, note });
   }
+);
 
-  return res.status(405).json({ error: "Method not allowed" });
-}
+export default pagesRouter({
+  GET: getFavorites,
+  POST: postFavorite,
+});

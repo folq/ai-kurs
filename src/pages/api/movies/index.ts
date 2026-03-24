@@ -1,12 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getDb, type Movie } from "@/lib/db";
+import { z } from "zod";
+import { getDb } from "@/lib/db";
+import { movieRowSchema } from "@/lib/db-rows";
+import { validatePagesMethod } from "@/lib/validate-api";
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "GET") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
+function listMovies(_req: NextApiRequest, res: NextApiResponse) {
   const db = getDb();
-  const movies = db.prepare("SELECT * FROM movies ORDER BY title").all() as Movie[];
-  return res.json(movies);
+  const raw = db.prepare("SELECT * FROM movies ORDER BY title").all();
+  const movies = z.array(movieRowSchema).safeParse(raw);
+  if (!movies.success) {
+    return res.status(500).json({ error: z.prettifyError(movies.error) });
+  }
+  return res.json(movies.data);
 }
+
+export default validatePagesMethod("GET", listMovies);

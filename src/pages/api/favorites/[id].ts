@@ -1,15 +1,20 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getDb } from "@/lib/db";
+import { pagesMovieIdQuerySchema } from "@/lib/pages-api-schemas";
+import {
+  validatePagesMethod,
+  validatePagesQuery,
+} from "@/lib/validate-api";
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "DELETE") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
+function removeFavorite(
+  _req: NextApiRequest,
+  res: NextApiResponse,
+  { id }: { id: number }
+) {
   const db = getDb();
   const result = db
     .prepare("DELETE FROM favorites WHERE movie_id = ?")
-    .run(req.query.id);
+    .run(id);
 
   if (result.changes === 0) {
     return res.status(404).json({ error: "Favorite not found" });
@@ -17,3 +22,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
   return res.json({ message: "Removed from favorites" });
 }
+
+export default validatePagesMethod(
+  "DELETE",
+  validatePagesQuery(pagesMovieIdQuerySchema, removeFavorite)
+);

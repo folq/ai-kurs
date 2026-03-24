@@ -73,3 +73,14 @@ export const schemas = {
 } as const;
 
 export type SchemaName = keyof typeof schemas;
+
+export const schemaNameSchema = z.enum([
+  "Movie Analysis",
+  "Review Sentiment",
+  "Content Advisory",
+]);
+
+export const analyzeBodySchema = z.object({
+  text: z.string().min(1),
+  schemaName: schemaNameSchema,
+});

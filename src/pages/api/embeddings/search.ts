@@ -1,19 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { semanticSearch, keywordSearch } from "@/lib/embeddings";
+import { embeddingsSearchBodySchema } from "@/lib/pages-api-schemas";
+import { validatePagesBody } from "@/lib/validate-api";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
+async function search(
+  _req: NextApiRequest,
+  res: NextApiResponse,
+  { query, limit }: { query: string; limit: number }
 ) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
-  const { query, limit = 10 } = req.body;
-  if (!query || typeof query !== "string") {
-    return res.status(400).json({ error: "query is required" });
-  }
-
   try {
     const [semanticResults, keywordResults] = await Promise.all([
       semanticSearch(query, limit),
@@ -30,7 +24,10 @@ export default async function handler(
   } catch (error) {
     console.error("Search error:", error);
     return res.status(500).json({
-      error: "Search failed. Make sure you have run `npm run seed` with embeddings.",
+      error:
+        "Search failed. Make sure you have run `npm run seed` with embeddings.",
     });
   }
 }
+
+export default validatePagesBody(embeddingsSearchBodySchema, search);

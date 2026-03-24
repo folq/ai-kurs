@@ -1,11 +1,8 @@
-import {
-  streamText,
-  type UIMessage,
-  convertToModelMessages,
-  stepCountIs,
-} from "ai";
+import { streamText, convertToModelMessages, stepCountIs } from "ai";
 import { getModel } from "@/lib/openai";
 import { agentTools } from "@/lib/agent-tools";
+import { agentChatBodySchema } from "@/lib/chat-api-schemas";
+import { validateRequest } from "@/lib/validate-api";
 
 const SYSTEM_PROMPT = `You are an intelligent movie and TV show discovery agent. You have access to tools that let you:
 
@@ -24,16 +21,17 @@ When helping users:
 
 Be conversational, enthusiastic, and helpful. You're a movie buff who loves sharing great finds!`;
 
-export async function POST(req: Request) {
-  const { messages } = (await req.json()) as { messages: UIMessage[] };
+export const POST = validateRequest(
+  agentChatBodySchema,
+  async ({ messages }) => {
+    const result = streamText({
+      model: getModel(),
+      system: SYSTEM_PROMPT,
+      messages: await convertToModelMessages(messages),
+      tools: agentTools,
+      stopWhen: stepCountIs(5),
+    });
 
-  const result = streamText({
-    model: getModel(),
-    system: SYSTEM_PROMPT,
-    messages: await convertToModelMessages(messages),
-    tools: agentTools,
-    stopWhen: stepCountIs(5),
-  });
-
-  return result.toUIMessageStreamResponse();
-}
+    return result.toUIMessageStreamResponse();
+  }
+);

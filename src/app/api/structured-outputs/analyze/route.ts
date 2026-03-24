@@ -1,11 +1,13 @@
 import { generateText, Output } from "ai";
 import { getModel } from "@/lib/openai";
 import {
+  analyzeBodySchema,
   movieAnalysisSchema,
   reviewSentimentSchema,
   contentAdvisorySchema,
   type SchemaName,
 } from "@/lib/schemas";
+import { validateRequest } from "@/lib/validate-api";
 
 async function analyzeWithSchema(text: string, schemaName: SchemaName) {
   const prompt = `Analyze the following text and extract structured information:\n\n${text}`;
@@ -38,33 +40,18 @@ async function analyzeWithSchema(text: string, schemaName: SchemaName) {
   }
 }
 
-export async function POST(req: Request) {
-  const { text, schemaName } = (await req.json()) as {
-    text: string;
-    schemaName: SchemaName;
-  };
-
-  const validNames: SchemaName[] = [
-    "Movie Analysis",
-    "Review Sentiment",
-    "Content Advisory",
-  ];
-
-  if (!text || !schemaName || !validNames.includes(schemaName)) {
-    return Response.json(
-      { error: "text and valid schemaName are required" },
-      { status: 400 }
-    );
+export const POST = validateRequest(
+  analyzeBodySchema,
+  async ({ text, schemaName }) => {
+    try {
+      const result = await analyzeWithSchema(text, schemaName);
+      return Response.json(result);
+    } catch (error) {
+      console.error("Structured output error:", error);
+      return Response.json(
+        { error: "Failed to generate structured output" },
+        { status: 500 }
+      );
+    }
   }
-
-  try {
-    const result = await analyzeWithSchema(text, schemaName);
-    return Response.json(result);
-  } catch (error) {
-    console.error("Structured output error:", error);
-    return Response.json(
-      { error: "Failed to generate structured output" },
-      { status: 500 }
-    );
-  }
-}
+);
