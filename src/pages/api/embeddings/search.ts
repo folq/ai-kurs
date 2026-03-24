@@ -1,12 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { semanticSearch, keywordSearch } from "@/lib/embeddings";
+import { keywordSearch, semanticSearch } from "@/lib/embeddings";
 import { embeddingsSearchBodySchema } from "@/lib/pages-api-schemas";
 import { validatePagesBody } from "@/lib/validate-api";
 
 async function search(
   _req: NextApiRequest,
   res: NextApiResponse,
-  { query, limit }: { query: string; limit: number }
+  { query, limit }: { query: string; limit: number },
 ) {
   try {
     const [semanticResults, keywordResults] = await Promise.all([

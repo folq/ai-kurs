@@ -7,10 +7,7 @@ import {
   movieRowSchema,
 } from "@/lib/db-rows";
 import { postFavoriteBodySchema } from "@/lib/pages-api-schemas";
-import {
-  pagesRouter,
-  validatePagesBody,
-} from "@/lib/validate-api";
+import { pagesRouter, validatePagesBody } from "@/lib/validate-api";
 
 function getFavorites(_req: NextApiRequest, res: NextApiResponse) {
   const db = getDb();
@@ -18,7 +15,7 @@ function getFavorites(_req: NextApiRequest, res: NextApiResponse) {
     .prepare(
       `SELECT f.id as favorite_id, f.note, f.created_at as favorited_at, m.*
        FROM favorites f JOIN movies m ON m.id = f.movie_id
-       ORDER BY f.created_at DESC`
+       ORDER BY f.created_at DESC`,
     )
     .all();
   const favorites = z.array(favoriteListRowSchema).safeParse(raw);
@@ -47,11 +44,12 @@ const postFavorite = validatePagesBody(
     if (existingRaw) {
       const existing = favoriteRowSchema.safeParse(existingRaw);
       if (!existing.success) {
-        return res
-          .status(500)
-          .json({ error: z.prettifyError(existing.error) });
+        return res.status(500).json({ error: z.prettifyError(existing.error) });
       }
-      return res.json({ message: "Already in favorites", favorite: existing.data });
+      return res.json({
+        message: "Already in favorites",
+        favorite: existing.data,
+      });
     }
 
     const result = db
@@ -59,7 +57,7 @@ const postFavorite = validatePagesBody(
       .run(movieId, note ?? null);
 
     return res.status(201).json({ id: result.lastInsertRowid, movieId, note });
-  }
+  },
 );
 
 export default pagesRouter({

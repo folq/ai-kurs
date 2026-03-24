@@ -9,7 +9,7 @@ const uiMessageShape = z.looseObject({
 
 /** Structural check; `parts` are validated again when converting to model messages. */
 export const uiMessageSchema: z.ZodType<UIMessage> = z.custom<UIMessage>(
-  (val): val is UIMessage => uiMessageShape.safeParse(val).success
+  (val): val is UIMessage => uiMessageShape.safeParse(val).success,
 );
 
 export const agentChatBodySchema = z.object({

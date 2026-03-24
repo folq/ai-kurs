@@ -1,6 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
-import { getDb, type Movie, type Favorite } from "./db";
+import { type Favorite, getDb, type Movie } from "./db";
 import { semanticSearch } from "./embeddings";
 
 export const agentTools = {
@@ -65,7 +65,7 @@ export const agentTools = {
 
       db.prepare("INSERT INTO favorites (movie_id, note) VALUES (?, ?)").run(
         movieId,
-        note ?? null
+        note ?? null,
       );
       return { message: `Added ${movie.title} to favorites` };
     },
@@ -100,7 +100,7 @@ export const agentTools = {
           FROM favorites f
           JOIN movies m ON m.id = f.movie_id
           ORDER BY f.created_at DESC
-        `
+        `,
         )
         .all() as (Movie & {
         favorite_id: number;

@@ -27,5 +27,5 @@ export const favoriteListRowSchema = movieRowZ.and(
     favorite_id: z.number(),
     note: z.string().nullable(),
     favorited_at: z.string(),
-  })
+  }),
 );

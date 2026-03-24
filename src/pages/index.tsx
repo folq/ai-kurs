@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const sections = [
   {
@@ -9,7 +9,12 @@ const sections = [
     title: "Prompting",
     description:
       "Learn how system prompts shape AI behavior. Experiment with different prompt strategies and parameters like temperature to control how the AI recommends movies.",
-    concepts: ["System Prompts", "Temperature", "Max Tokens", "Prompt Patterns"],
+    concepts: [
+      "System Prompts",
+      "Temperature",
+      "Max Tokens",
+      "Prompt Patterns",
+    ],
     color: "bg-blue-500/10 border-blue-500/20",
   },
   {
@@ -18,7 +23,12 @@ const sections = [
     title: "Structured Outputs",
     description:
       "Extract structured, typed JSON from free-form text using Zod schemas. See how the AI can reliably parse movie descriptions, reviews, and content into well-defined data structures.",
-    concepts: ["Zod Schemas", "Output.object()", "Type Safety", "Data Extraction"],
+    concepts: [
+      "Zod Schemas",
+      "Output.object()",
+      "Type Safety",
+      "Data Extraction",
+    ],
     color: "bg-green-500/10 border-green-500/20",
   },
   {
@@ -27,7 +37,12 @@ const sections = [
     title: "Embeddings & Vector Search",
     description:
       "Understand how text embeddings capture meaning as vectors. Compare semantic search (finding movies by concept) against traditional keyword matching side-by-side.",
-    concepts: ["Embeddings", "Vector Similarity", "sqlite-vec", "Cosine Distance"],
+    concepts: [
+      "Embeddings",
+      "Vector Similarity",
+      "sqlite-vec",
+      "Cosine Distance",
+    ],
     color: "bg-purple-500/10 border-purple-500/20",
   },
   {
@@ -49,9 +64,9 @@ export default function HomePage() {
           AI in Web Development
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          A hands-on course exploring four key areas of AI integration, built around
-          a movie and TV show discovery app. Each section introduces a concept you
-          can experiment with directly.
+          A hands-on course exploring four key areas of AI integration, built
+          around a movie and TV show discovery app. Each section introduces a
+          concept you can experiment with directly.
         </p>
       </div>
 
@@ -75,7 +90,11 @@ export default function HomePage() {
                 </p>
                 <div className="flex flex-wrap gap-1">
                   {section.concepts.map((concept) => (
-                    <Badge key={concept} variant="secondary" className="text-xs">
+                    <Badge
+                      key={concept}
+                      variant="secondary"
+                      className="text-xs"
+                    >
                       {concept}
                     </Badge>
                   ))}

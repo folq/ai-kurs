@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export async function parseRequestBody<T>(
   req: Request,
-  schema: z.ZodType<T>
+  schema: z.ZodType<T>,
 ): Promise<{ ok: true; data: T } | { ok: false; response: Response }> {
   let json: unknown;
   try {
@@ -20,7 +20,7 @@ export async function parseRequestBody<T>(
       ok: false,
       response: Response.json(
         { error: z.prettifyError(parsed.error) },
-        { status: 400 }
+        { status: 400 },
       ),
     };
   }
@@ -30,7 +30,7 @@ export async function parseRequestBody<T>(
 /** App Router: JSON body + Zod; invalid body → 400. */
 export function validateRequest<T>(
   schema: z.ZodType<T>,
-  handler: (data: T, req: Request) => Response | Promise<Response>
+  handler: (data: T, req: Request) => Response | Promise<Response>,
 ): (req: Request) => Promise<Response> {
   return async (req) => {
     const parsed = await parseRequestBody(req, schema);
@@ -62,8 +62,8 @@ export function validatePagesBody<T>(
   handler: (
     req: NextApiRequest,
     res: NextApiResponse,
-    data: T
-  ) => void | Promise<void>
+    data: T,
+  ) => void | Promise<void>,
 ): NextApiHandler {
   return async (req, res) => {
     if (req.method !== "POST") {
@@ -85,8 +85,8 @@ export function validatePagesQuery<T>(
   handler: (
     req: NextApiRequest,
     res: NextApiResponse,
-    data: T
-  ) => void | Promise<void>
+    data: T,
+  ) => void | Promise<void>,
 ): NextApiHandler {
   return async (req, res) => {
     const parsed = schema.safeParse(req.query);
@@ -101,7 +101,7 @@ export function validatePagesQuery<T>(
 /** Pages Router: single allowed method or 405. */
 export function validatePagesMethod(
   method: string,
-  handler: NextApiHandler
+  handler: NextApiHandler,
 ): NextApiHandler {
   return (req, res) => {
     if (req.method !== method) {

@@ -2,15 +2,12 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { getDb } from "@/lib/db";
 import { movieRowSchema } from "@/lib/db-rows";
 import { pagesMovieIdQuerySchema } from "@/lib/pages-api-schemas";
-import {
-  validatePagesMethod,
-  validatePagesQuery,
-} from "@/lib/validate-api";
+import { validatePagesMethod, validatePagesQuery } from "@/lib/validate-api";
 
 function getMovie(
   _req: NextApiRequest,
   res: NextApiResponse,
-  { id }: { id: number }
+  { id }: { id: number },
 ) {
   const db = getDb();
   const movieRaw = db.prepare("SELECT * FROM movies WHERE id = ?").get(id);
@@ -23,5 +20,5 @@ function getMovie(
 
 export default validatePagesMethod(
   "GET",
-  validatePagesQuery(pagesMovieIdQuerySchema, getMovie)
+  validatePagesQuery(pagesMovieIdQuerySchema, getMovie),
 );

@@ -14,7 +14,7 @@ export type SearchResult = Movie & { distance: number };
 
 export async function semanticSearch(
   query: string,
-  limit = 10
+  limit = 10,
 ): Promise<SearchResult[]> {
   const embedding = await generateEmbedding(query);
   const db = getDb();
@@ -27,9 +27,12 @@ export async function semanticSearch(
       INNER JOIN movies AS m ON m.id = e.movie_id
       WHERE e.embedding MATCH ? AND e.k = ?
       ORDER BY e.distance
-    `
+    `,
     )
-    .all(Buffer.from(new Float32Array(embedding).buffer), limit) as SearchResult[];
+    .all(
+      Buffer.from(new Float32Array(embedding).buffer),
+      limit,
+    ) as SearchResult[];
 
   return results;
 }
@@ -44,7 +47,7 @@ export function keywordSearch(query: string, limit = 10): Movie[] {
       SELECT * FROM movies
       WHERE title LIKE ? OR description LIKE ? OR genre LIKE ?
       LIMIT ?
-    `
+    `,
     )
     .all(pattern, pattern, pattern, limit) as Movie[];
 }

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 const SCHEMAS = {
   "Movie Analysis": {
@@ -60,12 +60,17 @@ type SchemaName = keyof typeof SCHEMAS;
 
 export default function StructuredOutputsPage() {
   const [schemaName, setSchemaName] = useState<SchemaName>("Movie Analysis");
-  const [inputText, setInputText] = useState(SCHEMAS["Movie Analysis"].exampleInput);
+  const [inputText, setInputText] = useState(
+    SCHEMAS["Movie Analysis"].exampleInput,
+  );
   const [output, setOutput] = useState<Record<string, unknown> | null>(null);
   const [rawJson, setRawJson] = useState("");
   const [loading, setLoading] = useState(false);
   const [showRaw, setShowRaw] = useState(false);
-  const [usage, setUsage] = useState<{ promptTokens: number; completionTokens: number } | null>(null);
+  const [usage, setUsage] = useState<{
+    promptTokens: number;
+    completionTokens: number;
+  } | null>(null);
 
   const handleSchemaChange = (name: string) => {
     const schema = SCHEMAS[name as SchemaName];
@@ -109,9 +114,9 @@ export default function StructuredOutputsPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">2. Structured Outputs</h1>
         <p className="text-muted-foreground max-w-2xl">
-          Use Zod schemas to extract <strong>structured, typed JSON</strong> from
-          free-form text. The LLM is constrained to output data that matches the
-          schema exactly.
+          Use Zod schemas to extract <strong>structured, typed JSON</strong>{" "}
+          from free-form text. The LLM is constrained to output data that
+          matches the schema exactly.
         </p>
       </div>
 
@@ -124,7 +129,10 @@ export default function StructuredOutputsPage() {
             <CardContent className="space-y-3">
               <div>
                 <Label className="text-sm">Select Schema</Label>
-                <Select value={schemaName} onValueChange={(v) => v && handleSchemaChange(v)}>
+                <Select
+                  value={schemaName}
+                  onValueChange={(v) => v && handleSchemaChange(v)}
+                >
                   <SelectTrigger className="mt-1">
                     <SelectValue />
                   </SelectTrigger>
@@ -212,18 +220,27 @@ export default function StructuredOutputsPage() {
                       <div className="mt-0.5">
                         {Array.isArray(value) ? (
                           <div className="flex flex-wrap gap-1">
-                            {value.map((v, i) => (
-                              <Badge key={i} variant="secondary" className="text-xs">
+                            {value.map((v) => (
+                              <Badge
+                                key={`${key}-${String(v)}`}
+                                variant="secondary"
+                                className="text-xs"
+                              >
                                 {String(v)}
                               </Badge>
                             ))}
                           </div>
                         ) : typeof value === "boolean" ? (
-                          <Badge variant={value ? "default" : "destructive"} className="text-xs">
+                          <Badge
+                            variant={value ? "default" : "destructive"}
+                            className="text-xs"
+                          >
                             {value ? "Yes" : "No"}
                           </Badge>
                         ) : typeof value === "number" ? (
-                          <span className="text-sm font-mono font-medium">{value}</span>
+                          <span className="text-sm font-mono font-medium">
+                            {value}
+                          </span>
                         ) : (
                           <p className="text-sm">{String(value)}</p>
                         )}
@@ -239,7 +256,8 @@ export default function StructuredOutputsPage() {
               )}
               {usage && (
                 <div className="mt-4 pt-3 border-t text-xs text-muted-foreground">
-                  Tokens: {usage.promptTokens} prompt + {usage.completionTokens} completion
+                  Tokens: {usage.promptTokens} prompt + {usage.completionTokens}{" "}
+                  completion
                 </div>
               )}
             </CardContent>

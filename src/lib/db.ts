@@ -1,6 +1,6 @@
-import Database from "better-sqlite3";
+import path from "node:path";
 import * as sqliteVec from "@photostructure/sqlite-vec";
-import path from "path";
+import Database from "better-sqlite3";
 
 const DB_PATH = path.join(process.cwd(), "data", "movies.db");
 
@@ -9,7 +9,7 @@ let _db: Database.Database | null = null;
 export function getDb(): Database.Database {
   if (_db) return _db;
 
-  const fs = require("fs");
+  const fs = require("node:fs");
   const dir = path.dirname(DB_PATH);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
@@ -48,7 +48,7 @@ function initSchema(db: Database.Database) {
 
   const vecTableExists = db
     .prepare(
-      "SELECT name FROM sqlite_master WHERE type='table' AND name='movie_embeddings'"
+      "SELECT name FROM sqlite_master WHERE type='table' AND name='movie_embeddings'",
     )
     .get();
 

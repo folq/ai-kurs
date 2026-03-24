@@ -8,15 +8,9 @@ export const movieAnalysisSchema = z.object({
     .enum(["dark", "light", "mixed", "intense", "whimsical"])
     .describe("Overall mood"),
   targetAudience: z.string().describe("Who would enjoy this"),
-  similarTo: z
-    .array(z.string())
-    .describe("Similar well-known movies or shows"),
+  similarTo: z.array(z.string()).describe("Similar well-known movies or shows"),
   summary: z.string().describe("A concise one-paragraph summary"),
-  rating: z
-    .number()
-    .min(1)
-    .max(10)
-    .describe("Estimated rating out of 10"),
+  rating: z.number().min(1).max(10).describe("Estimated rating out of 10"),
 });
 
 export const reviewSentimentSchema = z.object({
@@ -26,9 +20,7 @@ export const reviewSentimentSchema = z.object({
   score: z.number().min(0).max(100).describe("Sentiment score 0-100"),
   pros: z.array(z.string()).describe("Positive aspects mentioned"),
   cons: z.array(z.string()).describe("Negative aspects mentioned"),
-  keyQuotes: z
-    .array(z.string())
-    .describe("Notable quotes from the review"),
+  keyQuotes: z.array(z.string()).describe("Notable quotes from the review"),
   recommendedFor: z
     .string()
     .describe("What type of viewer would appreciate this based on the review"),
@@ -44,9 +36,7 @@ export const contentAdvisorySchema = z.object({
   language: z
     .enum(["none", "mild", "moderate", "strong"])
     .describe("Level of profanity"),
-  themes: z
-    .array(z.string())
-    .describe("Mature themes present"),
+  themes: z.array(z.string()).describe("Mature themes present"),
   suitableForChildren: z.boolean(),
   parentalGuidanceNote: z.string().describe("Brief note for parents"),
 });

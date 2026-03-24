@@ -1,13 +1,13 @@
-import { useChat, type UIMessage } from "@ai-sdk/react";
+import { type UIMessage, useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Slider } from "@/components/ui/slider";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { Slider } from "@/components/ui/slider";
+import { Textarea } from "@/components/ui/textarea";
 
 const DEFAULT_SYSTEM_PROMPT = `You are a knowledgeable movie and TV show recommendation assistant. 
 You help users discover new content based on their preferences, moods, and interests.
@@ -45,7 +45,7 @@ export default function PromptingPage() {
         api: "/api/prompting/chat",
         body: () => paramsRef.current,
       }),
-    []
+    [],
   );
 
   const { messages, sendMessage, status, setMessages } = useChat({
@@ -54,6 +54,7 @@ export default function PromptingPage() {
 
   const isActive = status === "submitted" || status === "streaming";
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: scroll when transcript updates (incl. streaming), not only when length changes
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -172,10 +173,7 @@ export default function PromptingPage() {
             <CardTitle className="text-base">Chat</CardTitle>
           </CardHeader>
           <Separator />
-          <div
-            ref={scrollRef}
-            className="flex-1 overflow-y-auto p-4"
-          >
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4">
             <div className="space-y-4">
               {messages.length === 0 && (
                 <p className="text-sm text-muted-foreground text-center py-12">
@@ -194,16 +192,22 @@ export default function PromptingPage() {
                         : "bg-muted"
                     }`}
                   >
-                    {message.parts.map((part: UIMessage["parts"][number], i: number) => {
-                      if (part.type === "text") {
-                        return (
-                          <div key={`${message.id}-${i}`} className="whitespace-pre-wrap">
-                            {part.text}
-                          </div>
-                        );
-                      }
-                      return null;
-                    })}
+                    {message.parts.map(
+                      (part: UIMessage["parts"][number], i: number) => {
+                        if (part.type === "text") {
+                          const textPartKey = `${message.id}-text-${i}`;
+                          return (
+                            <div
+                              key={textPartKey}
+                              className="whitespace-pre-wrap"
+                            >
+                              {part.text}
+                            </div>
+                          );
+                        }
+                        return null;
+                      },
+                    )}
                   </div>
                 </div>
               ))}

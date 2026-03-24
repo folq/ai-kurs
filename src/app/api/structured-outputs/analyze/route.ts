@@ -2,9 +2,9 @@ import { generateText, Output } from "ai";
 import { getModel } from "@/lib/openai";
 import {
   analyzeBodySchema,
+  contentAdvisorySchema,
   movieAnalysisSchema,
   reviewSentimentSchema,
-  contentAdvisorySchema,
   type SchemaName,
 } from "@/lib/schemas";
 import { validateRequest } from "@/lib/validate-api";
@@ -50,8 +50,8 @@ export const POST = validateRequest(
       console.error("Structured output error:", error);
       return Response.json(
         { error: "Failed to generate structured output" },
-        { status: 500 }
+        { status: 500 },
       );
     }
-  }
+  },
 );

@@ -1,16 +1,16 @@
-import { useChat, type UIMessage } from "@ai-sdk/react";
+import { type UIMessage, useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { useState, useRef, useEffect, useCallback, useMemo } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 
 type FavoriteMovie = {
   id: number;
@@ -50,10 +50,16 @@ function ToolCallCard({
         <span className="font-medium">{TOOL_LABELS[toolName] || toolName}</span>
         {args && Object.keys(args).length > 0 && (
           <span className="text-muted-foreground truncate">
-            ({Object.entries(args).map(([k, v]) => `${k}: ${JSON.stringify(v)}`).join(", ")})
+            (
+            {Object.entries(args)
+              .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
+              .join(", ")}
+            )
           </span>
         )}
-        <span className="ml-auto text-muted-foreground">{open ? "▲" : "▼"}</span>
+        <span className="ml-auto text-muted-foreground">
+          {open ? "▲" : "▼"}
+        </span>
       </CollapsibleTrigger>
       <CollapsibleContent>
         <div className="mt-1 p-3 bg-muted rounded-md text-xs font-mono overflow-x-auto max-h-[200px] overflow-y-auto">
@@ -75,7 +81,7 @@ export default function AgentPage() {
 
   const transport = useMemo(
     () => new DefaultChatTransport({ api: "/api/agent/chat" }),
-    []
+    [],
   );
 
   const { messages, sendMessage, status } = useChat({ transport });
@@ -96,6 +102,7 @@ export default function AgentPage() {
     fetchFavorites();
   }, [fetchFavorites]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: scroll when transcript updates (incl. streaming), not only when length changes
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -121,9 +128,10 @@ export default function AgentPage() {
       <div className="mb-6">
         <h1 className="text-3xl font-bold mb-2">4. Agent</h1>
         <p className="text-muted-foreground max-w-2xl">
-          A conversational agent with <strong>tools</strong> that ties everything
-          together. It can search movies semantically, manage your favorites, and
-          find similar content — all through natural conversation.
+          A conversational agent with <strong>tools</strong> that ties
+          everything together. It can search movies semantically, manage your
+          favorites, and find similar content — all through natural
+          conversation.
         </p>
       </div>
 
@@ -138,10 +146,7 @@ export default function AgentPage() {
             </div>
           </CardHeader>
           <Separator />
-          <div
-            ref={scrollRef}
-            className="flex-1 overflow-y-auto p-4"
-          >
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4">
             <div className="space-y-4">
               {messages.length === 0 && (
                 <div className="text-center py-12 space-y-3">
@@ -176,41 +181,46 @@ export default function AgentPage() {
                   className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div className="max-w-[85%] space-y-2">
-                    {message.parts.map((part: UIMessage["parts"][number], i: number) => {
-                      if (part.type === "text" && part.text) {
-                        return (
-                          <div
-                            key={`${message.id}-${i}`}
-                            className={`rounded-lg px-4 py-2 text-sm ${
-                              message.role === "user"
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-muted"
-                            }`}
-                          >
-                            <div className="whitespace-pre-wrap">{part.text}</div>
-                          </div>
-                        );
-                      }
-                      if (part.type && part.type.startsWith("tool-")) {
-                        const toolPart = part as unknown as {
-                          type: string;
-                          toolCallId: string;
-                          toolName: string;
-                          args: Record<string, unknown>;
-                          state: string;
-                          result?: unknown;
-                        };
-                        return (
-                          <ToolCallCard
-                            key={`${message.id}-${i}`}
-                            toolName={toolPart.toolName}
-                            args={toolPart.args}
-                            result={toolPart.result}
-                          />
-                        );
-                      }
-                      return null;
-                    })}
+                    {message.parts.map(
+                      (part: UIMessage["parts"][number], i: number) => {
+                        if (part.type === "text" && part.text) {
+                          const textPartKey = `${message.id}-text-${i}`;
+                          return (
+                            <div
+                              key={textPartKey}
+                              className={`rounded-lg px-4 py-2 text-sm ${
+                                message.role === "user"
+                                  ? "bg-primary text-primary-foreground"
+                                  : "bg-muted"
+                              }`}
+                            >
+                              <div className="whitespace-pre-wrap">
+                                {part.text}
+                              </div>
+                            </div>
+                          );
+                        }
+                        if (part.type?.startsWith("tool-")) {
+                          const toolPart = part as unknown as {
+                            type: string;
+                            toolCallId: string;
+                            toolName: string;
+                            args: Record<string, unknown>;
+                            state: string;
+                            result?: unknown;
+                          };
+                          return (
+                            <ToolCallCard
+                              key={toolPart.toolCallId}
+                              toolName={toolPart.toolName}
+                              args={toolPart.args}
+                              result={toolPart.result}
+                            />
+                          );
+                        }
+                        return null;
+                      },
+                    )}
                   </div>
                 </div>
               ))}
@@ -277,7 +287,10 @@ export default function AgentPage() {
             <CardContent className="space-y-2">
               {Object.entries(TOOL_LABELS).map(([key, label]) => (
                 <div key={key} className="flex items-center gap-2">
-                  <Badge variant="outline" className="text-xs font-mono shrink-0">
+                  <Badge
+                    variant="outline"
+                    className="text-xs font-mono shrink-0"
+                  >
                     {key}
                   </Badge>
                   <span className="text-xs text-muted-foreground">{label}</span>

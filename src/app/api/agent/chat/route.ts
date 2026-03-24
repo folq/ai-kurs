@@ -1,7 +1,7 @@
-import { streamText, convertToModelMessages, stepCountIs } from "ai";
-import { getModel } from "@/lib/openai";
+import { convertToModelMessages, stepCountIs, streamText } from "ai";
 import { agentTools } from "@/lib/agent-tools";
 import { agentChatBodySchema } from "@/lib/chat-api-schemas";
+import { getModel } from "@/lib/openai";
 import { validateRequest } from "@/lib/validate-api";
 
 const SYSTEM_PROMPT = `You are an intelligent movie and TV show discovery agent. You have access to tools that let you:
@@ -33,5 +33,5 @@ export const POST = validateRequest(
     });
 
     return result.toUIMessageStreamResponse();
-  }
+  },
 );

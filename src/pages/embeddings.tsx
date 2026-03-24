@@ -1,9 +1,9 @@
-import { useState, useCallback } from "react";
-import { Input } from "@/components/ui/input";
+import { useCallback, useState } from "react";
+import { MovieCard } from "@/components/shared/MovieCard";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { MovieCard } from "@/components/shared/MovieCard";
+import { Input } from "@/components/ui/input";
 
 type Movie = {
   id: number;
@@ -79,11 +79,14 @@ export default function EmbeddingsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">3. Embeddings & Vector Search</h1>
+        <h1 className="text-3xl font-bold mb-2">
+          3. Embeddings & Vector Search
+        </h1>
         <p className="text-muted-foreground max-w-2xl">
-          Type a natural-language description and find movies by <strong>meaning</strong>,
-          not just keywords. The left column uses vector similarity search (embeddings),
-          while the right column uses traditional SQL LIKE matching.
+          Type a natural-language description and find movies by{" "}
+          <strong>meaning</strong>, not just keywords. The left column uses
+          vector similarity search (embeddings), while the right column uses
+          traditional SQL LIKE matching.
         </p>
       </div>
 
@@ -173,13 +176,18 @@ export default function EmbeddingsPage() {
           <CardContent className="space-y-3 text-sm text-muted-foreground">
             <p>
               <strong>Embeddings</strong> are numerical vectors that capture the
-              semantic meaning of text. Similar concepts produce similar vectors.
+              semantic meaning of text. Similar concepts produce similar
+              vectors.
             </p>
             <p>
               When you search, your query is converted into an embedding via
-              Azure OpenAI's <code className="bg-muted px-1 rounded">text-embedding-3-small</code> model.
-              This embedding is compared against pre-computed embeddings
-              for every movie in the database using <strong>cosine distance</strong>.
+              Azure OpenAI's{" "}
+              <code className="bg-muted px-1 rounded">
+                text-embedding-3-small
+              </code>{" "}
+              model. This embedding is compared against pre-computed embeddings
+              for every movie in the database using{" "}
+              <strong>cosine distance</strong>.
             </p>
             <p>
               The vector search is powered by{" "}

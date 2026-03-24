@@ -1,19 +1,19 @@
-import 'dotenv/config';
-import { config } from 'dotenv';
-import Database from 'better-sqlite3';
-import * as sqliteVec from '@photostructure/sqlite-vec';
-import { AzureOpenAI } from 'openai';
-import path from 'path';
-import fs from 'fs';
+import "dotenv/config";
+import fs from "node:fs";
+import path from "node:path";
+import * as sqliteVec from "@photostructure/sqlite-vec";
+import Database from "better-sqlite3";
+import { config } from "dotenv";
+import { AzureOpenAI } from "openai";
 
-config({ path: path.join(process.cwd(), '.env.local') });
+config({ path: path.join(process.cwd(), ".env.local") });
 
-const DB_PATH = path.join(process.cwd(), 'data', 'movies.db');
+const DB_PATH = path.join(process.cwd(), "data", "movies.db");
 
 type SeedMovie = {
   title: string;
   year: number;
-  type: 'movie' | 'tv_show';
+  type: "movie" | "tv_show";
   genre: string;
   description: string;
   rating: number;
@@ -27,13 +27,13 @@ async function main() {
 
   if (fs.existsSync(DB_PATH)) {
     fs.unlinkSync(DB_PATH);
-    console.log('Removed existing database');
+    console.log("Removed existing database");
   }
 
   const db = new Database(DB_PATH);
   sqliteVec.load(db);
-  db.pragma('journal_mode = WAL');
-  db.pragma('foreign_keys = ON');
+  db.pragma("journal_mode = WAL");
+  db.pragma("foreign_keys = ON");
 
   db.exec(`
     CREATE TABLE IF NOT EXISTS movies (
@@ -61,7 +61,9 @@ async function main() {
     );
   `);
 
-  const movies: SeedMovie[] = JSON.parse(fs.readFileSync(path.join(__dirname, 'movies.json'), 'utf-8'));
+  const movies: SeedMovie[] = JSON.parse(
+    fs.readFileSync(path.join(__dirname, "movies.json"), "utf-8"),
+  );
 
   console.log(`Inserting ${movies.length} movies...`);
 
@@ -72,20 +74,30 @@ async function main() {
 
   const insertMany = db.transaction((movies: SeedMovie[]) => {
     for (const movie of movies) {
-      insertMovie.run(movie.title, movie.year, movie.type, movie.genre, movie.description, movie.rating);
+      insertMovie.run(
+        movie.title,
+        movie.year,
+        movie.type,
+        movie.genre,
+        movie.description,
+        movie.rating,
+      );
     }
   });
 
   insertMany(movies);
-  console.log('Movies inserted.');
+  console.log("Movies inserted.");
 
   const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
   const apiKey = process.env.AZURE_OPENAI_API_KEY;
-  const embeddingDeployment = process.env.AZURE_OPENAI_EMBEDDING_DEPLOYMENT || 'text-embedding-3-small';
+  const embeddingDeployment =
+    process.env.AZURE_OPENAI_EMBEDDING_DEPLOYMENT || "text-embedding-3-small";
 
   if (!endpoint || !apiKey) {
-    console.log('\nSkipping embedding generation: AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_API_KEY not set.');
-    console.log('Run the seed script again after setting up your .env.local');
+    console.log(
+      "\nSkipping embedding generation: AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_API_KEY not set.",
+    );
+    console.log("Run the seed script again after setting up your .env.local");
     db.close();
     return;
   }
@@ -93,12 +105,15 @@ async function main() {
   const client = new AzureOpenAI({
     endpoint,
     apiKey,
-    apiVersion: '2024-10-21',
+    apiVersion: "2024-10-21",
   });
 
-  console.log('\nGenerating embeddings...');
+  console.log("\nGenerating embeddings...");
 
-  const allMovies = db.prepare('SELECT id, title, description, genre FROM movies').safeIntegers(false).all() as {
+  const allMovies = db
+    .prepare("SELECT id, title, description, genre FROM movies")
+    .safeIntegers(false)
+    .all() as {
     id: number;
     title: string;
     description: string;
@@ -107,7 +122,7 @@ async function main() {
 
   function float32ToHex(arr: number[]): string {
     const f32 = new Float32Array(arr);
-    return Buffer.from(f32.buffer).toString('hex');
+    return Buffer.from(f32.buffer).toString("hex");
   }
 
   const BATCH_SIZE = 20;
@@ -124,13 +139,17 @@ async function main() {
       const embedding = response.data[j].embedding;
       const id = batch[j].id;
       const hex = float32ToHex(embedding);
-      db.exec(`INSERT INTO movie_embeddings(movie_id, embedding) VALUES (${id}, x'${hex}')`);
+      db.exec(
+        `INSERT INTO movie_embeddings(movie_id, embedding) VALUES (${id}, x'${hex}')`,
+      );
     }
 
-    console.log(`  Embedded ${Math.min(i + BATCH_SIZE, allMovies.length)}/${allMovies.length}`);
+    console.log(
+      `  Embedded ${Math.min(i + BATCH_SIZE, allMovies.length)}/${allMovies.length}`,
+    );
   }
 
-  console.log('Seeding complete!');
+  console.log("Seeding complete!");
   db.close();
 }
 

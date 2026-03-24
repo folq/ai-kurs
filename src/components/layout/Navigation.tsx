@@ -29,7 +29,7 @@ export function Navigation() {
                   "px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
                   router.pathname === item.href
                     ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted",
                 )}
               >
                 {item.label}

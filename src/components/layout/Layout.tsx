@@ -1,5 +1,5 @@
+import type { ReactNode } from "react";
 import { Navigation } from "./Navigation";
-import { ReactNode } from "react";
 
 export function Layout({ children }: { children: ReactNode }) {
   return (

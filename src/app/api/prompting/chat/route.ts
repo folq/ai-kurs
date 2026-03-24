@@ -1,6 +1,6 @@
-import { streamText, convertToModelMessages } from "ai";
-import { getModel } from "@/lib/openai";
+import { convertToModelMessages, streamText } from "ai";
 import { promptingChatBodySchema } from "@/lib/chat-api-schemas";
+import { getModel } from "@/lib/openai";
 import { validateRequest } from "@/lib/validate-api";
 
 const defaultSystemPrompt = `You are a knowledgeable movie and TV show recommendation assistant. 
@@ -20,5 +20,5 @@ export const POST = validateRequest(
     });
 
     return result.toUIMessageStreamResponse();
-  }
+  },
 );
