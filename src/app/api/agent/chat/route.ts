@@ -1,6 +1,6 @@
 import {
   streamText,
-  UIMessage,
+  type UIMessage,
   convertToModelMessages,
   stepCountIs,
 } from "ai";

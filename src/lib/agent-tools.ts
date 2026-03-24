@@ -9,11 +9,7 @@ export const agentTools = {
       "Search for movies and TV shows by meaning. Use natural language queries like 'dark sci-fi about AI' or 'feel-good comedy with friends'.",
     inputSchema: z.object({
       query: z.string().describe("Natural language search query"),
-      limit: z
-        .number()
-        .optional()
-        .default(5)
-        .describe("Max results to return"),
+      limit: z.number().optional().default(5).describe("Max results to return"),
     }),
     execute: async ({ query, limit }) => {
       const results = await semanticSearch(query, limit);
@@ -64,7 +60,8 @@ export const agentTools = {
       const existing = db
         .prepare("SELECT * FROM favorites WHERE movie_id = ?")
         .get(movieId) as Favorite | undefined;
-      if (existing) return { message: `${movie.title} is already in favorites` };
+      if (existing)
+        return { message: `${movie.title} is already in favorites` };
 
       db.prepare("INSERT INTO favorites (movie_id, note) VALUES (?, ?)").run(
         movieId,
@@ -84,7 +81,8 @@ export const agentTools = {
       const result = db
         .prepare("DELETE FROM favorites WHERE movie_id = ?")
         .run(movieId);
-      if (result.changes === 0) return { message: "Movie was not in favorites" };
+      if (result.changes === 0)
+        return { message: "Movie was not in favorites" };
       return { message: "Removed from favorites" };
     },
   }),
@@ -118,11 +116,7 @@ export const agentTools = {
       "Find movies or TV shows similar to a given title. Uses semantic similarity.",
     inputSchema: z.object({
       movieId: z.number().describe("The movie ID to find similar content for"),
-      limit: z
-        .number()
-        .optional()
-        .default(5)
-        .describe("Max results to return"),
+      limit: z.number().optional().default(5).describe("Max results to return"),
     }),
     execute: async ({ movieId, limit }) => {
       const db = getDb();
