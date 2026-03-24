@@ -1,0 +1,490 @@
+[
+  {
+    "title": "The Shawshank Redemption",
+    "year": 1994,
+    "type": "movie",
+    "genre": "Drama",
+    "description": "A banker wrongly convicted of murder forms an unlikely friendship with a fellow inmate as they find solace and eventual redemption through acts of common decency over two decades in prison.",
+    "rating": 9.3
+  },
+  {
+    "title": "Breaking Bad",
+    "year": 2008,
+    "type": "tv_show",
+    "genre": "Crime, Drama, Thriller",
+    "description": "A high school chemistry teacher diagnosed with terminal lung cancer turns to manufacturing methamphetamine to secure his family's future, descending into the criminal underworld of New Mexico.",
+    "rating": 9.5
+  },
+  {
+    "title": "Inception",
+    "year": 2010,
+    "type": "movie",
+    "genre": "Sci-Fi, Action, Thriller",
+    "description": "A skilled thief who steals secrets from people's dreams is offered a chance to have his criminal record erased if he can successfully plant an idea in a target's subconscious mind.",
+    "rating": 8.8
+  },
+  {
+    "title": "Stranger Things",
+    "year": 2016,
+    "type": "tv_show",
+    "genre": "Sci-Fi, Horror, Drama",
+    "description": "In 1980s Indiana, a group of young friends witness supernatural forces and secret government experiments. When a boy vanishes, they uncover a mystery involving secret experiments, terrifying forces, and one strange little girl.",
+    "rating": 8.7
+  },
+  {
+    "title": "The Dark Knight",
+    "year": 2008,
+    "type": "movie",
+    "genre": "Action, Crime, Drama",
+    "description": "Batman raises the stakes in his war on crime by facing the Joker, a criminal mastermind who plunges Gotham City into anarchy and forces the Dark Knight to confront his deepest beliefs.",
+    "rating": 9.0
+  },
+  {
+    "title": "The Office",
+    "year": 2005,
+    "type": "tv_show",
+    "genre": "Comedy",
+    "description": "A mockumentary sitcom that chronicles the everyday lives of office employees at the Scranton, Pennsylvania branch of Dunder Mifflin Paper Company, led by their well-meaning but clueless regional manager.",
+    "rating": 9.0
+  },
+  {
+    "title": "Interstellar",
+    "year": 2014,
+    "type": "movie",
+    "genre": "Sci-Fi, Adventure, Drama",
+    "description": "A team of explorers travel through a wormhole near Saturn in search of a new home for humanity as Earth faces an agricultural crisis that threatens the survival of the human race.",
+    "rating": 8.7
+  },
+  {
+    "title": "Game of Thrones",
+    "year": 2011,
+    "type": "tv_show",
+    "genre": "Fantasy, Drama, Adventure",
+    "description": "Noble families vie for control of the Iron Throne in the mythical continent of Westeros, while an ancient enemy returns after being dormant for millennia and threatens all living things.",
+    "rating": 9.2
+  },
+  {
+    "title": "Parasite",
+    "year": 2019,
+    "type": "movie",
+    "genre": "Thriller, Drama, Comedy",
+    "description": "A poor family schemes to infiltrate a wealthy household by posing as unrelated, highly qualified individuals. Their elaborate deception leads to unexpected consequences that blur the line between social classes.",
+    "rating": 8.5
+  },
+  {
+    "title": "Chernobyl",
+    "year": 2019,
+    "type": "tv_show",
+    "genre": "Drama, History, Thriller",
+    "description": "A dramatization of the 1986 nuclear disaster at the Chernobyl power plant in Ukraine, following the brave men and women who sacrificed to save Europe from unimaginable catastrophe.",
+    "rating": 9.4
+  },
+  {
+    "title": "The Matrix",
+    "year": 1999,
+    "type": "movie",
+    "genre": "Sci-Fi, Action",
+    "description": "A computer hacker discovers that reality as he knows it is a simulated world created by machines, and joins a rebellion to free humanity from the digital prison.",
+    "rating": 8.7
+  },
+  {
+    "title": "The Crown",
+    "year": 2016,
+    "type": "tv_show",
+    "genre": "Drama, History, Biography",
+    "description": "A biographical drama following the reign of Queen Elizabeth II, exploring the political and personal events that shaped the second half of the twentieth century through the lens of the British monarchy.",
+    "rating": 8.6
+  },
+  {
+    "title": "Pulp Fiction",
+    "year": 1994,
+    "type": "movie",
+    "genre": "Crime, Drama",
+    "description": "Interconnected stories of Los Angeles criminals, including hitmen, a boxer, and a pair of bandits, weave together in a nonlinear narrative filled with sharp dialogue and unexpected violence.",
+    "rating": 8.9
+  },
+  {
+    "title": "Black Mirror",
+    "year": 2011,
+    "type": "tv_show",
+    "genre": "Sci-Fi, Drama, Thriller",
+    "description": "An anthology series exploring the dark side of technology and its impact on society. Each standalone episode presents a different near-future scenario where humanity's relationship with technology goes wrong.",
+    "rating": 8.7
+  },
+  {
+    "title": "The Lord of the Rings: The Fellowship of the Ring",
+    "year": 2001,
+    "type": "movie",
+    "genre": "Fantasy, Adventure",
+    "description": "A young hobbit inherits a powerful ring and embarks on an epic quest with a diverse fellowship to destroy it in the fires of Mount Doom before the dark lord Sauron can use it to conquer Middle-earth.",
+    "rating": 8.8
+  },
+  {
+    "title": "Fleabag",
+    "year": 2016,
+    "type": "tv_show",
+    "genre": "Comedy, Drama",
+    "description": "A sharp-witted, sexually adventurous woman navigates life in London while dealing with tragedy, dysfunctional family relationships, and her own self-destructive tendencies, often breaking the fourth wall to confide in the audience.",
+    "rating": 8.7
+  },
+  {
+    "title": "Fight Club",
+    "year": 1999,
+    "type": "movie",
+    "genre": "Drama, Thriller",
+    "description": "An insomniac office worker and a mysterious soap salesman form an underground fight club that evolves into a dangerous anarchist movement challenging consumer society and masculine identity.",
+    "rating": 8.8
+  },
+  {
+    "title": "The Mandalorian",
+    "year": 2019,
+    "type": "tv_show",
+    "genre": "Sci-Fi, Action, Adventure",
+    "description": "A lone bounty hunter in the outer reaches of the galaxy finds himself protecting a mysterious alien child while navigating the dangerous remnants of the fallen Galactic Empire.",
+    "rating": 8.7
+  },
+  {
+    "title": "Spirited Away",
+    "year": 2001,
+    "type": "movie",
+    "genre": "Animation, Fantasy, Adventure",
+    "description": "A young girl becomes trapped in a mysterious spirit world after her parents are transformed into pigs. She must work in a bathhouse for spirits while finding a way to free herself and her family.",
+    "rating": 8.6
+  },
+  {
+    "title": "The Wire",
+    "year": 2002,
+    "type": "tv_show",
+    "genre": "Crime, Drama",
+    "description": "A sprawling examination of the Baltimore drug scene through the eyes of law enforcers and drug dealers alike. Each season examines a different facet of the city, from the drug trade to the docks to city politics.",
+    "rating": 9.3
+  },
+  {
+    "title": "Whiplash",
+    "year": 2014,
+    "type": "movie",
+    "genre": "Drama, Music",
+    "description": "A young jazz drummer at a prestigious music conservatory is pushed to his limits by a ruthless instructor who uses fear and intimidation to develop talent, blurring the line between mentorship and abuse.",
+    "rating": 8.5
+  },
+  {
+    "title": "Succession",
+    "year": 2018,
+    "type": "tv_show",
+    "genre": "Drama, Comedy",
+    "description": "The Roy family, owners of a global media and entertainment conglomerate, fight among themselves for control of the company as the aging patriarch considers retirement, exposing the family's dysfunction.",
+    "rating": 8.8
+  },
+  {
+    "title": "The Grand Budapest Hotel",
+    "year": 2014,
+    "type": "movie",
+    "genre": "Comedy, Drama, Adventure",
+    "description": "A legendary concierge at a famous European hotel between the wars takes a young lobby boy under his wing. Together they become embroiled in the theft of a priceless painting and a family fortune battle.",
+    "rating": 8.1
+  },
+  {
+    "title": "True Detective",
+    "year": 2014,
+    "type": "tv_show",
+    "genre": "Crime, Drama, Mystery",
+    "description": "An anthology crime series where each season follows different detectives investigating complex, dark cases. The first season follows two Louisiana State Police detectives tracking a serial killer over seventeen years.",
+    "rating": 8.9
+  },
+  {
+    "title": "Mad Max: Fury Road",
+    "year": 2015,
+    "type": "movie",
+    "genre": "Action, Sci-Fi, Adventure",
+    "description": "In a post-apocalyptic wasteland, a woman rebels against a tyrannical ruler and escapes with a group of female prisoners. A drifter joins their flight across the desert in a war rig pursued by armies.",
+    "rating": 8.1
+  },
+  {
+    "title": "The Bear",
+    "year": 2022,
+    "type": "tv_show",
+    "genre": "Comedy, Drama",
+    "description": "A young fine-dining chef returns home to Chicago to run his family's Italian beef sandwich shop after the death of his brother, bringing haute cuisine ambitions to a chaotic, working-class kitchen.",
+    "rating": 8.6
+  },
+  {
+    "title": "Eternal Sunshine of the Spotless Mind",
+    "year": 2004,
+    "type": "movie",
+    "genre": "Drama, Romance, Sci-Fi",
+    "description": "When a couple undergoes a medical procedure to erase each other from their memories after a painful breakup, Joel realizes mid-procedure that he wants to keep his memories of Clementine.",
+    "rating": 8.3
+  },
+  {
+    "title": "Severance",
+    "year": 2022,
+    "type": "tv_show",
+    "genre": "Sci-Fi, Drama, Thriller",
+    "description": "Employees of a mysterious corporation undergo a surgical procedure that separates their work memories from their personal memories. When one employee begins to question the arrangement, dark secrets emerge.",
+    "rating": 8.7
+  },
+  {
+    "title": "Get Out",
+    "year": 2017,
+    "type": "movie",
+    "genre": "Horror, Thriller, Mystery",
+    "description": "A young Black man visits his white girlfriend's family estate for the weekend, where his growing unease about their overly accommodating behavior leads to a terrifying discovery about their true intentions.",
+    "rating": 7.8
+  },
+  {
+    "title": "Better Call Saul",
+    "year": 2015,
+    "type": "tv_show",
+    "genre": "Crime, Drama",
+    "description": "The transformation of Jimmy McGill, a struggling lawyer, into the morally flexible criminal attorney Saul Goodman. A prequel to Breaking Bad exploring how good intentions can lead to corruption.",
+    "rating": 9.0
+  },
+  {
+    "title": "Everything Everywhere All at Once",
+    "year": 2022,
+    "type": "movie",
+    "genre": "Action, Sci-Fi, Comedy",
+    "description": "A middle-aged Chinese-American woman being audited by the IRS discovers she must connect with parallel universe versions of herself to prevent a powerful being from destroying the multiverse.",
+    "rating": 7.8
+  },
+  {
+    "title": "Arcane",
+    "year": 2021,
+    "type": "tv_show",
+    "genre": "Animation, Action, Adventure",
+    "description": "Set in the utopian city of Piltover and the oppressed underground of Zaun, two sisters find themselves on opposing sides of a war over the use of magical technologies.",
+    "rating": 9.0
+  },
+  {
+    "title": "The Social Network",
+    "year": 2010,
+    "type": "movie",
+    "genre": "Drama, Biography",
+    "description": "The story of the founding of Facebook and the resulting lawsuits, following Mark Zuckerberg as he navigates friendship, betrayal, and the explosive growth of a social media empire from his Harvard dorm room.",
+    "rating": 7.8
+  },
+  {
+    "title": "The Last of Us",
+    "year": 2023,
+    "type": "tv_show",
+    "genre": "Drama, Action, Adventure",
+    "description": "Twenty years after a fungal pandemic devastates civilization, a hardened smuggler is hired to escort a teenage girl across a post-apocalyptic United States. She may be the key to developing a cure.",
+    "rating": 8.8
+  },
+  {
+    "title": "Blade Runner 2049",
+    "year": 2017,
+    "type": "movie",
+    "genre": "Sci-Fi, Drama, Thriller",
+    "description": "A young blade runner discovers a long-buried secret that has the potential to plunge what's left of society into chaos, leading him on a quest to find a former blade runner who has been missing for thirty years.",
+    "rating": 8.0
+  },
+  {
+    "title": "Ted Lasso",
+    "year": 2020,
+    "type": "tv_show",
+    "genre": "Comedy, Drama, Sport",
+    "description": "An American college football coach is hired to manage a professional English soccer team despite having no experience with the sport. His relentless optimism and folksy charm win over the skeptics.",
+    "rating": 8.8
+  },
+  {
+    "title": "Arrival",
+    "year": 2016,
+    "type": "movie",
+    "genre": "Sci-Fi, Drama",
+    "description": "When mysterious spacecraft touch down across the globe, a linguist is recruited by the military to communicate with the alien visitors. As she learns their language, she begins to perceive time differently.",
+    "rating": 7.9
+  },
+  {
+    "title": "Dark",
+    "year": 2017,
+    "type": "tv_show",
+    "genre": "Sci-Fi, Drama, Mystery",
+    "description": "A German sci-fi thriller where the disappearance of children in a small town reveals the interconnected pasts of four families and a mind-bending mystery spanning three generations and multiple timelines.",
+    "rating": 8.8
+  },
+  {
+    "title": "Dune",
+    "year": 2021,
+    "type": "movie",
+    "genre": "Sci-Fi, Adventure, Drama",
+    "description": "The son of a noble family is entrusted with the protection of the most valuable asset in the galaxy — a desert planet that is the only source of a substance that extends life and enables interstellar travel.",
+    "rating": 8.0
+  },
+  {
+    "title": "Mindhunter",
+    "year": 2017,
+    "type": "tv_show",
+    "genre": "Crime, Drama, Thriller",
+    "description": "Two FBI agents in the late 1970s pioneer the development of criminal profiling by interviewing imprisoned serial killers to understand how they think, in order to solve ongoing cases.",
+    "rating": 8.6
+  },
+  {
+    "title": "The Silence of the Lambs",
+    "year": 1991,
+    "type": "movie",
+    "genre": "Crime, Drama, Thriller",
+    "description": "A young FBI cadet must receive the help of an incarcerated and manipulative cannibal killer to catch another serial killer who skins his victims. Their intellectual cat-and-mouse game becomes deeply personal.",
+    "rating": 8.6
+  },
+  {
+    "title": "Shogun",
+    "year": 2024,
+    "type": "tv_show",
+    "genre": "Drama, History, Adventure",
+    "description": "In feudal Japan, a shipwrecked English navigator becomes entangled in the political machinations of warring feudal lords. Based on James Clavell's epic novel about the collision of Western and Japanese cultures.",
+    "rating": 8.7
+  },
+  {
+    "title": "Goodfellas",
+    "year": 1990,
+    "type": "movie",
+    "genre": "Crime, Drama, Biography",
+    "description": "The true story of Henry Hill's life in the mob, covering his relationship with his wife Karen and his mob partners Jimmy Conway and Tommy DeVito over a period from 1955 to 1980.",
+    "rating": 8.7
+  },
+  {
+    "title": "Mr. Robot",
+    "year": 2015,
+    "type": "tv_show",
+    "genre": "Crime, Drama, Thriller",
+    "description": "A brilliant but socially awkward cybersecurity engineer and hacker is recruited by an anarchist group to destroy the financial records of a massive conglomerate, potentially erasing all consumer debt.",
+    "rating": 8.5
+  },
+  {
+    "title": "The Truman Show",
+    "year": 1998,
+    "type": "movie",
+    "genre": "Comedy, Drama, Sci-Fi",
+    "description": "An insurance salesman discovers his entire life is actually a reality TV show, with every person in his life being an actor and his idyllic hometown being an enormous studio set.",
+    "rating": 8.2
+  },
+  {
+    "title": "Andor",
+    "year": 2022,
+    "type": "tv_show",
+    "genre": "Sci-Fi, Action, Drama",
+    "description": "A thief-turned-rebel spy's journey during the early formation of the Rebel Alliance. Set in the Star Wars universe, it explores the human cost of revolution and the rise of authoritarian regimes.",
+    "rating": 8.4
+  },
+  {
+    "title": "No Country for Old Men",
+    "year": 2007,
+    "type": "movie",
+    "genre": "Crime, Drama, Thriller",
+    "description": "A hunter stumbles upon the aftermath of a drug deal gone wrong and takes a suitcase of cash, setting off a violent chain of events. A relentless hitman pursues him while an aging sheriff tries to contain the carnage.",
+    "rating": 8.2
+  },
+  {
+    "title": "Ozark",
+    "year": 2017,
+    "type": "tv_show",
+    "genre": "Crime, Drama, Thriller",
+    "description": "A financial advisor is forced to relocate his family to the Ozarks after a money-laundering scheme goes wrong, and must launder money for a Mexican drug cartel to keep his family alive.",
+    "rating": 8.5
+  },
+  {
+    "title": "WALL-E",
+    "year": 2008,
+    "type": "movie",
+    "genre": "Animation, Sci-Fi, Adventure",
+    "description": "In a distant future where Earth is buried in garbage and humans live in space, a small waste-collecting robot discovers a seedling and embarks on a journey across the galaxy that will determine the fate of mankind.",
+    "rating": 8.4
+  },
+  {
+    "title": "Westworld",
+    "year": 2016,
+    "type": "tv_show",
+    "genre": "Sci-Fi, Drama, Mystery",
+    "description": "In a futuristic Wild West theme park populated by artificially intelligent hosts, the androids begin to malfunction and gain consciousness, questioning their reality and the morality of their creators.",
+    "rating": 8.5
+  },
+  {
+    "title": "Moonlight",
+    "year": 2016,
+    "type": "movie",
+    "genre": "Drama",
+    "description": "A young African-American man grapples with his identity and sexuality while growing up in a rough neighborhood of Miami, told through three defining chapters of his life from childhood to adulthood.",
+    "rating": 7.4
+  },
+  {
+    "title": "Peaky Blinders",
+    "year": 2013,
+    "type": "tv_show",
+    "genre": "Crime, Drama",
+    "description": "An ambitious gang leader in 1920s Birmingham, England, rises to power through cunning, violence, and political maneuvering. The Shelby family's criminal empire clashes with police, rival gangs, and political figures.",
+    "rating": 8.8
+  },
+  {
+    "title": "The Departed",
+    "year": 2006,
+    "type": "movie",
+    "genre": "Crime, Drama, Thriller",
+    "description": "An undercover cop and a mole in the police force race to discover each other's identity in this tense cat-and-mouse thriller set in the Irish mob world of Boston.",
+    "rating": 8.5
+  },
+  {
+    "title": "Fargo",
+    "year": 2014,
+    "type": "tv_show",
+    "genre": "Crime, Drama, Thriller",
+    "description": "An anthology series inspired by the Coen brothers film, each season tells a new story of deception, crime, and murder in the American Midwest, blending dark humor with shocking violence.",
+    "rating": 8.9
+  },
+  {
+    "title": "Her",
+    "year": 2013,
+    "type": "movie",
+    "genre": "Drama, Romance, Sci-Fi",
+    "description": "A lonely writer develops an unlikely relationship with an operating system designed to meet his every need. As their connection deepens, it raises questions about the nature of love and consciousness.",
+    "rating": 8.0
+  },
+  {
+    "title": "The Expanse",
+    "year": 2015,
+    "type": "tv_show",
+    "genre": "Sci-Fi, Drama, Mystery",
+    "description": "In a colonized solar system, a ship's officer, a detective, and a political activist uncover a vast conspiracy that threatens the fragile peace between Earth, Mars, and the asteroid belt.",
+    "rating": 8.5
+  },
+  {
+    "title": "Jojo Rabbit",
+    "year": 2019,
+    "type": "movie",
+    "genre": "Comedy, Drama, War",
+    "description": "A young boy in Hitler's army finds out his mother is hiding a Jewish girl in their home. Aided by his imaginary friend — a childish version of Adolf Hitler — he must confront his blind nationalism.",
+    "rating": 7.9
+  },
+  {
+    "title": "Bojack Horseman",
+    "year": 2014,
+    "type": "tv_show",
+    "genre": "Animation, Comedy, Drama",
+    "description": "A washed-up 90s sitcom star, who happens to be a horse living in a human-animal hybrid world, struggles with depression, addiction, and self-destructive behavior while attempting a career comeback in Hollywood.",
+    "rating": 8.7
+  },
+  {
+    "title": "The Prestige",
+    "year": 2006,
+    "type": "movie",
+    "genre": "Drama, Mystery, Sci-Fi",
+    "description": "Two rival magicians in Victorian London engage in a bitter competition to create the ultimate illusion, making ever-greater sacrifices to outwit each other, with tragic consequences.",
+    "rating": 8.5
+  },
+  {
+    "title": "Invincible",
+    "year": 2021,
+    "type": "tv_show",
+    "genre": "Animation, Action, Drama",
+    "description": "A teenager discovers that his father, the most powerful superhero on the planet, is actually a villain. He must grapple with this revelation while developing his own powers and deciding what kind of hero he wants to be.",
+    "rating": 8.7
+  },
+  {
+    "title": "12 Angry Men",
+    "year": 1957,
+    "type": "movie",
+    "genre": "Crime, Drama",
+    "description": "Twelve jurors deliberate the fate of a young man accused of murdering his father. As one dissenting juror gradually persuades the others to reconsider the evidence, prejudices and personal biases are exposed.",
+    "rating": 9.0
+  }
+]
