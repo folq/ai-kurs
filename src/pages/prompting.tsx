@@ -5,9 +5,21 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  DEFAULT_LANGUAGE_MODEL,
+  LANGUAGE_MODEL_OPTIONS,
+  type LanguageModelId,
+} from "@/lib/model-selectors";
 
 const DEFAULT_SYSTEM_PROMPT = `You are a knowledgeable movie and TV show recommendation assistant. 
 You help users discover new content based on their preferences, moods, and interests.
@@ -31,13 +43,16 @@ Always ask follow-up questions to narrow down what the user is looking for withi
 
 export default function PromptingPage() {
   const [systemPrompt, setSystemPrompt] = useState(DEFAULT_SYSTEM_PROMPT);
+  const [modelId, setModelId] = useState<LanguageModelId>(
+    DEFAULT_LANGUAGE_MODEL,
+  );
   const [temperature, setTemperature] = useState(0.7);
   const [maxTokens, setMaxTokens] = useState(1024);
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const paramsRef = useRef({ systemPrompt, temperature, maxTokens });
-  paramsRef.current = { systemPrompt, temperature, maxTokens };
+  const paramsRef = useRef({ modelId, systemPrompt, temperature, maxTokens });
+  paramsRef.current = { modelId, systemPrompt, temperature, maxTokens };
 
   const transport = useMemo(
     () =>
@@ -82,6 +97,34 @@ export default function PromptingPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-6">
         <div className="space-y-4">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">Model</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div>
+                <Select
+                  value={modelId}
+                  onValueChange={(v) => setModelId(v as LanguageModelId)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {LANGUAGE_MODEL_OPTIONS.map((option) => (
+                      <SelectItem key={option.id} value={option.id}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Selects which AI Gateway model powers chat completions.
+              </p>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base">System Prompt</CardTitle>

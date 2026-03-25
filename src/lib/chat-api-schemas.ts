@@ -1,5 +1,9 @@
 import type { UIMessage } from "ai";
 import { z } from "zod";
+import {
+  DEFAULT_LANGUAGE_MODEL,
+  languageModelSelectorSchema,
+} from "@/lib/model-selectors";
 
 const uiMessageShape = z.looseObject({
   id: z.string(),
@@ -14,6 +18,9 @@ export const uiMessageSchema: z.ZodType<UIMessage> = z.custom<UIMessage>(
 
 export const agentChatBodySchema = z.object({
   messages: z.array(uiMessageSchema),
+  modelId: languageModelSelectorSchema
+    .optional()
+    .default(DEFAULT_LANGUAGE_MODEL),
 });
 
 export const promptingChatBodySchema = z.object({
@@ -21,4 +28,7 @@ export const promptingChatBodySchema = z.object({
   systemPrompt: z.string().optional(),
   temperature: z.number().optional(),
   maxTokens: z.number().optional(),
+  modelId: languageModelSelectorSchema
+    .optional()
+    .default(DEFAULT_LANGUAGE_MODEL),
 });

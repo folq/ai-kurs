@@ -1,16 +1,21 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { keywordSearch, semanticSearch } from "@/lib/embeddings";
+import type { EmbeddingModelId } from "@/lib/model-selectors";
 import { embeddingsSearchBodySchema } from "@/lib/pages-api-schemas";
 import { validatePagesBody } from "@/lib/validate-api";
 
 async function search(
   _req: NextApiRequest,
   res: NextApiResponse,
-  { query, limit }: { query: string; limit: number },
+  {
+    query,
+    limit,
+    embeddingModel,
+  }: { query: string; limit: number; embeddingModel?: EmbeddingModelId },
 ) {
   try {
     const [semanticResults, keywordResults] = await Promise.all([
-      semanticSearch(query, limit),
+      semanticSearch(query, limit, embeddingModel),
       keywordSearch(query, limit),
     ]);
 

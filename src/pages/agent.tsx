@@ -10,7 +10,19 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import {
+  DEFAULT_LANGUAGE_MODEL,
+  LANGUAGE_MODEL_OPTIONS,
+  type LanguageModelId,
+} from "@/lib/model-selectors";
 
 type FavoriteMovie = {
   id: number;
@@ -75,12 +87,19 @@ function ToolCallCard({
 
 export default function AgentPage() {
   const [input, setInput] = useState("");
+  const [model, setModel] = useState<LanguageModelId>(DEFAULT_LANGUAGE_MODEL);
   const [favorites, setFavorites] = useState<FavoriteMovie[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const modelRef = useRef(model);
+  modelRef.current = model;
 
   const transport = useMemo(
-    () => new DefaultChatTransport({ api: "/api/agent/chat" }),
+    () =>
+      new DefaultChatTransport({
+        api: "/api/agent/chat",
+        body: () => ({ modelId: modelRef.current }),
+      }),
     [],
   );
 
@@ -138,11 +157,28 @@ export default function AgentPage() {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
         <Card className="flex flex-col h-[calc(100vh-220px)]">
           <CardHeader className="pb-3 shrink-0">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <CardTitle className="text-base">Agent Chat</CardTitle>
               <Badge variant="secondary" className="text-xs">
                 {Object.keys(TOOL_LABELS).length} tools available
               </Badge>
+              <div className="ml-auto min-w-[220px]">
+                <Select
+                  value={model}
+                  onValueChange={(v) => setModel(v as LanguageModelId)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select model" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {LANGUAGE_MODEL_OPTIONS.map((option) => (
+                      <SelectItem key={option.id} value={option.id}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </CardHeader>
           <Separator />

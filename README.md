@@ -10,9 +10,7 @@ A hands-on course webapp for learning AI in web development. Built around a movi
 ## Prerequisites
 
 - Node.js 20.9+
-- Azure OpenAI API access with deployments for:
-  - `gpt-4o` (chat completion)
-  - `text-embedding-3-small` (embeddings)
+- Vercel AI Gateway API key (`AI_GATEWAY_API_KEY`)
 
 ## Setup
 
@@ -24,7 +22,7 @@ npm install
 
 ### 2. Configure environment
 
-Copy the example env file and fill in your Azure OpenAI credentials:
+Copy the example env file and fill in your AI Gateway credentials:
 
 ```bash
 cp .env.local.example .env.local
@@ -33,12 +31,9 @@ cp .env.local.example .env.local
 Edit `.env.local` with your values:
 
 ```
-AZURE_RESOURCE_NAME=your-resource-name
-AZURE_API_KEY=your-api-key
-AZURE_OPENAI_ENDPOINT=https://your-resource-name.openai.azure.com
-AZURE_OPENAI_API_KEY=your-api-key
-AZURE_OPENAI_DEPLOYMENT=gpt-4o
-AZURE_OPENAI_EMBEDDING_DEPLOYMENT=text-embedding-3-small
+AI_GATEWAY_API_KEY=your-vercel-ai-gateway-key
+# Optional: custom gateway endpoint
+# AI_GATEWAY_BASE_URL=https://ai-gateway.vercel.sh/v1/ai
 ```
 
 ### 3. Seed the database
@@ -49,7 +44,10 @@ This creates the SQLite database, inserts ~60 movies/shows, and generates embedd
 npm run seed
 ```
 
-The seed script will skip embedding generation if Azure credentials aren't set. You can re-run it after configuring `.env.local`.
+The seed script will skip embedding generation if `AZURE_OPENAI_ENDPOINT` and
+`AZURE_OPENAI_API_KEY` aren't set (the seed currently uses Azure OpenAI
+directly to precompute embeddings). You can re-run it after configuring
+`.env.local`.
 
 ### 4. Start the dev server
 
@@ -73,7 +71,8 @@ src/
   components/         # React components organized by section
   lib/
     db.ts             # SQLite + sqlite-vec setup
-    openai.ts         # Azure OpenAI client configuration
+    openai.ts         # AI Gateway client configuration
+    model-selectors.ts# Shared model options used across pages
     embeddings.ts     # Embedding generation + vector search
     schemas.ts        # Zod schemas for structured outputs
     agent-tools.ts    # Tool definitions for the agent
@@ -87,7 +86,7 @@ scripts/
 ## Tech Stack
 
 - **Next.js 16** (Pages Router) + TypeScript
-- **Vercel AI SDK v6** (`ai`, `@ai-sdk/azure`)
+- **Vercel AI SDK v6** (`ai`)
 - **SQLite** via `better-sqlite3` + `sqlite-vec` for vector search
 - **Tailwind CSS** + **shadcn/ui** for the UI
 - **Zod** for schema validation

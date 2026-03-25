@@ -1,5 +1,6 @@
 import { convertToModelMessages, streamText } from "ai";
 import { promptingChatBodySchema } from "@/lib/chat-api-schemas";
+import { DEFAULT_LANGUAGE_MODEL } from "@/lib/model-selectors";
 import { getModel } from "@/lib/openai";
 import { validateRequest } from "@/lib/validate-api";
 
@@ -10,9 +11,9 @@ When recommending, mention the genre, year, and a brief reason why the user migh
 
 export const POST = validateRequest(
   promptingChatBodySchema,
-  async ({ messages, systemPrompt, temperature, maxTokens }) => {
+  async ({ messages, systemPrompt, temperature, maxTokens, modelId }) => {
     const result = streamText({
-      model: getModel(),
+      model: getModel(modelId ?? DEFAULT_LANGUAGE_MODEL),
       system: systemPrompt || defaultSystemPrompt,
       messages: await convertToModelMessages(messages),
       temperature: temperature ?? 0.7,

@@ -23,9 +23,9 @@ Be conversational, enthusiastic, and helpful. You're a movie buff who loves shar
 
 export const POST = validateRequest(
   agentChatBodySchema,
-  async ({ messages }) => {
+  async ({ messages, modelId }) => {
     const result = streamText({
-      model: getModel(),
+      model: getModel(modelId),
       system: SYSTEM_PROMPT,
       messages: await convertToModelMessages(messages),
       tools: agentTools,

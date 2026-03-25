@@ -1,4 +1,8 @@
 import { z } from "zod";
+import {
+  DEFAULT_LANGUAGE_MODEL,
+  languageModelSelectorSchema,
+} from "@/lib/model-selectors";
 
 export const movieAnalysisSchema = z.object({
   title: z.string().describe("The title of the movie or show"),
@@ -73,4 +77,7 @@ export const schemaNameSchema = z.enum([
 export const analyzeBodySchema = z.object({
   text: z.string().min(1),
   schemaName: schemaNameSchema,
+  modelId: languageModelSelectorSchema
+    .optional()
+    .default(DEFAULT_LANGUAGE_MODEL),
 });

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { embeddingModelSelectorSchema } from "@/lib/model-selectors";
 
 export const postFavoriteBodySchema = z.object({
   movieId: z.coerce.number().int().positive(),
@@ -8,6 +9,7 @@ export const postFavoriteBodySchema = z.object({
 export const embeddingsSearchBodySchema = z.object({
   query: z.string().min(1),
   limit: z.coerce.number().int().positive().max(200).optional().default(10),
+  embeddingModel: embeddingModelSelectorSchema.optional(),
 });
 
 /** Dynamic route segment `pages/api/.../[id].ts` */

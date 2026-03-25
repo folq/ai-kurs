@@ -114,7 +114,7 @@ export default function HomePage() {
                 "Next.js 16",
                 "TypeScript",
                 "Vercel AI SDK",
-                "Azure OpenAI",
+                "Vercel AI Gateway",
                 "SQLite + sqlite-vec",
                 "Tailwind CSS",
                 "shadcn/ui",
