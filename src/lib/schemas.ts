@@ -45,6 +45,62 @@ export const contentAdvisorySchema = z.object({
   parentalGuidanceNote: z.string().describe("Brief note for parents"),
 });
 
+export const contentClassificationSchema = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("review"),
+    sentiment: z.enum([
+      "very_positive",
+      "positive",
+      "mixed",
+      "negative",
+      "very_negative",
+    ]),
+    score: z.number().min(0).max(100),
+    pros: z.array(z.string()),
+    cons: z.array(z.string()),
+  }),
+  z.object({
+    type: z.literal("synopsis"),
+    title: z.string(),
+    genre: z.string(),
+    plotSummary: z.string(),
+    characters: z.array(z.string()),
+  }),
+  z.object({
+    type: z.literal("question"),
+    topic: z.string(),
+    intent: z.string(),
+    suggestedAction: z.string(),
+  }),
+]);
+
+export const versionedAnalysisSchema = z.discriminatedUnion("version", [
+  z.object({
+    version: z.literal(1),
+    title: z.string(),
+    rating: z.number().min(1).max(10),
+  }),
+  z.object({
+    version: z.literal(2),
+    title: z.string(),
+    rating: z.number().min(1).max(10),
+    genres: z.array(z.string()),
+    themes: z.array(z.string()),
+    mood: z.enum(["dark", "light", "mixed", "intense", "whimsical"]),
+  }),
+  z.object({
+    version: z.literal(3),
+    title: z.string(),
+    rating: z.number().min(1).max(10),
+    genres: z.array(z.string()),
+    themes: z.array(z.string()),
+    mood: z.enum(["dark", "light", "mixed", "intense", "whimsical"]),
+    targetAudience: z.string(),
+    contentWarnings: z.array(z.string()),
+    similarTo: z.array(z.string()),
+  }),
+]);
+
 export const schemas = {
   "Movie Analysis": {
     schema: movieAnalysisSchema,
@@ -64,6 +120,20 @@ export const schemas = {
     exampleInput:
       "An intense crime drama featuring graphic violence, drug use, and strong language throughout. The show depicts realistic portrayals of murder and torture. Some episodes deal with themes of mental illness and suicide. Not suitable for younger viewers.",
   },
+  "Content Classification": {
+    schema: contentClassificationSchema,
+    description:
+      "Classify input as a review, synopsis, or question with type-specific fields",
+    exampleInput:
+      "What should I watch if I liked Inception? I'm in the mood for something mind-bending with great visuals and a complex plot.",
+  },
+  "Versioned Analysis": {
+    schema: versionedAnalysisSchema,
+    description:
+      "Analyze with increasing detail levels — version 1 (basic), 2 (detailed), or 3 (comprehensive)",
+    exampleInput:
+      "A lonely writer in near-future Los Angeles develops a relationship with an AI operating system. The film explores themes of love, loneliness, and what it means to be human.",
+  },
 } as const;
 
 export type SchemaName = keyof typeof schemas;
@@ -72,6 +142,8 @@ export const schemaNameSchema = z.enum([
   "Movie Analysis",
   "Review Sentiment",
   "Content Advisory",
+  "Content Classification",
+  "Versioned Analysis",
 ]);
 
 export const analyzeBodySchema = z.object({

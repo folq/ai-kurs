@@ -4,8 +4,10 @@ import { getModel } from "@/lib/openai";
 import {
   analyzeBodySchema,
   contentAdvisorySchema,
+  contentClassificationSchema,
   movieAnalysisSchema,
   reviewSentimentSchema,
+  versionedAnalysisSchema,
   type SchemaName,
 } from "@/lib/schemas";
 import { validateRequest } from "@/lib/validate-api";
@@ -39,6 +41,22 @@ async function analyzeWithSchema(
       const { output, usage } = await generateText({
         model,
         output: Output.object({ schema: contentAdvisorySchema }),
+        prompt,
+      });
+      return { output, usage };
+    }
+    case "Content Classification": {
+      const { output, usage } = await generateText({
+        model,
+        output: Output.object({ schema: contentClassificationSchema }),
+        prompt,
+      });
+      return { output, usage };
+    }
+    case "Versioned Analysis": {
+      const { output, usage } = await generateText({
+        model,
+        output: Output.object({ schema: versionedAnalysisSchema }),
         prompt,
       });
       return { output, usage };
