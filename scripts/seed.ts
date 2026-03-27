@@ -2,9 +2,9 @@ import "dotenv/config";
 import fs from "node:fs";
 import path from "node:path";
 import * as sqliteVec from "@photostructure/sqlite-vec";
+import { createGateway, embedMany, gateway } from "ai";
 import Database from "better-sqlite3";
 import { config } from "dotenv";
-import { AzureOpenAI } from "openai";
 
 config({ path: path.join(process.cwd(), ".env.local") });
 
@@ -88,27 +88,25 @@ async function main() {
   insertMany(movies);
   console.log("Movies inserted.");
 
-  const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
-  const apiKey = process.env.AZURE_OPENAI_API_KEY;
-  const embeddingDeployment =
-    process.env.AZURE_OPENAI_EMBEDDING_DEPLOYMENT || "text-embedding-3-small";
-
-  if (!endpoint || !apiKey) {
+  if (!process.env.AI_GATEWAY_API_KEY && !process.env.AI_GATEWAY_BASE_URL) {
     console.log(
-      "\nSkipping embedding generation: AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_API_KEY not set.",
+      "\nSkipping embedding generation: set AI_GATEWAY_API_KEY in .env.local",
     );
-    console.log("Run the seed script again after setting up your .env.local");
     db.close();
     return;
   }
 
-  const client = new AzureOpenAI({
-    endpoint,
-    apiKey,
-    apiVersion: "2024-10-21",
-  });
+  const gatewayProvider =
+    process.env.AI_GATEWAY_API_KEY || process.env.AI_GATEWAY_BASE_URL
+      ? createGateway({
+          apiKey: process.env.AI_GATEWAY_API_KEY,
+          baseURL: process.env.AI_GATEWAY_BASE_URL,
+        })
+      : gateway;
 
-  console.log("\nGenerating embeddings...");
+  const embeddingModel = gatewayProvider.embeddingModel(
+    "openai/text-embedding-3-small",
+  );
 
   const allMovies = db
     .prepare("SELECT id, title, description, genre FROM movies")
@@ -125,22 +123,21 @@ async function main() {
     return Buffer.from(f32.buffer).toString("hex");
   }
 
+  console.log("\nGenerating embeddings...");
+
   const BATCH_SIZE = 20;
   for (let i = 0; i < allMovies.length; i += BATCH_SIZE) {
     const batch = allMovies.slice(i, i + BATCH_SIZE);
-    const texts = batch.map((m) => `${m.title} (${m.genre}): ${m.description}`);
+    const texts = batch.map(
+      (m) => `${m.title} (${m.genre}): ${m.description}`,
+    );
 
-    const response = await client.embeddings.create({
-      model: embeddingDeployment,
-      input: texts,
-    });
+    const { embeddings } = await embedMany({ model: embeddingModel, values: texts });
 
     for (let j = 0; j < batch.length; j++) {
-      const embedding = response.data[j].embedding;
-      const id = batch[j].id;
-      const hex = float32ToHex(embedding);
+      const hex = float32ToHex(embeddings[j]);
       db.exec(
-        `INSERT INTO movie_embeddings(movie_id, embedding) VALUES (${id}, x'${hex}')`,
+        `INSERT INTO movie_embeddings(movie_id, embedding) VALUES (${batch[j].id}, x'${hex}')`,
       );
     }
 
