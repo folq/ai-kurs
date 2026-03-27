@@ -51,6 +51,14 @@ export function PromptingTheory() {
             <li>Endre prompten til å motstå jailbreaking</li>
             <li>Bytt modell og se forskjellen i kvalitet og hastighet</li>
             <li>Sammenlign modeller — hvilken synes du var best?</li>
+            <li>
+              Legg til modeller som modellkandidat i modellsammenligningen
+            </li>
+            <li>
+              Kjør samme prompt på flere modeller — sammenlign selv, hvilken var
+              best?
+            </li>
+            <li>Bruk LLM as judge — var du enig med dommen?</li>
           </ol>
         </div>
       </section>

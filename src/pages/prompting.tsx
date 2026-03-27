@@ -2,6 +2,7 @@ import { type UIMessage, useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PageShell } from "@/components/layout/PageShell";
+import { ModelComparison } from "@/components/prompting/ModelComparison";
 import { UsageStats } from "@/components/shared/UsageStats";
 import { PromptingTheory } from "@/components/theory/PromptingTheory";
 import { Button } from "@/components/ui/button";
@@ -331,6 +332,11 @@ export default function PromptingPage() {
           </form>
         </Card>
       </div>
+      <ModelComparison
+        systemPrompt={systemPrompt}
+        temperature={temperature}
+        maxTokens={maxTokens}
+      />
     </PageShell>
   );
 }
