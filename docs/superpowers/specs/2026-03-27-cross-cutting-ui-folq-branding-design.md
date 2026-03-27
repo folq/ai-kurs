@@ -1,7 +1,7 @@
 # Spec 1: Cross-cutting UI & Folq Branding
 
 **Date:** 2026-03-27
-**Status:** Draft
+**Status:** Final
 **Scope:** Full Folq rebrand, theory/workshop tabs, model pricing display, Norwegian content
 
 ---
@@ -17,7 +17,7 @@ Rebrand the AI-Kurs app to Folq's visual identity, add a theory/intro tab to eve
 | Branding depth | Full rebrand — colors, fonts, section accents |
 | Tab structure | Two tabs: "Teori" + "Workshop" |
 | Pricing strategy | Hardcoded price table in `model-selectors.ts` |
-| Language | Norwegian for all theory/exercise content |
+| Language | Norwegian for Teori tab content only (intro, concepts, exercises). Workshop UI labels, placeholders, and component copy stay in English. UsageStats uses English abbreviations (tok/s, in, out). |
 | Architecture | Shared `PageShell` component + CSS variable rebrand |
 
 ---
@@ -111,7 +111,7 @@ interface PageShellProps {
 - Renders the page title (h1, SangBleu Republic) and description above the tab bar
 - Tab bar with "Teori" | "Workshop" — teal-600 underline on active tab
 - `defaultTab` defaults to `"workshop"` so returning participants land on the interactive tool
-- Tab state is stored in URL query param (`?tab=teori`) so it's shareable/bookmarkable
+- Tab state is stored in URL query param: `?tab=teori` when Teori is active, no param when Workshop is active (the default). Switching to Workshop removes the query param. This means a bare URL like `/prompting` always lands on Workshop.
 - Teori tab renders the `theory` prop
 - Workshop tab renders `children`
 
@@ -323,6 +323,7 @@ Prices are approximate and will need verification at implementation time.
 
 - Database schema, seed script, embedding logic, API structure — no backend changes beyond streaming usage metadata
 - Dark mode mapping can be done later (not in scope for this spec)
+- `--chart-*` and `--sidebar-*` CSS variables: left as-is (currently unused in the app). Will be mapped to Folq equivalents if/when needed.
 
 ## 8. Out of Scope
 
