@@ -143,6 +143,7 @@ export default function StructuredOutputsPage() {
     completionTokens: number;
   } | null>(null);
   const [durationMs, setDurationMs] = useState<number | null>(null);
+  const [mode, setMode] = useState<"full" | "streaming">("full");
 
   const handleSchemaChange = (name: string) => {
     const schema = SCHEMAS[name as SchemaName];
@@ -157,24 +158,62 @@ export default function StructuredOutputsPage() {
     if (!inputText.trim()) return;
     setLoading(true);
     setOutput(null);
+    setRawJson("");
     setDurationMs(null);
 
     try {
       const startTime = Date.now();
-      const res = await fetch("/api/structured-outputs/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: inputText, schemaName, modelId }),
-      });
-      const data = await res.json();
-      setDurationMs(Date.now() - startTime);
-      if (data.error) {
-        console.error(data.error);
-        return;
+
+      if (mode === "streaming") {
+        const res = await fetch("/api/structured-outputs/stream", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: inputText, schemaName, modelId }),
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          console.error(err.error);
+          return;
+        }
+
+        const reader = res.body?.getReader();
+        if (!reader) return;
+
+        const decoder = new TextDecoder();
+        let accumulated = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          accumulated += decoder.decode(value, { stream: true });
+          setRawJson(accumulated);
+          try {
+            const parsed = JSON.parse(accumulated);
+            setOutput(parsed);
+          } catch {
+            // partial JSON, keep accumulating
+          }
+        }
+
+        setDurationMs(Date.now() - startTime);
+        setUsage(null); // streaming may not return usage in text stream
+      } else {
+        const res = await fetch("/api/structured-outputs/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: inputText, schemaName, modelId }),
+        });
+        const data = await res.json();
+        setDurationMs(Date.now() - startTime);
+        if (data.error) {
+          console.error(data.error);
+          return;
+        }
+        setOutput(data.output);
+        setRawJson(JSON.stringify(data.output, null, 2));
+        setUsage(data.usage);
       }
-      setOutput(data.output);
-      setRawJson(JSON.stringify(data.output, null, 2));
-      setUsage(data.usage);
     } catch (error) {
       console.error("Analysis failed:", error);
     } finally {
@@ -214,6 +253,27 @@ export default function StructuredOutputsPage() {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+              <div>
+                <Label className="text-sm">Generation Mode</Label>
+                <div className="flex gap-1 mt-1">
+                  <Button
+                    variant={mode === "full" ? "default" : "outline"}
+                    size="sm"
+                    className="text-xs flex-1"
+                    onClick={() => setMode("full")}
+                  >
+                    Full
+                  </Button>
+                  <Button
+                    variant={mode === "streaming" ? "default" : "outline"}
+                    size="sm"
+                    className="text-xs flex-1"
+                    onClick={() => setMode("streaming")}
+                  >
+                    Streaming
+                  </Button>
+                </div>
               </div>
               <div>
                 <Label className="text-sm">Select Schema</Label>
@@ -297,6 +357,11 @@ export default function StructuredOutputsPage() {
                 <p className="text-sm text-muted-foreground text-center py-12">
                   Extracting structured data...
                 </p>
+              )}
+              {mode === "streaming" && rawJson && !output && (
+                <pre className="p-3 bg-muted rounded-md text-xs font-mono overflow-x-auto whitespace-pre max-h-[400px] overflow-y-auto">
+                  {rawJson}
+                </pre>
               )}
               {output && !showRaw && (
                 <div className="space-y-3">
