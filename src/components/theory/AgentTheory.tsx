@@ -47,6 +47,12 @@ export function AgentTheory() {
             <li>Observer verktøykallene — forstå hva agenten gjør</li>
             <li>Prøv oppgaver som krever flere verktøy i sekvens</li>
             <li>Bytt modell og se hvordan verktøybruk endres</li>
+            <li>
+              Prøv å gi agenten en kompleks oppgave som krever planlegging
+            </li>
+            <li>
+              Observer hvordan ulike modeller håndterer verktøyvalg forskjellig
+            </li>
           </ol>
         </div>
       </section>

@@ -35,6 +35,17 @@ export function StructuredOutputsTheory() {
             <strong>Data extraction</strong> — Fra fritekst til strukturert
             data. Fungerer som en intelligent parser.
           </div>
+          <div className="text-sm leading-relaxed">
+            <strong>Discriminated union</strong> — Én felles nøkkel (f.eks.
+            <code>type</code> eller <code>version</code>) bestemmer hvilke
+            felter som finnes. Nyttig når én prompt kan gi ulike former på
+            svaret.
+          </div>
+          <div className="text-sm leading-relaxed">
+            <strong>Streaming structured output</strong> —{" "}
+            <code>streamObject</code> bygger JSON gradvis i stedet for alt på en
+            gang. Gir raskere opplevd responstid.
+          </div>
         </div>
       </section>
 
@@ -48,6 +59,12 @@ export function StructuredOutputsTheory() {
             <li>Sammenlign generering av hele objektet vs streaming</li>
             <li>Lag et nytt schema fra scratch (eksempler gitt)</li>
             <li>Vis det frem for sidemannen</li>
+            <li>
+              Prøv discriminated union-schemat — se hvordan AI-en klassifiserer
+              ulik input
+            </li>
+            <li>Sammenlign streaming vs full generering — når er hva best?</li>
+            <li>Lag et eget schema og test det</li>
           </ol>
         </div>
       </section>
