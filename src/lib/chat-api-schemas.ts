@@ -32,3 +32,24 @@ export const promptingChatBodySchema = z.object({
     .optional()
     .default(DEFAULT_LANGUAGE_MODEL),
 });
+
+export const compareBodSchema = z.object({
+  prompt: z.string().min(1),
+  systemPrompt: z.string().optional(),
+  modelIds: z.array(languageModelSelectorSchema).min(2).max(4),
+  temperature: z.number().min(0).max(2).optional(),
+  maxTokens: z.number().int().positive().optional(),
+});
+
+export const judgeBodSchema = z.object({
+  prompt: z.string().min(1),
+  responses: z
+    .array(
+      z.object({
+        modelId: z.string(),
+        text: z.string(),
+      }),
+    )
+    .min(2),
+  judgeModelId: languageModelSelectorSchema,
+});
