@@ -44,10 +44,9 @@ This creates the SQLite database, inserts ~60 movies/shows, and generates embedd
 npm run seed
 ```
 
-The seed script will skip embedding generation if `AZURE_OPENAI_ENDPOINT` and
-`AZURE_OPENAI_API_KEY` aren't set (the seed currently uses Azure OpenAI
-directly to precompute embeddings). You can re-run it after configuring
-`.env.local`.
+The seed script uses your `AI_GATEWAY_API_KEY` to generate embeddings. If the
+key isn't set, it will skip embedding generation — you can re-run it after
+configuring `.env.local`.
 
 ### 4. Start the dev server
 
@@ -72,7 +71,7 @@ src/
   lib/
     db.ts             # SQLite + sqlite-vec setup
     openai.ts         # AI Gateway client configuration
-    model-selectors.ts# Shared model options used across pages
+    model-selectors.ts# Model catalog (flagship → lightweight → no-tool-use)
     embeddings.ts     # Embedding generation + vector search
     schemas.ts        # Zod schemas for structured outputs
     agent-tools.ts    # Tool definitions for the agent
