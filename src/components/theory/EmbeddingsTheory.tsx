@@ -47,6 +47,11 @@ export function EmbeddingsTheory() {
             <li>Søk med naturlig språk og sammenlign semantisk vs keyword</li>
             <li>Endre scoring-funksjon og observer endringer</li>
             <li>Prøv søk der semantisk slår keyword, og omvendt</li>
+            <li>
+              Utforsk 3D-visualiseringen — se hvordan filmer grupperer seg
+            </li>
+            <li>Klikk på en film og se anbefalinger basert på vektornærhet</li>
+            <li>Sammenlign anbefalinger med dine egne preferanser</li>
           </ol>
         </div>
       </section>

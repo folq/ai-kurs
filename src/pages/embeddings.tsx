@@ -1,5 +1,7 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { PageShell } from "@/components/layout/PageShell";
+import { RecommendationPanel } from "@/components/embeddings/RecommendationPanel";
 import { MovieCard } from "@/components/shared/MovieCard";
 import { EmbeddingsTheory } from "@/components/theory/EmbeddingsTheory";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +21,18 @@ import {
   type EmbeddingModelId,
 } from "@/lib/model-selectors";
 
+const EmbeddingsScatter = dynamic(
+  () => import("@/components/embeddings/EmbeddingsScatter"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-[500px] bg-muted rounded-lg flex items-center justify-center text-sm text-muted-foreground">
+        Loading 3D visualization...
+      </div>
+    ),
+  },
+);
+
 type Movie = {
   id: number;
   title: string;
@@ -28,6 +42,29 @@ type Movie = {
   description: string;
   rating: number | null;
   similarity?: string;
+};
+
+type MoviePoint = {
+  id: number;
+  title: string;
+  genre: string;
+  rating: number | null;
+  year: number | null;
+  type: string;
+  x: number;
+  y: number;
+  z: number;
+};
+
+type SimilarMovie = {
+  id: number;
+  title: string;
+  year: number | null;
+  type: "movie" | "tv_show";
+  genre: string;
+  description: string;
+  rating: number | null;
+  distance: number;
 };
 
 export default function EmbeddingsPage() {
@@ -40,11 +77,50 @@ export default function EmbeddingsPage() {
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [favorites, setFavorites] = useState<Set<number>>(new Set());
+  const [allMovies, setAllMovies] = useState<MoviePoint[]>([]);
+  const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
+  const [similarMovies, setSimilarMovies] = useState<SimilarMovie[]>([]);
+  const [loadingSimilar, setLoadingSimilar] = useState(false);
+  const [vizLoaded, setVizLoaded] = useState(false);
 
   const fetchFavorites = useCallback(async () => {
     const res = await fetch("/api/favorites");
     const data = await res.json();
     setFavorites(new Set(data.map((f: { id: number }) => f.id)));
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/embeddings/all")
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setAllMovies(data);
+          setVizLoaded(true);
+        }
+      })
+      .catch(console.error);
+  }, []);
+
+  const handleSelectMovie = useCallback(async (id: number | null) => {
+    setSelectedMovieId(id);
+    if (id == null) {
+      setSimilarMovies([]);
+      return;
+    }
+    setLoadingSimilar(true);
+    try {
+      const res = await fetch("/api/embeddings/similar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ movieId: id, limit: 8 }),
+      });
+      const data = await res.json();
+      setSimilarMovies(data.similar || []);
+    } catch {
+      setSimilarMovies([]);
+    } finally {
+      setLoadingSimilar(false);
+    }
   }, []);
 
   const search = async () => {
@@ -227,6 +303,37 @@ export default function EmbeddingsPage() {
             </p>
           </CardContent>
         </Card>
+      )}
+
+      {vizLoaded && allMovies.length > 0 && (
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold mb-4">
+            Visualisering & Anbefalinger
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
+            <EmbeddingsScatter
+              points={allMovies}
+              selectedId={selectedMovieId}
+              neighborIds={similarMovies.map((m) => m.id)}
+              searchHitIds={semanticResults.map((m) => m.id)}
+              onSelectMovie={handleSelectMovie}
+            />
+            <Card>
+              <CardContent className="p-4">
+                <RecommendationPanel
+                  selectedMovie={
+                    selectedMovieId
+                      ? allMovies.find((m) => m.id === selectedMovieId) || null
+                      : null
+                  }
+                  similarMovies={similarMovies}
+                  loading={loadingSimilar}
+                  onClear={() => handleSelectMovie(null)}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       )}
     </PageShell>
   );
