@@ -1,10 +1,14 @@
-import { LangfuseSpanProcessor } from "@langfuse/otel";
-import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
+export async function register() {
+  if (process.env.NEXT_RUNTIME === "nodejs") {
+    const { NodeTracerProvider } = await import(
+      "@opentelemetry/sdk-trace-node"
+    );
+    const { LangfuseSpanProcessor } = await import("@langfuse/otel");
 
-export const langfuseSpanProcessor = new LangfuseSpanProcessor();
+    const tracerProvider = new NodeTracerProvider({
+      spanProcessors: [new LangfuseSpanProcessor()],
+    });
 
-const tracerProvider = new NodeTracerProvider({
-  spanProcessors: [langfuseSpanProcessor],
-});
-
-tracerProvider.register();
+    tracerProvider.register();
+  }
+}
