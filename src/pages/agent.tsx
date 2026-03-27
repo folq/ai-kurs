@@ -1,6 +1,9 @@
 import { type UIMessage, useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { PageShell } from "@/components/layout/PageShell";
+import { UsageStats } from "@/components/shared/UsageStats";
+import { AgentTheory } from "@/components/theory/AgentTheory";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -89,8 +92,19 @@ export default function AgentPage() {
   const [input, setInput] = useState("");
   const [model, setModel] = useState<LanguageModelId>(DEFAULT_LANGUAGE_MODEL);
   const [favorites, setFavorites] = useState<FavoriteMovie[]>([]);
+  const [streamStats, setStreamStats] = useState<
+    Map<
+      string,
+      {
+        promptTokens: number;
+        completionTokens: number;
+        tokensPerSecond: number;
+      }
+    >
+  >(new Map());
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const streamStartRef = useRef<number | null>(null);
   const modelRef = useRef(model);
   modelRef.current = model;
 
@@ -103,9 +117,38 @@ export default function AgentPage() {
     [],
   );
 
-  const { messages, sendMessage, status } = useChat({ transport });
+  const { messages, sendMessage, status } = useChat({
+    transport,
+    onFinish: ({ message }) => {
+      const metadata = (message as { metadata?: unknown }).metadata as
+        | { usage?: { inputTokens: number; outputTokens: number } }
+        | undefined;
+      const usage = metadata?.usage;
+      const startTime = streamStartRef.current;
+      streamStartRef.current = null;
+      if (usage && startTime) {
+        const elapsed = (Date.now() - startTime) / 1000;
+        const tokPerSec = elapsed > 0 ? usage.outputTokens / elapsed : 0;
+        setStreamStats((prev) => {
+          const next = new Map(prev);
+          next.set(message.id, {
+            promptTokens: usage.inputTokens,
+            completionTokens: usage.outputTokens,
+            tokensPerSecond: tokPerSec,
+          });
+          return next;
+        });
+      }
+    },
+  });
 
   const isActive = status === "submitted" || status === "streaming";
+
+  useEffect(() => {
+    if (status === "streaming" && streamStartRef.current === null) {
+      streamStartRef.current = Date.now();
+    }
+  }, [status]);
 
   const fetchFavorites = useCallback(async () => {
     try {
@@ -143,17 +186,11 @@ export default function AgentPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">4. Agent</h1>
-        <p className="text-muted-foreground max-w-2xl">
-          A conversational agent with <strong>tools</strong> that ties
-          everything together. It can search movies semantically, manage your
-          favorites, and find similar content — all through natural
-          conversation.
-        </p>
-      </div>
-
+    <PageShell
+      title="4. Agent"
+      description="En samtalende agent med verktøy som binder alt sammen."
+      theory={<AgentTheory />}
+    >
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
         <Card className="flex flex-col h-[calc(100vh-220px)]">
           <CardHeader className="pb-3 shrink-0">
@@ -211,55 +248,71 @@ export default function AgentPage() {
                   </div>
                 </div>
               )}
-              {messages.map((message: UIMessage) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-                >
-                  <div className="max-w-[85%] space-y-2">
-                    {message.parts.map(
-                      (part: UIMessage["parts"][number], i: number) => {
-                        if (part.type === "text" && part.text) {
-                          const textPartKey = `${message.id}-text-${i}`;
-                          return (
-                            <div
-                              key={textPartKey}
-                              className={`rounded-lg px-4 py-2 text-sm ${
-                                message.role === "user"
-                                  ? "bg-primary text-primary-foreground"
-                                  : "bg-muted"
-                              }`}
-                            >
-                              <div className="whitespace-pre-wrap">
-                                {part.text}
+              {messages.map((message: UIMessage) => {
+                const assistantStats =
+                  message.role === "assistant"
+                    ? streamStats.get(message.id)
+                    : undefined;
+                return (
+                  <div
+                    key={message.id}
+                    className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+                  >
+                    <div className="max-w-[85%] space-y-2">
+                      {message.parts.map(
+                        (part: UIMessage["parts"][number], i: number) => {
+                          if (part.type === "text" && part.text) {
+                            const textPartKey = `${message.id}-text-${i}`;
+                            return (
+                              <div
+                                key={textPartKey}
+                                className={`rounded-lg px-4 py-2 text-sm ${
+                                  message.role === "user"
+                                    ? "bg-primary text-primary-foreground"
+                                    : "bg-muted"
+                                }`}
+                              >
+                                <div className="whitespace-pre-wrap">
+                                  {part.text}
+                                </div>
                               </div>
-                            </div>
-                          );
-                        }
-                        if (part.type?.startsWith("tool-")) {
-                          const toolPart = part as unknown as {
-                            type: string;
-                            toolCallId: string;
-                            toolName: string;
-                            args: Record<string, unknown>;
-                            state: string;
-                            result?: unknown;
-                          };
-                          return (
-                            <ToolCallCard
-                              key={toolPart.toolCallId}
-                              toolName={toolPart.toolName}
-                              args={toolPart.args}
-                              result={toolPart.result}
-                            />
-                          );
-                        }
-                        return null;
-                      },
-                    )}
+                            );
+                          }
+                          if (part.type?.startsWith("tool-")) {
+                            const toolPart = part as unknown as {
+                              type: string;
+                              toolCallId: string;
+                              toolName: string;
+                              args: Record<string, unknown>;
+                              state: string;
+                              result?: unknown;
+                            };
+                            return (
+                              <ToolCallCard
+                                key={toolPart.toolCallId}
+                                toolName={toolPart.toolName}
+                                args={toolPart.args}
+                                result={toolPart.result}
+                              />
+                            );
+                          }
+                          return null;
+                        },
+                      )}
+                      {assistantStats != null && (
+                        <div className="mt-1">
+                          <UsageStats
+                            promptTokens={assistantStats.promptTokens}
+                            completionTokens={assistantStats.completionTokens}
+                            tokensPerSecond={assistantStats.tokensPerSecond}
+                            modelId={model}
+                          />
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
               {isActive && messages[messages.length - 1]?.role === "user" && (
                 <div className="flex justify-start">
                   <div className="bg-muted rounded-lg px-4 py-2 text-sm text-muted-foreground">
@@ -336,6 +389,6 @@ export default function AgentPage() {
           </Card>
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 }
