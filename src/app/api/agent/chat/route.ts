@@ -30,6 +30,7 @@ export const POST = validateRequest(
       messages: await convertToModelMessages(messages),
       tools: agentTools,
       stopWhen: stepCountIs(5),
+      experimental_telemetry: { isEnabled: true },
     });
 
     return result.toUIMessageStreamResponse({

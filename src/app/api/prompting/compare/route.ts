@@ -19,6 +19,7 @@ export const POST = validateRequest(
             prompt,
             temperature: temperature ?? 0.7,
             maxOutputTokens: maxTokens ?? 1024,
+            experimental_telemetry: { isEnabled: true },
           });
           return {
             modelId,

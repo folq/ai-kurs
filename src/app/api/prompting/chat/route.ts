@@ -18,6 +18,7 @@ export const POST = validateRequest(
       messages: await convertToModelMessages(messages),
       temperature: temperature ?? 0.7,
       maxOutputTokens: maxTokens ?? 1024,
+      experimental_telemetry: { isEnabled: true },
     });
 
     return result.toUIMessageStreamResponse({

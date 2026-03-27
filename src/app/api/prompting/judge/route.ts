@@ -43,6 +43,7 @@ export const POST = validateRequest(
         system: JUDGE_SYSTEM_PROMPT,
         prompt: judgePrompt,
         output: Output.object({ schema: judgeSchema }),
+        experimental_telemetry: { isEnabled: true },
       });
 
       return Response.json(output);

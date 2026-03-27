@@ -20,12 +20,15 @@ async function analyzeWithSchema(
   const prompt = `Analyze the following text and extract structured information:\n\n${text}`;
   const model = getModel(modelId);
 
+  const telemetry = { isEnabled: true } as const;
+
   switch (schemaName) {
     case "Movie Analysis": {
       const { output, usage } = await generateText({
         model,
         output: Output.object({ schema: movieAnalysisSchema }),
         prompt,
+        experimental_telemetry: telemetry,
       });
       return { output, usage };
     }
@@ -34,6 +37,7 @@ async function analyzeWithSchema(
         model,
         output: Output.object({ schema: reviewSentimentSchema }),
         prompt,
+        experimental_telemetry: telemetry,
       });
       return { output, usage };
     }
@@ -42,6 +46,7 @@ async function analyzeWithSchema(
         model,
         output: Output.object({ schema: contentAdvisorySchema }),
         prompt,
+        experimental_telemetry: telemetry,
       });
       return { output, usage };
     }
@@ -50,6 +55,7 @@ async function analyzeWithSchema(
         model,
         output: Output.object({ schema: contentClassificationSchema }),
         prompt,
+        experimental_telemetry: telemetry,
       });
       return { output, usage };
     }
@@ -58,6 +64,7 @@ async function analyzeWithSchema(
         model,
         output: Output.object({ schema: versionedAnalysisSchema }),
         prompt,
+        experimental_telemetry: telemetry,
       });
       return { output, usage };
     }

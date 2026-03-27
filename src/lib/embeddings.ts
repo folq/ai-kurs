@@ -13,6 +13,7 @@ export async function generateEmbedding(
   const { embedding } = await embed({
     model: getEmbeddingModel(modelId),
     value: text,
+    experimental_telemetry: { isEnabled: true },
   });
   return embedding;
 }

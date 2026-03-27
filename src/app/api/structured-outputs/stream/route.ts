@@ -17,6 +17,7 @@ export const POST = validateRequest(
       model: getModel(modelId),
       schema: schemaEntry.schema,
       prompt,
+      experimental_telemetry: { isEnabled: true },
     });
 
     return result.toTextStreamResponse();
