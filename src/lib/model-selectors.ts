@@ -18,7 +18,10 @@ export const LANGUAGE_MODEL_OPTIONS = [
 
   // Reasoning-only models — no function calling / tool use
   { id: "deepseek/deepseek-r1", label: "DeepSeek R1 (no tools)" },
-  { id: "deepseek/deepseek-v3.2-speciale", label: "DeepSeek V3.2 Speciale (no tools)" },
+  {
+    id: "deepseek/deepseek-v3.2-speciale",
+    label: "DeepSeek V3.2 Speciale (no tools)",
+  },
 ] as const;
 
 export const EMBEDDING_MODEL_OPTIONS = [

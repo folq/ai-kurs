@@ -4,9 +4,9 @@ export function EmbeddingsTheory() {
       <section>
         <h2 className="text-xl font-bold mb-3">Introduksjon</h2>
         <p className="text-sm text-foreground/80 leading-relaxed">
-          Embeddings er numeriske vektorer som fanger semantisk mening i tekst. Like
-          konsepter gir like vektorer, noe som muliggjør søk basert på mening i
-          stedet for nøkkelord.
+          Embeddings er numeriske vektorer som fanger semantisk mening i tekst.
+          Like konsepter gir like vektorer, noe som muliggjør søk basert på
+          mening i stedet for nøkkelord.
         </p>
         <p className="text-sm text-foreground/80 leading-relaxed mt-3">
           I denne workshopen sammenligner du semantisk søk (embeddings + cosine
@@ -21,8 +21,8 @@ export function EmbeddingsTheory() {
         <div className="bg-teal-50 rounded-lg p-5 space-y-2">
           <div className="text-sm leading-relaxed">
             <strong>Embeddings</strong> — Tekst representert som tall-vektorer.
-            Hvert ord, setning eller dokument blir en punkt i et høy-dimensjonalt
-            rom.
+            Hvert ord, setning eller dokument blir en punkt i et
+            høy-dimensjonalt rom.
           </div>
           <div className="text-sm leading-relaxed">
             <strong>Cosine similarity</strong> — Måler likhet mellom to vektorer
@@ -33,8 +33,9 @@ export function EmbeddingsTheory() {
             KNN-søk (K nearest neighbors) direkte i databasen.
           </div>
           <div className="text-sm leading-relaxed">
-            <strong>Semantisk vs keyword</strong> — Semantisk søk forstår mening.
-            Keyword-søk krever eksakte ord. Begge har styrker i ulike situasjoner.
+            <strong>Semantisk vs keyword</strong> — Semantisk søk forstår
+            mening. Keyword-søk krever eksakte ord. Begge har styrker i ulike
+            situasjoner.
           </div>
         </div>
       </section>

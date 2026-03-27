@@ -1,0 +1,124 @@
+<h2>Folq Color System — CSS Variable Mapping</h2>
+<p class="subtitle">How Folq's palette maps to shadcn's design token slots</p>
+
+<div class="section">
+  <h3>Primary (Teal)</h3>
+  <p>Used for buttons, active nav items, links, focus rings</p>
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; margin-top: 12px;">
+    <div style="background: #4D988A; color: white; padding: 12px 8px; border-radius: 6px; text-align: center; font-size: 12px;">
+      <div style="font-weight: 600;">--primary</div>
+      <div>teal-600</div>
+      <div style="opacity: 0.7;">#4D988A</div>
+    </div>
+    <div style="background: #FFFFFF; color: #1A1919; padding: 12px 8px; border-radius: 6px; text-align: center; font-size: 12px; border: 1px solid #ddd;">
+      <div style="font-weight: 600;">--primary-fg</div>
+      <div>white</div>
+      <div style="opacity: 0.7;">#FFFFFF</div>
+    </div>
+    <div style="background: #EEF6F4; color: #1A1919; padding: 12px 8px; border-radius: 6px; text-align: center; font-size: 12px;">
+      <div style="font-weight: 600;">--accent</div>
+      <div>teal-50</div>
+      <div style="opacity: 0.7;">#EEF6F4</div>
+    </div>
+    <div style="background: #19564A; color: white; padding: 12px 8px; border-radius: 6px; text-align: center; font-size: 12px;">
+      <div style="font-weight: 600;">--ring</div>
+      <div>teal-1200</div>
+      <div style="opacity: 0.7;">#19564A</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Destructive / Alert (Tiger Lily)</h3>
+  <p>Used for errors, destructive actions, warnings</p>
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; margin-top: 12px;">
+    <div style="background: #DC583E; color: white; padding: 12px 8px; border-radius: 6px; text-align: center; font-size: 12px;">
+      <div style="font-weight: 600;">--destructive</div>
+      <div>tiger-lily-600</div>
+      <div style="opacity: 0.7;">#DC583E</div>
+    </div>
+    <div style="background: #FDF0ED; color: #1A1919; padding: 12px 8px; border-radius: 6px; text-align: center; font-size: 12px;">
+      <div style="font-weight: 600;">alert bg</div>
+      <div>tiger-lily-05</div>
+      <div style="opacity: 0.7;">#FDF0ED</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Neutrals (Folq Grays)</h3>
+  <p>Background, foreground, borders, muted text</p>
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; margin-top: 12px;">
+    <div style="background: #FFFFFF; color: #1A1919; padding: 12px 8px; border-radius: 6px; text-align: center; font-size: 12px; border: 1px solid #ddd;">
+      <div style="font-weight: 600;">--background</div>
+      <div>white</div>
+    </div>
+    <div style="background: #1A1919; color: white; padding: 12px 8px; border-radius: 6px; text-align: center; font-size: 12px;">
+      <div style="font-weight: 600;">--foreground</div>
+      <div>gray-1100</div>
+      <div style="opacity: 0.7;">#1A1919</div>
+    </div>
+    <div style="background: #FAFAFA; color: #1A1919; padding: 12px 8px; border-radius: 6px; text-align: center; font-size: 12px; border: 1px solid #ddd;">
+      <div style="font-weight: 600;">--card</div>
+      <div>gray-25</div>
+      <div style="opacity: 0.7;">#FAFAFA</div>
+    </div>
+    <div style="background: #F5F5F5; color: #1A1919; padding: 12px 8px; border-radius: 6px; text-align: center; font-size: 12px;">
+      <div style="font-weight: 600;">--muted</div>
+      <div>gray-50</div>
+      <div style="opacity: 0.7;">#F5F5F5</div>
+    </div>
+    <div style="background: #636363; color: white; padding: 12px 8px; border-radius: 6px; text-align: center; font-size: 12px;">
+      <div style="font-weight: 600;">--muted-fg</div>
+      <div>gray-600</div>
+      <div style="opacity: 0.7;">#636363</div>
+    </div>
+    <div style="background: #EBEBEB; color: #1A1919; padding: 12px 8px; border-radius: 6px; text-align: center; font-size: 12px;">
+      <div style="font-weight: 600;">--border</div>
+      <div>gray-100</div>
+      <div style="opacity: 0.7;">#EBEBEB</div>
+    </div>
+    <div style="background: #D8D8D8; color: #1A1919; padding: 12px 8px; border-radius: 6px; text-align: center; font-size: 12px;">
+      <div style="font-weight: 600;">--input</div>
+      <div>gray-200</div>
+      <div style="opacity: 0.7;">#D8D8D8</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Typography</h3>
+  <div style="margin-top: 12px; display: grid; gap: 16px;">
+    <div style="padding: 16px; background: #FAFAFA; border-radius: 8px;">
+      <div style="font-family: Georgia, serif; font-size: 28px; font-weight: 400; margin-bottom: 4px;">SangBleu Republic</div>
+      <div style="font-size: 12px; color: #636363;">Display / headings — page titles, section headers, nav brand</div>
+    </div>
+    <div style="padding: 16px; background: #FAFAFA; border-radius: 8px;">
+      <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; margin-bottom: 4px;">Helvetica Neue — Body text, UI labels, inputs, badges</div>
+      <div style="font-size: 12px; color: #636363;">Body / UI — all interactive elements, descriptions, code blocks stay monospace</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Homepage Section Colors</h3>
+  <p>Each course section gets a distinct Folq color accent instead of generic Tailwind colors</p>
+  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px;">
+    <div style="background: #EEF6F4; border: 2px solid #9CC8BF; padding: 16px; border-radius: 8px;">
+      <div style="font-weight: 600; font-size: 14px;">1. Prompting</div>
+      <div style="font-size: 11px; color: #19564A;">teal-50 bg / teal-300 border</div>
+    </div>
+    <div style="background: #EBF7FE; border: 2px solid #9DD6FB; padding: 16px; border-radius: 8px;">
+      <div style="font-weight: 600; font-size: 14px;">2. Structured Outputs</div>
+      <div style="font-size: 11px; color: #146BA7;">information-25 bg / information-300 border</div>
+    </div>
+    <div style="background: #EAEDF8; border: 2px solid #B1BFF8; padding: 16px; border-radius: 8px;">
+      <div style="font-weight: 600; font-size: 14px;">3. Embeddings</div>
+      <div style="font-size: 11px; color: #291B95;">cornflower-100 bg / cornflower-300 border</div>
+    </div>
+    <div style="background: #FDF0ED; border: 2px solid #F1A596; padding: 16px; border-radius: 8px;">
+      <div style="font-weight: 600; font-size: 14px;">4. Agent</div>
+      <div style="font-size: 11px; color: #B93116;">tiger-lily-05 bg / tiger-lily-200 border</div>
+    </div>
+  </div>
+</div>

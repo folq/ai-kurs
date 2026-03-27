@@ -17,7 +17,10 @@ export function Navigation() {
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex h-14 items-center gap-6">
-          <Link href="/" className="font-heading font-bold text-lg tracking-tight text-teal-1200">
+          <Link
+            href="/"
+            className="font-heading font-bold text-lg tracking-tight text-teal-1200"
+          >
             AI-Kurs
           </Link>
           <div className="flex gap-1">

@@ -11,8 +11,8 @@ export function AgentTheory() {
         <p className="text-sm text-foreground/80 leading-relaxed mt-3">
           Agenten i denne workshopen har tilgang til seks verktøy: søke filmer
           semantisk, hente detaljer, legge til og fjerne favoritter, liste
-          favoritter, og finne lignende filmer. Den bestemmer selv hvilke verktøy
-          den trenger for å svare på spørsmålet ditt.
+          favoritter, og finne lignende filmer. Den bestemmer selv hvilke
+          verktøy den trenger for å svare på spørsmålet ditt.
         </p>
       </section>
 
@@ -20,8 +20,8 @@ export function AgentTheory() {
         <h2 className="text-xl font-bold mb-3">Konsepter</h2>
         <div className="bg-teal-50 rounded-lg p-5 space-y-2">
           <div className="text-sm leading-relaxed">
-            <strong>Tool calling</strong> — LLM velger og kaller funksjoner basert
-            på brukerens spørsmål. Den genererer argumenter som JSON.
+            <strong>Tool calling</strong> — LLM velger og kaller funksjoner
+            basert på brukerens spørsmål. Den genererer argumenter som JSON.
           </div>
           <div className="text-sm leading-relaxed">
             <strong>Agent loop</strong> — Iterativ prosess: LLM tenker → kaller

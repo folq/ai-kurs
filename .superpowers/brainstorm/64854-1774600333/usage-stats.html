@@ -1,0 +1,107 @@
+<h2>UsageStats — Tokens, Speed & Price Display</h2>
+<p class="subtitle">Shared component shown after every LLM response</p>
+
+<div class="section">
+  <h3>Streaming Chat (Prompting / Agent pages)</h3>
+  <p>Appears below each assistant message as it finishes streaming</p>
+  <div class="mockup">
+    <div class="mockup-header">After a streamed response</div>
+    <div class="mockup-body">
+      <!-- Chat bubble -->
+      <div style="background: #F5F5F5; border-radius: 8px; padding: 12px 16px; font-size: 13px; margin-bottom: 12px; max-width: 480px;">
+        I'd recommend "Arrival" (2016) — a thoughtful sci-fi film about linguistics and time perception. If you enjoyed Interstellar's blend of emotion and science...
+      </div>
+      <!-- Usage stats bar -->
+      <div style="display: flex; gap: 16px; align-items: center; padding: 6px 12px; background: #FAFAFA; border: 1px solid #EBEBEB; border-radius: 6px; font-size: 11px; color: #636363; max-width: 480px;">
+        <div style="display: flex; align-items: center; gap: 4px;">
+          <span style="color: #B1B1B1;">↑</span>
+          <span>342 in</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 4px;">
+          <span style="color: #B1B1B1;">↓</span>
+          <span>187 out</span>
+        </div>
+        <div style="width: 1px; height: 14px; background: #EBEBEB;"></div>
+        <div style="display: flex; align-items: center; gap: 4px;">
+          <span style="color: #B1B1B1;">⚡</span>
+          <span>62.4 tok/s</span>
+        </div>
+        <div style="width: 1px; height: 14px; background: #EBEBEB;"></div>
+        <div style="display: flex; align-items: center; gap: 4px;">
+          <span style="color: #4D988A; font-weight: 500;">$0.0001</span>
+        </div>
+        <div style="margin-left: auto; font-size: 10px; color: #B1B1B1;">GPT-4o mini</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Non-Streaming (Structured Outputs page)</h3>
+  <p>Appears below the output card after extraction completes</p>
+  <div class="mockup">
+    <div class="mockup-header">After structured extraction</div>
+    <div class="mockup-body">
+      <div style="display: flex; gap: 16px; align-items: center; padding: 8px 14px; background: #FAFAFA; border: 1px solid #EBEBEB; border-radius: 6px; font-size: 11px; color: #636363;">
+        <div><span style="color: #B1B1B1;">↑</span> 856 prompt tokens</div>
+        <div><span style="color: #B1B1B1;">↓</span> 243 completion tokens</div>
+        <div style="width: 1px; height: 14px; background: #EBEBEB;"></div>
+        <div><span style="color: #B1B1B1;">⏱</span> 1.8s total</div>
+        <div style="width: 1px; height: 14px; background: #EBEBEB;"></div>
+        <div style="color: #4D988A; font-weight: 500;">$0.0003</div>
+        <div style="margin-left: auto; font-size: 10px; color: #B1B1B1;">GPT-4o mini</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Price Data in model-selectors.ts</h3>
+  <div style="background: #1A1919; color: #E0E6E5; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 11px; line-height: 1.8; overflow-x: auto;">
+<span style="color: #636363;">// Prices per 1M tokens (USD)</span><br>
+<span style="color: #9CC8BF;">export const</span> MODEL_PRICING = {<br>
+&nbsp;&nbsp;<span style="color: #F1A596;">"openai/gpt-4o-mini"</span>:&nbsp;&nbsp;&nbsp;&nbsp; { input: <span style="color: #7BB5AA;">0.15</span>,&nbsp; output: <span style="color: #7BB5AA;">0.60</span> },<br>
+&nbsp;&nbsp;<span style="color: #F1A596;">"openai/gpt-4o"</span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { input: <span style="color: #7BB5AA;">2.50</span>,&nbsp; output: <span style="color: #7BB5AA;">10.00</span> },<br>
+&nbsp;&nbsp;<span style="color: #F1A596;">"openai/gpt-5.4"</span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { input: <span style="color: #7BB5AA;">10.00</span>, output: <span style="color: #7BB5AA;">30.00</span> },<br>
+&nbsp;&nbsp;<span style="color: #F1A596;">"anthropic/claude-haiku"</span>: { input: <span style="color: #7BB5AA;">0.25</span>,&nbsp; output: <span style="color: #7BB5AA;">1.25</span> },<br>
+&nbsp;&nbsp;<span style="color: #636363;">// ... etc for all models</span><br>
+} <span style="color: #9CC8BF;">as const</span>;<br>
+<br>
+<span style="color: #636363;">// Helper</span><br>
+<span style="color: #9CC8BF;">export function</span> <span style="color: #7BB5AA;">calculateCost</span>(modelId, promptTokens, completionTokens) {<br>
+&nbsp;&nbsp;<span style="color: #9CC8BF;">const</span> p = MODEL_PRICING[modelId];<br>
+&nbsp;&nbsp;<span style="color: #9CC8BF;">if</span> (!p) <span style="color: #9CC8BF;">return null</span>;<br>
+&nbsp;&nbsp;<span style="color: #9CC8BF;">return</span> (promptTokens * p.input + completionTokens * p.output) / <span style="color: #7BB5AA;">1_000_000</span>;<br>
+}
+  </div>
+</div>
+
+<div class="section">
+  <h3>How tokens/sec is measured</h3>
+  <div style="background: #EEF6F4; border-radius: 8px; padding: 16px; font-size: 13px; line-height: 1.7; color: #3C3C3C;">
+    <strong>Streaming pages</strong> (prompting, agent): Track the time from first token to last token. Divide output token count by elapsed seconds.<br><br>
+    <strong>Non-streaming</strong> (structured outputs): Show total wall-clock time instead of tok/s, since the response arrives all at once.
+  </div>
+</div>
+
+<div class="section">
+  <h3>Where it appears</h3>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+    <div style="background: #FAFAFA; border: 1px solid #EBEBEB; border-radius: 8px; padding: 12px;">
+      <div style="font-weight: 600; font-size: 13px; margin-bottom: 4px;">Prompting</div>
+      <div style="font-size: 11px; color: #636363;">Below each assistant message</div>
+    </div>
+    <div style="background: #FAFAFA; border: 1px solid #EBEBEB; border-radius: 8px; padding: 12px;">
+      <div style="font-weight: 600; font-size: 13px; margin-bottom: 4px;">Structured Outputs</div>
+      <div style="font-size: 11px; color: #636363;">Below the output card (replaces current token display)</div>
+    </div>
+    <div style="background: #FAFAFA; border: 1px solid #EBEBEB; border-radius: 8px; padding: 12px;">
+      <div style="font-weight: 600; font-size: 13px; margin-bottom: 4px;">Agent</div>
+      <div style="font-size: 11px; color: #636363;">Below each assistant message</div>
+    </div>
+    <div style="background: #F5F5F5; border: 1px dashed #D8D8D8; border-radius: 8px; padding: 12px;">
+      <div style="font-weight: 600; font-size: 13px; margin-bottom: 4px; color: #B1B1B1;">Embeddings</div>
+      <div style="font-size: 11px; color: #B1B1B1;">N/A — embedding calls don't return usage in the same way</div>
+    </div>
+  </div>
+</div>

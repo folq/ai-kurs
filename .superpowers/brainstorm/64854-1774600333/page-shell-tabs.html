@@ -1,0 +1,146 @@
+<h2>PageShell — Tab Structure</h2>
+<p class="subtitle">Shared component wrapping every course page with Teori / Workshop tabs</p>
+
+<div class="section">
+  <h3>Wireframe — Prompting Page Example</h3>
+  <div class="mockup">
+    <div class="mockup-header">PageShell with "Teori" tab active</div>
+    <div class="mockup-body" style="padding: 0;">
+      <!-- Nav bar -->
+      <div style="background: #FAFAFA; border-bottom: 1px solid #EBEBEB; padding: 10px 20px; display: flex; align-items: center; gap: 16px;">
+        <span style="font-family: Georgia, serif; font-weight: 600; font-size: 16px; color: #19564A;">AI-Kurs</span>
+        <div style="display: flex; gap: 4px;">
+          <span style="background: #4D988A; color: white; padding: 4px 10px; border-radius: 4px; font-size: 11px;">1. Prompting</span>
+          <span style="color: #636363; padding: 4px 10px; font-size: 11px;">2. Structured Outputs</span>
+          <span style="color: #636363; padding: 4px 10px; font-size: 11px;">3. Embeddings</span>
+          <span style="color: #636363; padding: 4px 10px; font-size: 11px;">4. Agent</span>
+        </div>
+      </div>
+
+      <!-- Page header + tabs -->
+      <div style="padding: 24px 24px 0;">
+        <h2 style="font-family: Georgia, serif; font-size: 22px; margin: 0 0 4px;">1. Prompting</h2>
+        <p style="font-size: 12px; color: #636363; margin: 0 0 16px;">Eksperimenter med systemprompter og parametere</p>
+        
+        <!-- Tab bar -->
+        <div style="display: flex; gap: 0; border-bottom: 2px solid #EBEBEB;">
+          <div style="padding: 8px 20px; font-size: 13px; font-weight: 600; color: #19564A; border-bottom: 2px solid #4D988A; margin-bottom: -2px; cursor: pointer;">Teori</div>
+          <div style="padding: 8px 20px; font-size: 13px; color: #636363; cursor: pointer;">Workshop</div>
+        </div>
+      </div>
+
+      <!-- Teori content -->
+      <div style="padding: 24px; max-width: 680px;">
+        <div style="margin-bottom: 20px;">
+          <h3 style="font-size: 16px; margin: 0 0 8px; font-family: Georgia, serif;">Introduksjon</h3>
+          <p style="font-size: 13px; color: #3C3C3C; line-height: 1.6;">
+            Prompting handler om hvordan du kommuniserer med en LLM. Systemprompten setter rollens rammer, mens temperatur og max tokens styrer kreativitet og lengde på svar.
+          </p>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <h3 style="font-size: 16px; margin: 0 0 8px; font-family: Georgia, serif;">Konsepter</h3>
+          <div style="background: #EEF6F4; border-radius: 8px; padding: 16px;">
+            <div style="font-size: 13px; line-height: 1.8;">
+              <strong>System prompt</strong> — Setter AI-ens rolle og oppførsel<br>
+              <strong>Temperatur</strong> — Lav = forutsigbar, Høy = kreativ<br>
+              <strong>Max tokens</strong> — Begrenser lengden på svaret<br>
+              <strong>Modellvalg</strong> — Ulike modeller har ulik styrke og pris
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 style="font-size: 16px; margin: 0 0 8px; font-family: Georgia, serif;">Oppgaver</h3>
+          <div style="background: #FAFAFA; border: 1px solid #EBEBEB; border-radius: 8px; padding: 16px;">
+            <ol style="font-size: 13px; line-height: 2; margin: 0; padding-left: 20px; color: #3C3C3C;">
+              <li>Endre prompten og observer hvordan svaret endres</li>
+              <li>Juster temperatur — sammenlign lav (0.1) vs høy (1.5)</li>
+              <li>Prøv å jailbreake AI-en</li>
+              <li>Endre prompten til å motstå jailbreaking</li>
+              <li>Bytt modell og se forskjellen i kvalitet og hastighet</li>
+              <li>Sammenlign modeller — hvilken synes du var best?</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Wireframe — Same page, "Workshop" tab active</h3>
+  <div class="mockup">
+    <div class="mockup-header">PageShell with "Workshop" tab active</div>
+    <div class="mockup-body" style="padding: 0;">
+      <!-- Nav bar -->
+      <div style="background: #FAFAFA; border-bottom: 1px solid #EBEBEB; padding: 10px 20px; display: flex; align-items: center; gap: 16px;">
+        <span style="font-family: Georgia, serif; font-weight: 600; font-size: 16px; color: #19564A;">AI-Kurs</span>
+        <div style="display: flex; gap: 4px;">
+          <span style="background: #4D988A; color: white; padding: 4px 10px; border-radius: 4px; font-size: 11px;">1. Prompting</span>
+          <span style="color: #636363; padding: 4px 10px; font-size: 11px;">2. Structured Outputs</span>
+          <span style="color: #636363; padding: 4px 10px; font-size: 11px;">3. Embeddings</span>
+          <span style="color: #636363; padding: 4px 10px; font-size: 11px;">4. Agent</span>
+        </div>
+      </div>
+
+      <!-- Page header + tabs -->
+      <div style="padding: 24px 24px 0;">
+        <h2 style="font-family: Georgia, serif; font-size: 22px; margin: 0 0 4px;">1. Prompting</h2>
+        <p style="font-size: 12px; color: #636363; margin: 0 0 16px;">Eksperimenter med systemprompter og parametere</p>
+        
+        <!-- Tab bar -->
+        <div style="display: flex; gap: 0; border-bottom: 2px solid #EBEBEB;">
+          <div style="padding: 8px 20px; font-size: 13px; color: #636363; cursor: pointer;">Teori</div>
+          <div style="padding: 8px 20px; font-size: 13px; font-weight: 600; color: #19564A; border-bottom: 2px solid #4D988A; margin-bottom: -2px; cursor: pointer;">Workshop</div>
+        </div>
+      </div>
+
+      <!-- Workshop content (current page UI) -->
+      <div style="padding: 24px;">
+        <div style="display: grid; grid-template-columns: 280px 1fr; gap: 16px;">
+          <!-- Sidebar -->
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="background: #FAFAFA; border: 1px solid #EBEBEB; border-radius: 8px; padding: 12px;">
+              <div style="font-size: 12px; font-weight: 600; margin-bottom: 8px;">Modell</div>
+              <div style="background: white; border: 1px solid #D8D8D8; border-radius: 4px; padding: 6px 10px; font-size: 12px;">GPT-4o mini ▾</div>
+            </div>
+            <div style="background: #FAFAFA; border: 1px solid #EBEBEB; border-radius: 8px; padding: 12px;">
+              <div style="font-size: 12px; font-weight: 600; margin-bottom: 8px;">System Prompt</div>
+              <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 8px;">
+                <span style="background: #4D988A; color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px;">Default</span>
+                <span style="border: 1px solid #D8D8D8; padding: 2px 8px; border-radius: 4px; font-size: 10px;">Film Critic</span>
+                <span style="border: 1px solid #D8D8D8; padding: 2px 8px; border-radius: 4px; font-size: 10px;">Spoiler-Free</span>
+              </div>
+              <div style="background: white; border: 1px solid #D8D8D8; border-radius: 4px; padding: 8px; font-size: 10px; font-family: monospace; height: 60px; color: #636363;">You are a knowledgeable movie...</div>
+            </div>
+          </div>
+          <!-- Chat area -->
+          <div style="background: #FAFAFA; border: 1px solid #EBEBEB; border-radius: 8px; padding: 16px; min-height: 180px; display: flex; flex-direction: column; justify-content: space-between;">
+            <div style="text-align: center; color: #B1B1B1; font-size: 12px; padding: 40px 0;">Start a conversation...</div>
+            <div style="display: flex; gap: 8px;">
+              <div style="flex: 1; background: white; border: 1px solid #D8D8D8; border-radius: 4px; padding: 6px 10px; font-size: 12px; color: #B1B1B1;">Ask for recommendations...</div>
+              <div style="background: #4D988A; color: white; padding: 6px 14px; border-radius: 4px; font-size: 12px;">Send</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>PageShell Component API</h3>
+  <div style="background: #1A1919; color: #E0E6E5; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 12px; line-height: 1.8; overflow-x: auto;">
+    <span style="color: #9CC8BF;">&lt;PageShell</span><br>
+    &nbsp;&nbsp;<span style="color: #7BB5AA;">title=</span><span style="color: #F1A596;">"1. Prompting"</span><br>
+    &nbsp;&nbsp;<span style="color: #7BB5AA;">description=</span><span style="color: #F1A596;">"Eksperimenter med systemprompter..."</span><br>
+    &nbsp;&nbsp;<span style="color: #7BB5AA;">theory=</span><span style="color: #F1A596;">{&lt;PromptingTheory /&gt;}</span><br>
+    <span style="color: #9CC8BF;">&gt;</span><br>
+    &nbsp;&nbsp;<span style="color: #636363;">{/* Workshop content — current page body */}</span><br>
+    <span style="color: #9CC8BF;">&lt;/PageShell&gt;</span>
+  </div>
+  <p style="font-size: 12px; color: #636363; margin-top: 8px;">
+    Children = Workshop tab content. Theory passed as a React node prop. Title and description shown above the tabs in both views.
+  </p>
+</div>
