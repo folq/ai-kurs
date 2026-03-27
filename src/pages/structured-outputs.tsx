@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { PageShell } from "@/components/layout/PageShell";
+import { UsageStats } from "@/components/shared/UsageStats";
+import { StructuredOutputsTheory } from "@/components/theory/StructuredOutputsTheory";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -79,6 +82,7 @@ export default function StructuredOutputsPage() {
     promptTokens: number;
     completionTokens: number;
   } | null>(null);
+  const [durationMs, setDurationMs] = useState<number | null>(null);
 
   const handleSchemaChange = (name: string) => {
     const schema = SCHEMAS[name as SchemaName];
@@ -93,14 +97,17 @@ export default function StructuredOutputsPage() {
     if (!inputText.trim()) return;
     setLoading(true);
     setOutput(null);
+    setDurationMs(null);
 
     try {
+      const startTime = Date.now();
       const res = await fetch("/api/structured-outputs/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: inputText, schemaName, modelId }),
       });
       const data = await res.json();
+      setDurationMs(Date.now() - startTime);
       if (data.error) {
         console.error(data.error);
         return;
@@ -118,16 +125,11 @@ export default function StructuredOutputsPage() {
   const currentSchema = SCHEMAS[schemaName];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">2. Structured Outputs</h1>
-        <p className="text-muted-foreground max-w-2xl">
-          Use Zod schemas to extract <strong>structured, typed JSON</strong>{" "}
-          from free-form text. The LLM is constrained to output data that
-          matches the schema exactly.
-        </p>
-      </div>
-
+    <PageShell
+      title="2. Structured Outputs"
+      description="Bruk Zod-schemas for å hente ut strukturert, typet JSON fra fritekst."
+      theory={<StructuredOutputsTheory />}
+    >
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="space-y-4">
           <Card>
@@ -281,15 +283,19 @@ export default function StructuredOutputsPage() {
                 </pre>
               )}
               {usage && (
-                <div className="mt-4 pt-3 border-t text-xs text-muted-foreground">
-                  Tokens: {usage.promptTokens} prompt + {usage.completionTokens}{" "}
-                  completion
+                <div className="mt-4 pt-3 border-t">
+                  <UsageStats
+                    promptTokens={usage.promptTokens}
+                    completionTokens={usage.completionTokens}
+                    modelId={modelId}
+                    durationMs={durationMs ?? undefined}
+                  />
                 </div>
               )}
             </CardContent>
           </Card>
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 }
