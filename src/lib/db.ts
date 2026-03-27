@@ -1,21 +1,31 @@
+import fs from "node:fs";
 import path from "node:path";
 import * as sqliteVec from "@photostructure/sqlite-vec";
 import Database from "better-sqlite3";
 
-const DB_PATH = path.join(process.cwd(), "data", "movies.db");
+const SOURCE_DB_PATH = path.join(process.cwd(), "data", "movies.db");
+const IS_VERCEL = !!process.env.VERCEL;
+const RUNTIME_DB_PATH = IS_VERCEL
+  ? path.join("/tmp", "movies.db")
+  : SOURCE_DB_PATH;
 
 let _db: Database.Database | null = null;
 
 export function getDb(): Database.Database {
   if (_db) return _db;
 
-  const fs = require("node:fs");
-  const dir = path.dirname(DB_PATH);
+  if (IS_VERCEL && !fs.existsSync(RUNTIME_DB_PATH)) {
+    if (fs.existsSync(SOURCE_DB_PATH)) {
+      fs.copyFileSync(SOURCE_DB_PATH, RUNTIME_DB_PATH);
+    }
+  }
+
+  const dir = path.dirname(RUNTIME_DB_PATH);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
 
-  _db = new Database(DB_PATH);
+  _db = new Database(RUNTIME_DB_PATH);
   sqliteVec.load(_db);
   _db.pragma("journal_mode = WAL");
   _db.pragma("foreign_keys = ON");
