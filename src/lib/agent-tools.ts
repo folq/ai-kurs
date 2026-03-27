@@ -1,5 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
+import { DEFAULT_EMBEDDING_MODEL } from "@/lib/model-selectors";
 import { type Favorite, getDb, type Movie } from "./db";
 import { semanticSearch } from "./embeddings";
 
@@ -12,7 +13,11 @@ export const agentTools = {
       limit: z.number().optional().default(5).describe("Max results to return"),
     }),
     execute: async ({ query, limit }) => {
-      const results = await semanticSearch(query, limit);
+      const results = await semanticSearch(
+        query,
+        limit,
+        DEFAULT_EMBEDDING_MODEL,
+      );
       return results.map((r) => ({
         id: r.id,
         title: r.title,
@@ -126,7 +131,11 @@ export const agentTools = {
       if (!movie) return { error: "Movie not found" };
 
       const query = `${movie.title} (${movie.genre}): ${movie.description}`;
-      const results = await semanticSearch(query, limit + 1);
+      const results = await semanticSearch(
+        query,
+        limit + 1,
+        DEFAULT_EMBEDDING_MODEL,
+      );
       return results
         .filter((r) => r.id !== movieId)
         .slice(0, limit)

@@ -1,31 +1,25 @@
-import { createAzure } from "@ai-sdk/azure";
-import { AzureOpenAI } from "openai";
+import { createGateway, gateway } from "ai";
+import {
+  DEFAULT_EMBEDDING_MODEL,
+  DEFAULT_LANGUAGE_MODEL,
+  type EmbeddingModelId,
+  type LanguageModelId,
+} from "@/lib/model-selectors";
 
-export const azure = createAzure({
-  resourceName: process.env.AZURE_RESOURCE_NAME,
-  apiKey: process.env.AZURE_API_KEY,
-});
+const gatewayProvider =
+  process.env.AI_GATEWAY_API_KEY || process.env.AI_GATEWAY_BASE_URL
+    ? createGateway({
+        apiKey: process.env.AI_GATEWAY_API_KEY,
+        baseURL: process.env.AI_GATEWAY_BASE_URL,
+      })
+    : gateway;
 
-export function getModel() {
-  const deployment = process.env.AZURE_OPENAI_DEPLOYMENT || "gpt-4o";
-  return azure(deployment);
+export function getModel(modelId: LanguageModelId = DEFAULT_LANGUAGE_MODEL) {
+  return gatewayProvider(modelId);
 }
 
-export function getEmbeddingClient() {
-  const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
-  const apiKey = process.env.AZURE_OPENAI_API_KEY;
-  if (!endpoint || !apiKey) {
-    throw new Error("Missing AZURE_OPENAI_ENDPOINT or AZURE_OPENAI_API_KEY");
-  }
-  return new AzureOpenAI({
-    endpoint,
-    apiKey,
-    apiVersion: "2024-10-21",
-  });
-}
-
-export function getEmbeddingDeployment() {
-  return (
-    process.env.AZURE_OPENAI_EMBEDDING_DEPLOYMENT || "text-embedding-3-small"
-  );
+export function getEmbeddingModel(
+  modelId: EmbeddingModelId = DEFAULT_EMBEDDING_MODEL,
+) {
+  return gatewayProvider.embeddingModel(modelId);
 }

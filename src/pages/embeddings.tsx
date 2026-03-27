@@ -4,6 +4,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  DEFAULT_EMBEDDING_MODEL,
+  EMBEDDING_MODEL_OPTIONS,
+  type EmbeddingModelId,
+} from "@/lib/model-selectors";
 
 type Movie = {
   id: number;
@@ -20,6 +32,9 @@ export default function EmbeddingsPage() {
   const [query, setQuery] = useState("");
   const [semanticResults, setSemanticResults] = useState<Movie[]>([]);
   const [keywordResults, setKeywordResults] = useState<Movie[]>([]);
+  const [embeddingModelId, setEmbeddingModelId] = useState<EmbeddingModelId>(
+    DEFAULT_EMBEDDING_MODEL,
+  );
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [favorites, setFavorites] = useState<Set<number>>(new Set());
@@ -40,7 +55,11 @@ export default function EmbeddingsPage() {
         fetch("/api/embeddings/search", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ query, limit: 8 }),
+          body: JSON.stringify({
+            query,
+            limit: 8,
+            embeddingModel: embeddingModelId,
+          }),
         }),
         fetchFavorites(),
       ]);
@@ -96,8 +115,26 @@ export default function EmbeddingsPage() {
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && search()}
           placeholder='Try: "dark sci-fi about consciousness" or "feel-good comedy about friendship"'
-          className="max-w-2xl"
+          className="max-w-xl"
         />
+        <Select
+          value={embeddingModelId}
+          onValueChange={(v) => setEmbeddingModelId(v as EmbeddingModelId)}
+        >
+          <SelectTrigger className="w-56">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {EMBEDDING_MODEL_OPTIONS.map((model) => (
+              <SelectItem key={model.id} value={model.id}>
+                {model.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Badge variant="outline" className="self-center">
+          Embeddings: {embeddingModelId}
+        </Badge>
         <Button onClick={search} disabled={loading || !query.trim()}>
           {loading ? "Searching..." : "Search"}
         </Button>
@@ -119,7 +156,7 @@ export default function EmbeddingsPage() {
                 <CardContent className="py-8 text-center text-muted-foreground">
                   No results. Make sure you've run{" "}
                   <code className="bg-muted px-1 rounded">npm run seed</code>{" "}
-                  with your Azure OpenAI credentials.
+                  with your AI Gateway API key.
                 </CardContent>
               </Card>
             ) : (
@@ -180,8 +217,8 @@ export default function EmbeddingsPage() {
               vectors.
             </p>
             <p>
-              When you search, your query is converted into an embedding via
-              Azure OpenAI's{" "}
+              When you search, your query is converted into an embedding via AI
+              Gateway's{" "}
               <code className="bg-muted px-1 rounded">
                 text-embedding-3-small
               </code>{" "}

@@ -11,6 +11,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  DEFAULT_LANGUAGE_MODEL,
+  LANGUAGE_MODEL_OPTIONS,
+  type LanguageModelId,
+} from "@/lib/model-selectors";
 
 const SCHEMAS = {
   "Movie Analysis": {
@@ -60,6 +65,9 @@ type SchemaName = keyof typeof SCHEMAS;
 
 export default function StructuredOutputsPage() {
   const [schemaName, setSchemaName] = useState<SchemaName>("Movie Analysis");
+  const [modelId, setModelId] = useState<LanguageModelId>(
+    DEFAULT_LANGUAGE_MODEL,
+  );
   const [inputText, setInputText] = useState(
     SCHEMAS["Movie Analysis"].exampleInput,
   );
@@ -90,7 +98,7 @@ export default function StructuredOutputsPage() {
       const res = await fetch("/api/structured-outputs/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: inputText, schemaName }),
+        body: JSON.stringify({ text: inputText, schemaName, modelId }),
       });
       const data = await res.json();
       if (data.error) {
@@ -127,6 +135,24 @@ export default function StructuredOutputsPage() {
               <CardTitle className="text-base">Schema</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
+              <div>
+                <Label className="text-sm">Model</Label>
+                <Select
+                  value={modelId}
+                  onValueChange={(v) => setModelId(v as LanguageModelId)}
+                >
+                  <SelectTrigger className="mt-1">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {LANGUAGE_MODEL_OPTIONS.map((option) => (
+                      <SelectItem key={option.id} value={option.id}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <div>
                 <Label className="text-sm">Select Schema</Label>
                 <Select

@@ -1,13 +1,20 @@
+import { embed } from "ai";
+import {
+  DEFAULT_EMBEDDING_MODEL,
+  type EmbeddingModelId,
+} from "@/lib/model-selectors";
 import { getDb, type Movie } from "./db";
-import { getEmbeddingClient, getEmbeddingDeployment } from "./openai";
+import { getEmbeddingModel } from "./openai";
 
-export async function generateEmbedding(text: string): Promise<number[]> {
-  const client = getEmbeddingClient();
-  const response = await client.embeddings.create({
-    model: getEmbeddingDeployment(),
-    input: text,
+export async function generateEmbedding(
+  text: string,
+  modelId: EmbeddingModelId = DEFAULT_EMBEDDING_MODEL,
+): Promise<number[]> {
+  const { embedding } = await embed({
+    model: getEmbeddingModel(modelId),
+    value: text,
   });
-  return response.data[0].embedding;
+  return embedding;
 }
 
 export type SearchResult = Movie & { distance: number };
@@ -15,8 +22,9 @@ export type SearchResult = Movie & { distance: number };
 export async function semanticSearch(
   query: string,
   limit = 10,
+  modelId: EmbeddingModelId = DEFAULT_EMBEDDING_MODEL,
 ): Promise<SearchResult[]> {
-  const embedding = await generateEmbedding(query);
+  const embedding = await generateEmbedding(query, modelId);
   const db = getDb();
 
   const results = db
