@@ -1,6 +1,9 @@
 import { type UIMessage, useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { PageShell } from "@/components/layout/PageShell";
+import { UsageStats } from "@/components/shared/UsageStats";
+import { PromptingTheory } from "@/components/theory/PromptingTheory";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -49,8 +52,19 @@ export default function PromptingPage() {
   const [temperature, setTemperature] = useState(0.7);
   const [maxTokens, setMaxTokens] = useState(1024);
   const [input, setInput] = useState("");
+  const [streamStats, setStreamStats] = useState<
+    Map<
+      string,
+      {
+        promptTokens: number;
+        completionTokens: number;
+        tokensPerSecond: number;
+      }
+    >
+  >(new Map());
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const streamStartRef = useRef<number | null>(null);
   const paramsRef = useRef({ modelId, systemPrompt, temperature, maxTokens });
   paramsRef.current = { modelId, systemPrompt, temperature, maxTokens };
 
@@ -65,9 +79,36 @@ export default function PromptingPage() {
 
   const { messages, sendMessage, status, setMessages } = useChat({
     transport,
+    onFinish: ({ message }) => {
+      const metadata = (message as { metadata?: unknown }).metadata as
+        | { usage?: { inputTokens: number; outputTokens: number } }
+        | undefined;
+      const usage = metadata?.usage;
+      const startTime = streamStartRef.current;
+      streamStartRef.current = null;
+      if (usage && startTime) {
+        const elapsed = (Date.now() - startTime) / 1000;
+        const tokPerSec = elapsed > 0 ? usage.outputTokens / elapsed : 0;
+        setStreamStats((prev) => {
+          const next = new Map(prev);
+          next.set(message.id, {
+            promptTokens: usage.inputTokens,
+            completionTokens: usage.outputTokens,
+            tokensPerSecond: tokPerSec,
+          });
+          return next;
+        });
+      }
+    },
   });
 
   const isActive = status === "submitted" || status === "streaming";
+
+  useEffect(() => {
+    if (status === "streaming" && streamStartRef.current === null) {
+      streamStartRef.current = Date.now();
+    }
+  }, [status]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: scroll when transcript updates (incl. streaming), not only when length changes
   useEffect(() => {
@@ -85,16 +126,11 @@ export default function PromptingPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">1. Prompting</h1>
-        <p className="text-muted-foreground max-w-2xl">
-          Experiment with different system prompts to see how they shape the
-          AI's personality and responses. Try adjusting the temperature to
-          control creativity vs consistency.
-        </p>
-      </div>
-
+    <PageShell
+      title="1. Prompting"
+      description="Eksperimenter med systemprompter og parametere for å se hvordan de påvirker AI-ens svar."
+      theory={<PromptingTheory />}
+    >
       <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-6">
         <div className="space-y-4">
           <Card>
@@ -223,37 +259,53 @@ export default function PromptingPage() {
                   Start a conversation about movies or TV shows...
                 </p>
               )}
-              {messages.map((message: UIMessage) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-                >
+              {messages.map((message: UIMessage) => {
+                const assistantStats =
+                  message.role === "assistant"
+                    ? streamStats.get(message.id)
+                    : undefined;
+                return (
                   <div
-                    className={`max-w-[80%] rounded-lg px-4 py-2 text-sm ${
-                      message.role === "user"
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted"
-                    }`}
+                    key={message.id}
+                    className={`flex flex-col ${message.role === "user" ? "items-end" : "items-start"}`}
                   >
-                    {message.parts.map(
-                      (part: UIMessage["parts"][number], i: number) => {
-                        if (part.type === "text") {
-                          const textPartKey = `${message.id}-text-${i}`;
-                          return (
-                            <div
-                              key={textPartKey}
-                              className="whitespace-pre-wrap"
-                            >
-                              {part.text}
-                            </div>
-                          );
-                        }
-                        return null;
-                      },
+                    <div
+                      className={`max-w-[80%] rounded-lg px-4 py-2 text-sm ${
+                        message.role === "user"
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted"
+                      }`}
+                    >
+                      {message.parts.map(
+                        (part: UIMessage["parts"][number], i: number) => {
+                          if (part.type === "text") {
+                            const textPartKey = `${message.id}-text-${i}`;
+                            return (
+                              <div
+                                key={textPartKey}
+                                className="whitespace-pre-wrap"
+                              >
+                                {part.text}
+                              </div>
+                            );
+                          }
+                          return null;
+                        },
+                      )}
+                    </div>
+                    {assistantStats != null && (
+                      <div className="mt-1 max-w-[80%]">
+                        <UsageStats
+                          promptTokens={assistantStats.promptTokens}
+                          completionTokens={assistantStats.completionTokens}
+                          tokensPerSecond={assistantStats.tokensPerSecond}
+                          modelId={modelId}
+                        />
+                      </div>
                     )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
               {isActive && messages[messages.length - 1]?.role === "user" && (
                 <div className="flex justify-start">
                   <div className="bg-muted rounded-lg px-4 py-2 text-sm text-muted-foreground">
@@ -279,6 +331,6 @@ export default function PromptingPage() {
           </form>
         </Card>
       </div>
-    </div>
+    </PageShell>
   );
 }
