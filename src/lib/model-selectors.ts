@@ -1,8 +1,24 @@
 import { z } from "zod";
 
 export const LANGUAGE_MODEL_OPTIONS = [
-  { id: "openai/gpt-4o-mini", label: "GPT-4o mini" },
+  // Powerful flagship models
+  { id: "anthropic/claude-opus-4.6", label: "Claude Opus 4.6" },
+  { id: "openai/gpt-5.4", label: "GPT-5.4" },
+  { id: "google/gemini-3.1-pro-preview", label: "Gemini 3.1 Pro" },
+
+  // Strong mid-tier models
+  { id: "anthropic/claude-sonnet-4.6", label: "Claude Sonnet 4.6" },
   { id: "openai/gpt-4o", label: "GPT-4o" },
+  { id: "google/gemini-2.5-flash", label: "Gemini 2.5 Flash" },
+
+  // Lightweight / fast models
+  { id: "openai/gpt-4o-mini", label: "GPT-4o mini" },
+  { id: "anthropic/claude-haiku-4.5", label: "Claude Haiku 4.5" },
+  { id: "google/gemini-2.5-flash-lite", label: "Gemini 2.5 Flash Lite" },
+
+  // Reasoning-only models — no function calling / tool use
+  { id: "deepseek/deepseek-r1", label: "DeepSeek R1 (no tools)" },
+  { id: "deepseek/deepseek-v3.2-speciale", label: "DeepSeek V3.2 Speciale (no tools)" },
 ] as const;
 
 export const EMBEDDING_MODEL_OPTIONS = [
