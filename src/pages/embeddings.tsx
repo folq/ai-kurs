@@ -1,5 +1,7 @@
 import { useCallback, useState } from "react";
+import { PageShell } from "@/components/layout/PageShell";
 import { MovieCard } from "@/components/shared/MovieCard";
+import { EmbeddingsTheory } from "@/components/theory/EmbeddingsTheory";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -96,19 +98,11 @@ export default function EmbeddingsPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">
-          3. Embeddings & Vector Search
-        </h1>
-        <p className="text-muted-foreground max-w-2xl">
-          Type a natural-language description and find movies by{" "}
-          <strong>meaning</strong>, not just keywords. The left column uses
-          vector similarity search (embeddings), while the right column uses
-          traditional SQL LIKE matching.
-        </p>
-      </div>
-
+    <PageShell
+      title="3. Embeddings & Vector Search"
+      description="Søk etter filmer basert på mening, ikke bare nøkkelord."
+      theory={<EmbeddingsTheory />}
+    >
       <div className="flex gap-2 mb-8">
         <Input
           value={query}
@@ -234,6 +228,6 @@ export default function EmbeddingsPage() {
           </CardContent>
         </Card>
       )}
-    </div>
+    </PageShell>
   );
 }
