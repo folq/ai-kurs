@@ -5,24 +5,24 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --background: #FFFFFF;
+  --foreground: #1A1919;
+  --card: #FAFAFA;
+  --card-foreground: #1A1919;
+  --popover: #FFFFFF;
+  --popover-foreground: #1A1919;
+  --primary: #4D988A;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F5F5F5;
+  --secondary-foreground: #1A1919;
+  --muted: #F5F5F5;
+  --muted-foreground: #636363;
+  --accent: #EEF6F4;
+  --accent-foreground: #1A1919;
+  --destructive: #DC583E;
+  --border: #EBEBEB;
+  --input: #D8D8D8;
+  --ring: #19564A;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -81,6 +81,60 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  --color-teal-1200: #19564A;
+  --color-teal-1100: #1F6154;
+  --color-teal-1000: #27685C;
+  --color-teal-900: #337266;
+  --color-teal-800: #3D8073;
+  --color-teal-700: #468E81;
+  --color-teal-600: #4D988A;
+  --color-teal-500: #5AA395;
+  --color-teal-400: #7BB5AA;
+  --color-teal-300: #9CC8BF;
+  --color-teal-200: #BDDAD5;
+  --color-teal-100: #DEEDEA;
+  --color-teal-50: #EEF6F4;
+  --color-teal-25: #F7FBFA;
+
+  --color-tiger-lily-1000: #B93116;
+  --color-tiger-lily-900: #C33B20;
+  --color-tiger-lily-800: #CB472D;
+  --color-tiger-lily-700: #D24F35;
+  --color-tiger-lily-600: #DC583E;
+  --color-tiger-lily-500: #E36147;
+  --color-tiger-lily-400: #E76950;
+  --color-tiger-lily-300: #EC8773;
+  --color-tiger-lily-200: #F1A596;
+  --color-tiger-lily-100: #F5C3B9;
+  --color-tiger-lily-50: #F7CFC7;
+  --color-tiger-lily-25: #FAE1DC;
+  --color-tiger-lily-05: #FDF0ED;
+
+  --color-information-1000: #146BA7;
+  --color-information-900: #1774B2;
+  --color-information-800: #1F7CBB;
+  --color-information-700: #2B89C9;
+  --color-information-600: #429CDA;
+  --color-information-500: #68B8EF;
+  --color-information-400: #83C8F7;
+  --color-information-300: #9DD6FB;
+  --color-information-200: #B1DEFC;
+  --color-information-100: #C4E6FD;
+  --color-information-50: #D8EEFD;
+  --color-information-25: #EBF7FE;
+
+  --color-cornflower-600: #7690FB;
+  --color-cornflower-500: #91A6FC;
+  --color-cornflower-400: #9FB1FC;
+  --color-cornflower-300: #B1BFF8;
+  --color-cornflower-200: #CBD6FB;
+  --color-cornflower-100: #EAEDF8;
+
+  --color-alert-1000: #AE8300;
+  --color-alert-900: #F0B912;
+  --color-alert-500: #FFD967;
+  --color-alert-100: #FFF7E1;
 }
 
 .dark {
