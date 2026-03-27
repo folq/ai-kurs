@@ -15,7 +15,7 @@ const sections = [
       "Max Tokens",
       "Prompt Patterns",
     ],
-    color: "bg-blue-500/10 border-blue-500/20",
+    color: "bg-teal-50 border-teal-300",
   },
   {
     href: "/structured-outputs",
@@ -29,7 +29,7 @@ const sections = [
       "Type Safety",
       "Data Extraction",
     ],
-    color: "bg-green-500/10 border-green-500/20",
+    color: "bg-information-25 border-information-300",
   },
   {
     href: "/embeddings",
@@ -43,7 +43,7 @@ const sections = [
       "sqlite-vec",
       "Cosine Distance",
     ],
-    color: "bg-purple-500/10 border-purple-500/20",
+    color: "bg-cornflower-100 border-cornflower-300",
   },
   {
     href: "/agent",
@@ -52,7 +52,7 @@ const sections = [
     description:
       "Bring it all together with a conversational agent that can search movies, manage favorites, and find recommendations — all by deciding which tools to call and when.",
     concepts: ["Tool Calling", "Agent Loop", "Multi-step", "Tool Composition"],
-    color: "bg-orange-500/10 border-orange-500/20",
+    color: "bg-tiger-lily-05 border-tiger-lily-200",
   },
 ];
 
