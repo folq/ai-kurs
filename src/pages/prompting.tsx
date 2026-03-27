@@ -53,6 +53,7 @@ export default function PromptingPage() {
   const [temperature, setTemperature] = useState(0.7);
   const [maxTokens, setMaxTokens] = useState(1024);
   const [input, setInput] = useState("");
+  const [workshopTab, setWorkshopTab] = useState<"chat" | "comparison">("chat");
   const [streamStats, setStreamStats] = useState<
     Map<
       string,
@@ -60,6 +61,7 @@ export default function PromptingPage() {
         promptTokens: number;
         completionTokens: number;
         tokensPerSecond: number;
+        reasoningTokens?: number;
       }
     >
   >(new Map());
@@ -82,7 +84,13 @@ export default function PromptingPage() {
     transport,
     onFinish: ({ message }) => {
       const metadata = (message as { metadata?: unknown }).metadata as
-        | { usage?: { inputTokens: number; outputTokens: number } }
+        | {
+            usage?: {
+              inputTokens: number;
+              outputTokens: number;
+              reasoningTokens?: number;
+            };
+          }
         | undefined;
       const usage = metadata?.usage;
       const startTime = streamStartRef.current;
@@ -96,6 +104,7 @@ export default function PromptingPage() {
             promptTokens: usage.inputTokens,
             completionTokens: usage.outputTokens,
             tokensPerSecond: tokPerSec,
+            reasoningTokens: usage.reasoningTokens,
           });
           return next;
         });
@@ -132,211 +141,240 @@ export default function PromptingPage() {
       description="Eksperimenter med systemprompter og parametere for å se hvordan de påvirker AI-ens svar."
       theory={<PromptingTheory />}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-6">
-        <div className="space-y-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Model</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div>
-                <Select
-                  value={modelId}
-                  onValueChange={(v) => setModelId(v as LanguageModelId)}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {LANGUAGE_MODEL_OPTIONS.map((option) => (
-                      <SelectItem key={option.id} value={option.id}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Selects which AI Gateway model powers chat completions.
-              </p>
-            </CardContent>
-          </Card>
+      <div className="mb-6 flex gap-0 border-b border-border">
+        <button
+          type="button"
+          onClick={() => setWorkshopTab("chat")}
+          className={`px-4 py-2 text-sm font-medium transition-colors -mb-px ${
+            workshopTab === "chat"
+              ? "border-b-2 border-primary text-foreground"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          Chat
+        </button>
+        <button
+          type="button"
+          onClick={() => setWorkshopTab("comparison")}
+          className={`px-4 py-2 text-sm font-medium transition-colors -mb-px ${
+            workshopTab === "comparison"
+              ? "border-b-2 border-primary text-foreground"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          Model Comparison
+        </button>
+      </div>
 
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">System Prompt</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex flex-wrap gap-1.5">
-                {Object.entries(PRESET_PROMPTS).map(([name, prompt]) => (
-                  <Button
-                    key={name}
-                    variant={systemPrompt === prompt ? "default" : "outline"}
-                    size="sm"
-                    className="text-xs"
-                    onClick={() => setSystemPrompt(prompt)}
+      {workshopTab === "comparison" ? (
+        <ModelComparison
+          systemPrompt={systemPrompt}
+          temperature={temperature}
+          maxTokens={maxTokens}
+        />
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-6">
+          <div className="space-y-4">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">Model</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div>
+                  <Select
+                    value={modelId}
+                    onValueChange={(v) => setModelId(v as LanguageModelId)}
                   >
-                    {name}
-                  </Button>
-                ))}
-              </div>
-              <Textarea
-                value={systemPrompt}
-                onChange={(e) => setSystemPrompt(e.target.value)}
-                rows={10}
-                className="text-sm font-mono"
-              />
-              <p className="text-xs text-muted-foreground">
-                The system prompt sets the AI's role and behavior. Changes apply
-                to the next message you send.
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Parameters</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <Label className="text-sm">Temperature</Label>
-                  <span className="text-sm text-muted-foreground font-mono">
-                    {temperature.toFixed(1)}
-                  </span>
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {LANGUAGE_MODEL_OPTIONS.map((option) => (
+                        <SelectItem key={option.id} value={option.id}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-                <Slider
-                  value={[temperature]}
-                  onValueChange={(v) =>
-                    setTemperature(Array.isArray(v) ? v[0] : v)
-                  }
-                  min={0}
-                  max={2}
-                  step={0.1}
+                <p className="text-xs text-muted-foreground">
+                  Selects which AI Gateway model powers chat completions.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">System Prompt</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex flex-wrap gap-1.5">
+                  {Object.entries(PRESET_PROMPTS).map(([name, prompt]) => (
+                    <Button
+                      key={name}
+                      variant={systemPrompt === prompt ? "default" : "outline"}
+                      size="sm"
+                      className="text-xs"
+                      onClick={() => setSystemPrompt(prompt)}
+                    >
+                      {name}
+                    </Button>
+                  ))}
+                </div>
+                <Textarea
+                  value={systemPrompt}
+                  onChange={(e) => setSystemPrompt(e.target.value)}
+                  rows={10}
+                  className="text-sm font-mono"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Low = deterministic and focused. High = creative and varied.
+                  The system prompt sets the AI's role and behavior. Changes
+                  apply to the next message you send.
                 </p>
-              </div>
+              </CardContent>
+            </Card>
 
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <Label className="text-sm">Max Tokens</Label>
-                  <span className="text-sm text-muted-foreground font-mono">
-                    {maxTokens}
-                  </span>
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">Parameters</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <Label className="text-sm">Temperature</Label>
+                    <span className="text-sm text-muted-foreground font-mono">
+                      {temperature.toFixed(1)}
+                    </span>
+                  </div>
+                  <Slider
+                    value={[temperature]}
+                    onValueChange={(v) =>
+                      setTemperature(Array.isArray(v) ? v[0] : v)
+                    }
+                    min={0}
+                    max={2}
+                    step={0.1}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Low = deterministic and focused. High = creative and varied.
+                  </p>
                 </div>
-                <Slider
-                  value={[maxTokens]}
-                  onValueChange={(v) =>
-                    setMaxTokens(Array.isArray(v) ? v[0] : v)
-                  }
-                  min={64}
-                  max={4096}
-                  step={64}
-                />
-              </div>
-            </CardContent>
-          </Card>
 
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => setMessages([])}
-          >
-            Clear Conversation
-          </Button>
-        </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <Label className="text-sm">Max Tokens</Label>
+                    <span className="text-sm text-muted-foreground font-mono">
+                      {maxTokens}
+                    </span>
+                  </div>
+                  <Slider
+                    value={[maxTokens]}
+                    onValueChange={(v) =>
+                      setMaxTokens(Array.isArray(v) ? v[0] : v)
+                    }
+                    min={64}
+                    max={4096}
+                    step={64}
+                  />
+                </div>
+              </CardContent>
+            </Card>
 
-        <Card className="flex flex-col h-[calc(100vh-220px)]">
-          <CardHeader className="pb-3 shrink-0">
-            <CardTitle className="text-base">Chat</CardTitle>
-          </CardHeader>
-          <Separator />
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4">
-            <div className="space-y-4">
-              {messages.length === 0 && (
-                <p className="text-sm text-muted-foreground text-center py-12">
-                  Start a conversation about movies or TV shows...
-                </p>
-              )}
-              {messages.map((message: UIMessage) => {
-                const assistantStats =
-                  message.role === "assistant"
-                    ? streamStats.get(message.id)
-                    : undefined;
-                return (
-                  <div
-                    key={message.id}
-                    className={`flex flex-col ${message.role === "user" ? "items-end" : "items-start"}`}
-                  >
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => setMessages([])}
+            >
+              Clear Conversation
+            </Button>
+          </div>
+
+          <Card className="flex flex-col h-[calc(100vh-220px)]">
+            <CardHeader className="pb-3 shrink-0">
+              <CardTitle className="text-base">Chat</CardTitle>
+            </CardHeader>
+            <Separator />
+            <div ref={scrollRef} className="flex-1 overflow-y-auto p-4">
+              <div className="space-y-4">
+                {messages.length === 0 && (
+                  <p className="text-sm text-muted-foreground text-center py-12">
+                    Start a conversation about movies or TV shows...
+                  </p>
+                )}
+                {messages.map((message: UIMessage) => {
+                  const assistantStats =
+                    message.role === "assistant"
+                      ? streamStats.get(message.id)
+                      : undefined;
+                  return (
                     <div
-                      className={`max-w-[80%] rounded-lg px-4 py-2 text-sm ${
-                        message.role === "user"
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted"
-                      }`}
+                      key={message.id}
+                      className={`flex flex-col ${message.role === "user" ? "items-end" : "items-start"}`}
                     >
-                      {message.parts.map(
-                        (part: UIMessage["parts"][number], i: number) => {
-                          if (part.type === "text") {
-                            const textPartKey = `${message.id}-text-${i}`;
-                            return (
-                              <div
-                                key={textPartKey}
-                                className="whitespace-pre-wrap"
-                              >
-                                {part.text}
-                              </div>
-                            );
-                          }
-                          return null;
-                        },
+                      <div
+                        className={`max-w-[80%] rounded-lg px-4 py-2 text-sm ${
+                          message.role === "user"
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted"
+                        }`}
+                      >
+                        {message.parts.map(
+                          (part: UIMessage["parts"][number], i: number) => {
+                            if (part.type === "text") {
+                              const textPartKey = `${message.id}-text-${i}`;
+                              return (
+                                <div
+                                  key={textPartKey}
+                                  className="whitespace-pre-wrap"
+                                >
+                                  {part.text}
+                                </div>
+                              );
+                            }
+                            return null;
+                          },
+                        )}
+                      </div>
+                      {assistantStats != null && (
+                        <div className="mt-1 max-w-[80%]">
+                          <UsageStats
+                            promptTokens={assistantStats.promptTokens}
+                            completionTokens={assistantStats.completionTokens}
+                            tokensPerSecond={assistantStats.tokensPerSecond}
+                            reasoningTokens={assistantStats.reasoningTokens}
+                            modelId={modelId}
+                          />
+                        </div>
                       )}
                     </div>
-                    {assistantStats != null && (
-                      <div className="mt-1 max-w-[80%]">
-                        <UsageStats
-                          promptTokens={assistantStats.promptTokens}
-                          completionTokens={assistantStats.completionTokens}
-                          tokensPerSecond={assistantStats.tokensPerSecond}
-                          modelId={modelId}
-                        />
-                      </div>
-                    )}
+                  );
+                })}
+                {isActive && messages[messages.length - 1]?.role === "user" && (
+                  <div className="flex justify-start">
+                    <div className="bg-muted rounded-lg px-4 py-2 text-sm text-muted-foreground">
+                      Thinking...
+                    </div>
                   </div>
-                );
-              })}
-              {isActive && messages[messages.length - 1]?.role === "user" && (
-                <div className="flex justify-start">
-                  <div className="bg-muted rounded-lg px-4 py-2 text-sm text-muted-foreground">
-                    Thinking...
-                  </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
-          </div>
-          <Separator />
-          <form onSubmit={handleSubmit} className="p-4 flex gap-2 shrink-0">
-            <Input
-              ref={inputRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask for movie recommendations..."
-              disabled={isActive}
-              autoFocus
-            />
-            <Button type="submit" disabled={isActive || !input.trim()}>
-              Send
-            </Button>
-          </form>
-        </Card>
-      </div>
-      <ModelComparison
-        systemPrompt={systemPrompt}
-        temperature={temperature}
-        maxTokens={maxTokens}
-      />
+            <Separator />
+            <form onSubmit={handleSubmit} className="p-4 flex gap-2 shrink-0">
+              <Input
+                ref={inputRef}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Ask for movie recommendations..."
+                disabled={isActive}
+                autoFocus
+              />
+              <Button type="submit" disabled={isActive || !input.trim()}>
+                Send
+              </Button>
+            </form>
+          </Card>
+        </div>
+      )}
     </PageShell>
   );
 }

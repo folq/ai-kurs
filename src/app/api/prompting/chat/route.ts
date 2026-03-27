@@ -22,7 +22,14 @@ export const POST = validateRequest(
 
     return result.toUIMessageStreamResponse({
       messageMetadata: ({ part }) =>
-        part.type === "finish" ? { usage: part.totalUsage } : undefined,
+        part.type === "finish"
+          ? {
+              usage: {
+                ...part.totalUsage,
+                reasoningTokens: part.totalUsage.reasoningTokens,
+              },
+            }
+          : undefined,
     });
   },
 );

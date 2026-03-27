@@ -99,6 +99,7 @@ export default function AgentPage() {
         promptTokens: number;
         completionTokens: number;
         tokensPerSecond: number;
+        reasoningTokens?: number;
       }
     >
   >(new Map());
@@ -121,7 +122,13 @@ export default function AgentPage() {
     transport,
     onFinish: ({ message }) => {
       const metadata = (message as { metadata?: unknown }).metadata as
-        | { usage?: { inputTokens: number; outputTokens: number } }
+        | {
+            usage?: {
+              inputTokens: number;
+              outputTokens: number;
+              reasoningTokens?: number;
+            };
+          }
         | undefined;
       const usage = metadata?.usage;
       const startTime = streamStartRef.current;
@@ -135,6 +142,7 @@ export default function AgentPage() {
             promptTokens: usage.inputTokens,
             completionTokens: usage.outputTokens,
             tokensPerSecond: tokPerSec,
+            reasoningTokens: usage.reasoningTokens,
           });
           return next;
         });
@@ -305,6 +313,7 @@ export default function AgentPage() {
                             promptTokens={assistantStats.promptTokens}
                             completionTokens={assistantStats.completionTokens}
                             tokensPerSecond={assistantStats.tokensPerSecond}
+                            reasoningTokens={assistantStats.reasoningTokens}
                             modelId={model}
                           />
                         </div>

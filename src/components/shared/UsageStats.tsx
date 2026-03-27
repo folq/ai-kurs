@@ -6,6 +6,7 @@ interface UsageStatsProps {
   modelId: string;
   tokensPerSecond?: number;
   durationMs?: number;
+  reasoningTokens?: number;
 }
 
 export function UsageStats({
@@ -14,6 +15,7 @@ export function UsageStats({
   modelId,
   tokensPerSecond,
   durationMs,
+  reasoningTokens,
 }: UsageStatsProps) {
   const cost = calculateCost(modelId, promptTokens, completionTokens);
   const label = getModelLabel(modelId);
@@ -27,6 +29,12 @@ export function UsageStats({
         <span className="text-muted-foreground/60">↓</span> {completionTokens}{" "}
         out
       </span>
+      {reasoningTokens != null && reasoningTokens > 0 && (
+        <span>
+          <span className="text-muted-foreground/60">💭</span> {reasoningTokens}{" "}
+          reasoning
+        </span>
+      )}
       <span className="w-px h-3.5 bg-border" />
       {tokensPerSecond != null && (
         <span>

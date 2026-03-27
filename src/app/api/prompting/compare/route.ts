@@ -26,6 +26,7 @@ export const POST = validateRequest(
             usage: {
               inputTokens: usage.inputTokens,
               outputTokens: usage.outputTokens,
+              reasoningTokens: usage.reasoningTokens ?? undefined,
             },
             error: null,
           };
