@@ -51,3 +51,37 @@ export type EmbeddingModelId = z.infer<typeof embeddingModelSelectorSchema>;
 export const DEFAULT_LANGUAGE_MODEL: LanguageModelId = "openai/gpt-4o-mini";
 export const DEFAULT_EMBEDDING_MODEL: EmbeddingModelId =
   "openai/text-embedding-3-small";
+
+export const MODEL_PRICING: Partial<
+  Record<LanguageModelId, { input: number; output: number }>
+> = {
+  "anthropic/claude-opus-4.6": { input: 15.0, output: 75.0 },
+  "openai/gpt-5.4": { input: 10.0, output: 30.0 },
+  "google/gemini-3.1-pro-preview": { input: 1.25, output: 5.0 },
+  "anthropic/claude-sonnet-4.6": { input: 3.0, output: 15.0 },
+  "openai/gpt-4o": { input: 2.5, output: 10.0 },
+  "google/gemini-2.5-flash": { input: 0.15, output: 0.6 },
+  "openai/gpt-4o-mini": { input: 0.15, output: 0.6 },
+  "anthropic/claude-haiku-4.5": { input: 0.8, output: 4.0 },
+  "google/gemini-2.5-flash-lite": { input: 0.075, output: 0.3 },
+  "deepseek/deepseek-r1": { input: 0.55, output: 2.19 },
+  "deepseek/deepseek-v3.2-speciale": { input: 0.27, output: 1.1 },
+};
+
+export function calculateCost(
+  modelId: string,
+  promptTokens: number,
+  completionTokens: number,
+): number | null {
+  const pricing = MODEL_PRICING[modelId as LanguageModelId];
+  if (!pricing) return null;
+  return (
+    (promptTokens * pricing.input + completionTokens * pricing.output) /
+    1_000_000
+  );
+}
+
+export function getModelLabel(modelId: string): string {
+  const option = LANGUAGE_MODEL_OPTIONS.find((o) => o.id === modelId);
+  return option?.label ?? modelId;
+}
