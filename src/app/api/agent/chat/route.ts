@@ -32,6 +32,9 @@ export const POST = validateRequest(
       stopWhen: stepCountIs(5),
     });
 
-    return result.toUIMessageStreamResponse();
+    return result.toUIMessageStreamResponse({
+      messageMetadata: ({ part }) =>
+        part.type === "finish" ? { usage: part.totalUsage } : undefined,
+    });
   },
 );

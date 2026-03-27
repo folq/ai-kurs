@@ -20,6 +20,9 @@ export const POST = validateRequest(
       maxOutputTokens: maxTokens ?? 1024,
     });
 
-    return result.toUIMessageStreamResponse();
+    return result.toUIMessageStreamResponse({
+      messageMetadata: ({ part }) =>
+        part.type === "finish" ? { usage: part.totalUsage } : undefined,
+    });
   },
 );
