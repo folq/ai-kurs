@@ -23,7 +23,7 @@ async function analyzeWithSchema(
   const telemetry = { isEnabled: true } as const;
 
   switch (schemaName) {
-    case "Movie Analysis": {
+    case "Filmanalyse": {
       const { output, usage } = await generateText({
         model,
         output: Output.object({ schema: movieAnalysisSchema }),
@@ -32,7 +32,7 @@ async function analyzeWithSchema(
       });
       return { output, usage };
     }
-    case "Review Sentiment": {
+    case "Sentimentanalyse": {
       const { output, usage } = await generateText({
         model,
         output: Output.object({ schema: reviewSentimentSchema }),
@@ -41,7 +41,7 @@ async function analyzeWithSchema(
       });
       return { output, usage };
     }
-    case "Content Advisory": {
+    case "Innholdsvarsel": {
       const { output, usage } = await generateText({
         model,
         output: Output.object({ schema: contentAdvisorySchema }),
@@ -50,7 +50,7 @@ async function analyzeWithSchema(
       });
       return { output, usage };
     }
-    case "Content Classification": {
+    case "Innholdsklassifisering": {
       const { output, usage } = await generateText({
         model,
         output: Output.object({ schema: contentClassificationSchema }),
@@ -59,7 +59,7 @@ async function analyzeWithSchema(
       });
       return { output, usage };
     }
-    case "Versioned Analysis": {
+    case "Versjonert analyse": {
       const { output, usage } = await generateText({
         model,
         output: Output.object({ schema: versionedAnalysisSchema }),

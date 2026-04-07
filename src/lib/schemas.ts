@@ -102,48 +102,48 @@ export const versionedAnalysisSchema = z.discriminatedUnion("version", [
 ]);
 
 export const schemas = {
-  "Movie Analysis": {
+  Filmanalyse: {
     schema: movieAnalysisSchema,
-    description: "Extract structured details from a movie or show description",
+    description: "Hent ut strukturerte detaljer fra en film- eller seriebeskrivelse",
     exampleInput:
-      "A lonely writer in near-future Los Angeles develops a relationship with an AI operating system. The film explores themes of love, loneliness, and what it means to be human in an increasingly digital world. It has beautiful cinematography and a melancholic soundtrack.",
+      "En ensom forfatter i et nær-fremtidig Los Angeles utvikler et forhold til et AI-operativsystem. Filmen utforsker temaer som kjærlighet, ensomhet og hva det betyr å være menneske i en stadig mer digital verden. Den har vakker kinematografi og et melankolsk lydspor.",
   },
-  "Review Sentiment": {
+  Sentimentanalyse: {
     schema: reviewSentimentSchema,
-    description: "Analyze sentiment and key points from a review",
+    description: "Analyser sentiment og nøkkelpunkter fra en anmeldelse",
     exampleInput:
-      "This show started incredibly strong with gripping performances and a tense atmosphere. However, by season 3, the writing became predictable and the characters lost their depth. The cinematography remained stunning throughout, but the plot holes became too large to ignore. Worth watching the first two seasons at least.",
+      "Denne serien startet utrolig sterkt med gripende skuespill og en spent atmosfære. Men innen sesong 3 ble manuset forutsigbart og karakterene mistet dybden sin. Kinematografien forble imponerende gjennomgående, men plottehullene ble for store til å ignorere. Verdt å se de to første sesongene i det minste.",
   },
-  "Content Advisory": {
+  Innholdsvarsel: {
     schema: contentAdvisorySchema,
-    description: "Generate content warnings and age ratings",
+    description: "Generer innholdsadvarsler og aldersgrenser",
     exampleInput:
-      "An intense crime drama featuring graphic violence, drug use, and strong language throughout. The show depicts realistic portrayals of murder and torture. Some episodes deal with themes of mental illness and suicide. Not suitable for younger viewers.",
+      "Et intenst krimdrama med grafisk vold, narkotikabruk og sterkt språk gjennomgående. Serien viser realistiske skildringer av drap og tortur. Noen episoder tar opp temaer som psykisk sykdom og selvmord. Ikke egnet for yngre seere.",
   },
-  "Content Classification": {
+  Innholdsklassifisering: {
     schema: contentClassificationSchema,
     description:
-      "Classify input as a review, synopsis, or question with type-specific fields",
+      "Klassifiser input som anmeldelse, synopsis eller spørsmål med typespesifikke felt",
     exampleInput:
-      "What should I watch if I liked Inception? I'm in the mood for something mind-bending with great visuals and a complex plot.",
+      "Hva bør jeg se hvis jeg likte Inception? Jeg er i humør for noe tankevridende med flott visuelt og et komplekst plott.",
   },
-  "Versioned Analysis": {
+  "Versjonert analyse": {
     schema: versionedAnalysisSchema,
     description:
-      "Analyze with increasing detail levels — version 1 (basic), 2 (detailed), or 3 (comprehensive)",
+      "Analyser med økende detaljnivå — v1 (enkel), v2 (detaljert), v3 (omfattende)",
     exampleInput:
-      "A lonely writer in near-future Los Angeles develops a relationship with an AI operating system. The film explores themes of love, loneliness, and what it means to be human.",
+      "En ensom forfatter i et nær-fremtidig Los Angeles utvikler et forhold til et AI-operativsystem. Filmen utforsker temaer som kjærlighet, ensomhet og hva det betyr å være menneske.",
   },
 } as const;
 
 export type SchemaName = keyof typeof schemas;
 
 export const schemaNameSchema = z.enum([
-  "Movie Analysis",
-  "Review Sentiment",
-  "Content Advisory",
-  "Content Classification",
-  "Versioned Analysis",
+  "Filmanalyse",
+  "Sentimentanalyse",
+  "Innholdsvarsel",
+  "Innholdsklassifisering",
+  "Versjonert analyse",
 ]);
 
 export const analyzeBodySchema = z.object({

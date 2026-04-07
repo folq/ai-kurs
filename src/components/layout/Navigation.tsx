@@ -3,9 +3,9 @@ import { useRouter } from "next/router";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/", label: "Home" },
+  { href: "/", label: "Hjem" },
   { href: "/prompting", label: "1. Prompting" },
-  { href: "/structured-outputs", label: "2. Structured Outputs" },
+  { href: "/structured-outputs", label: "2. Strukturerte output" },
   { href: "/embeddings", label: "3. Embeddings" },
   { href: "/agent", label: "4. Agent" },
 ];

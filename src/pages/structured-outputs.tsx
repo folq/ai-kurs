@@ -21,10 +21,10 @@ import {
 } from "@/lib/model-selectors";
 
 const SCHEMAS = {
-  "Movie Analysis": {
-    description: "Extract structured details from a movie or show description",
+  Filmanalyse: {
+    description: "Hent ut strukturerte detaljer fra en film- eller seriebeskrivelse",
     exampleInput:
-      "A lonely writer in near-future Los Angeles develops a relationship with an AI operating system. The film explores themes of love, loneliness, and what it means to be human in an increasingly digital world. It has beautiful cinematography and a melancholic soundtrack.",
+      "En ensom forfatter i et nær-fremtidig Los Angeles utvikler et forhold til et AI-operativsystem. Filmen utforsker temaer som kjærlighet, ensomhet og hva det betyr å være menneske i en stadig mer digital verden. Den har vakker kinematografi og et melankolsk lydspor.",
     zodCode: `z.object({
   title: z.string(),
   genres: z.array(z.string()),
@@ -36,10 +36,10 @@ const SCHEMAS = {
   rating: z.number().min(1).max(10),
 })`,
   },
-  "Review Sentiment": {
-    description: "Analyze sentiment and key points from a review",
+  Sentimentanalyse: {
+    description: "Analyser sentiment og nøkkelpunkter fra en anmeldelse",
     exampleInput:
-      "This show started incredibly strong with gripping performances and a tense atmosphere. However, by season 3, the writing became predictable and the characters lost their depth. The cinematography remained stunning throughout, but the plot holes became too large to ignore. Worth watching the first two seasons at least.",
+      "Denne serien startet utrolig sterkt med gripende skuespill og en spent atmosfære. Men innen sesong 3 ble manuset forutsigbart og karakterene mistet dybden sin. Kinematografien forble imponerende gjennomgående, men plottehullene ble for store til å ignorere. Verdt å se de to første sesongene i det minste.",
     zodCode: `z.object({
   sentiment: z.enum(["very_positive", "positive", "mixed", "negative", "very_negative"]),
   score: z.number().min(0).max(100),
@@ -49,10 +49,10 @@ const SCHEMAS = {
   recommendedFor: z.string(),
 })`,
   },
-  "Content Advisory": {
-    description: "Generate content warnings and age ratings",
+  Innholdsvarsel: {
+    description: "Generer innholdsadvarsler og aldersgrenser",
     exampleInput:
-      "An intense crime drama featuring graphic violence, drug use, and strong language throughout. The show depicts realistic portrayals of murder and torture. Some episodes deal with themes of mental illness and suicide. Not suitable for younger viewers.",
+      "Et intenst krimdrama med grafisk vold, narkotikabruk og sterkt språk gjennomgående. Serien viser realistiske skildringer av drap og tortur. Noen episoder tar opp temaer som psykisk sykdom og selvmord. Ikke egnet for yngre seere.",
     zodCode: `z.object({
   ageRating: z.enum(["G", "PG", "PG-13", "R", "NC-17"]),
   violence: z.enum(["none", "mild", "moderate", "strong", "extreme"]),
@@ -62,11 +62,11 @@ const SCHEMAS = {
   parentalGuidanceNote: z.string(),
 })`,
   },
-  "Content Classification": {
+  Innholdsklassifisering: {
     description:
-      "Classify input as a review, synopsis, or question with type-specific fields",
+      "Klassifiser input som anmeldelse, synopsis eller spørsmål med typespesifikke felt",
     exampleInput:
-      "What should I watch if I liked Inception? I'm in the mood for something mind-bending with great visuals and a complex plot.",
+      "Hva bør jeg se hvis jeg likte Inception? Jeg er i humør for noe tankevridende med flott visuelt og et komplekst plott.",
     zodCode: `z.discriminatedUnion("type", [
   z.object({
     type: z.literal("review"),
@@ -90,11 +90,11 @@ const SCHEMAS = {
   }),
 ])`,
   },
-  "Versioned Analysis": {
+  "Versjonert analyse": {
     description:
-      "Analyze with increasing detail — v1 (basic), v2 (detailed), v3 (comprehensive)",
+      "Analyser med økende detaljnivå — v1 (enkel), v2 (detaljert), v3 (omfattende)",
     exampleInput:
-      "A lonely writer in near-future Los Angeles develops a relationship with an AI operating system. The film explores themes of love, loneliness, and what it means to be human.",
+      "En ensom forfatter i et nær-fremtidig Los Angeles utvikler et forhold til et AI-operativsystem. Filmen utforsker temaer som kjærlighet, ensomhet og hva det betyr å være menneske.",
     zodCode: `z.discriminatedUnion("version", [
   z.object({
     version: z.literal(1),
@@ -127,12 +127,12 @@ const SCHEMAS = {
 type SchemaName = keyof typeof SCHEMAS;
 
 export default function StructuredOutputsPage() {
-  const [schemaName, setSchemaName] = useState<SchemaName>("Movie Analysis");
+  const [schemaName, setSchemaName] = useState<SchemaName>("Filmanalyse");
   const [modelId, setModelId] = useState<LanguageModelId>(
     DEFAULT_LANGUAGE_MODEL,
   );
   const [inputText, setInputText] = useState(
-    SCHEMAS["Movie Analysis"].exampleInput,
+    SCHEMAS["Filmanalyse"].exampleInput,
   );
   const [output, setOutput] = useState<Record<string, unknown> | null>(null);
   const [rawJson, setRawJson] = useState("");
@@ -233,11 +233,11 @@ export default function StructuredOutputsPage() {
         <div className="space-y-4">
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-base">Schema</CardTitle>
+              <CardTitle className="text-base">Skjema</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div>
-                <Label className="text-sm">Model</Label>
+                <Label className="text-sm">Modell</Label>
                 <Select
                   value={modelId}
                   onValueChange={(v) => setModelId(v as LanguageModelId)}
@@ -255,7 +255,7 @@ export default function StructuredOutputsPage() {
                 </Select>
               </div>
               <div>
-                <Label className="text-sm">Generation Mode</Label>
+                <Label className="text-sm">Genereringsmodus</Label>
                 <div className="flex gap-1 mt-1">
                   <Button
                     variant={mode === "full" ? "default" : "outline"}
@@ -263,7 +263,7 @@ export default function StructuredOutputsPage() {
                     className="text-xs flex-1"
                     onClick={() => setMode("full")}
                   >
-                    Full
+                    Komplett
                   </Button>
                   <Button
                     variant={mode === "streaming" ? "default" : "outline"}
@@ -271,12 +271,12 @@ export default function StructuredOutputsPage() {
                     className="text-xs flex-1"
                     onClick={() => setMode("streaming")}
                   >
-                    Streaming
+                    Strømming
                   </Button>
                 </div>
               </div>
               <div>
-                <Label className="text-sm">Select Schema</Label>
+                <Label className="text-sm">Velg skjema</Label>
                 <Select
                   value={schemaName}
                   onValueChange={(v) => v && handleSchemaChange(v)}
@@ -297,7 +297,7 @@ export default function StructuredOutputsPage() {
                 {currentSchema.description}
               </p>
               <div>
-                <Label className="text-sm">Zod Schema Definition</Label>
+                <Label className="text-sm">Zod-skjemadefinisjon</Label>
                 <pre className="mt-1 p-3 bg-muted rounded-md text-xs font-mono overflow-x-auto whitespace-pre">
                   {currentSchema.zodCode}
                 </pre>
@@ -309,14 +309,14 @@ export default function StructuredOutputsPage() {
         <div className="space-y-4">
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-base">Input Text</CardTitle>
+              <CardTitle className="text-base">Inntekst</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <Textarea
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 rows={12}
-                placeholder="Paste a movie description, review, or any text to analyze..."
+                placeholder="Lim inn en filmbeskrivelse, anmeldelse eller annen tekst å analysere..."
                 className="text-sm"
               />
               <Button
@@ -324,7 +324,7 @@ export default function StructuredOutputsPage() {
                 disabled={loading || !inputText.trim()}
                 className="w-full"
               >
-                {loading ? "Analyzing..." : "Extract Structured Data"}
+                {loading ? "Analyserer..." : "Hent ut strukturerte data"}
               </Button>
             </CardContent>
           </Card>
@@ -334,7 +334,7 @@ export default function StructuredOutputsPage() {
           <Card>
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base">Output</CardTitle>
+                <CardTitle className="text-base">Resultat</CardTitle>
                 {output && (
                   <Button
                     variant="ghost"
@@ -342,7 +342,7 @@ export default function StructuredOutputsPage() {
                     className="text-xs h-7"
                     onClick={() => setShowRaw(!showRaw)}
                   >
-                    {showRaw ? "Formatted" : "Raw JSON"}
+                    {showRaw ? "Formatert" : "Rå JSON"}
                   </Button>
                 )}
               </div>
@@ -350,12 +350,12 @@ export default function StructuredOutputsPage() {
             <CardContent>
               {!output && !loading && (
                 <p className="text-sm text-muted-foreground text-center py-12">
-                  Run the extraction to see structured output here.
+                  Kjør utvinningen for å se strukturert resultat her.
                 </p>
               )}
               {loading && (
                 <p className="text-sm text-muted-foreground text-center py-12">
-                  Extracting structured data...
+                  Henter ut strukturerte data...
                 </p>
               )}
               {mode === "streaming" && rawJson && !output && (
@@ -388,7 +388,7 @@ export default function StructuredOutputsPage() {
                             variant={value ? "default" : "destructive"}
                             className="text-xs"
                           >
-                            {value ? "Yes" : "No"}
+                            {value ? "Ja" : "Nei"}
                           </Badge>
                         ) : typeof value === "number" ? (
                           <span className="text-sm font-mono font-medium">

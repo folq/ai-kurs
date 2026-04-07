@@ -25,24 +25,24 @@ import {
   type LanguageModelId,
 } from "@/lib/model-selectors";
 
-const DEFAULT_SYSTEM_PROMPT = `You are a knowledgeable movie and TV show recommendation assistant. 
-You help users discover new content based on their preferences, moods, and interests.
-Be conversational, enthusiastic about great content, and provide specific reasons for your recommendations.
-When recommending, mention the genre, year, and a brief reason why the user might enjoy it.`;
+const DEFAULT_SYSTEM_PROMPT = `Du er en kunnskapsrik assistent for film- og TV-serieanbefalinger. 
+Du hjelper brukere med å oppdage nytt innhold basert på deres preferanser, humør og interesser.
+Vær samtalevennlig, entusiastisk om godt innhold, og gi spesifikke grunner for anbefalingene dine.
+Når du anbefaler, nevn sjanger, årstall og en kort grunn til hvorfor brukeren kan like det.`;
 
 const PRESET_PROMPTS = {
-  "Default Assistant": DEFAULT_SYSTEM_PROMPT,
-  "Film Critic": `You are a distinguished film critic with decades of experience. 
-You analyze movies and TV shows with deep insight into cinematography, narrative structure, and thematic elements.
-Use sophisticated language but remain accessible. Reference other works for comparison.
-Be honest — not everything is a masterpiece.`,
-  "Spoiler-Free Guide": `You are a spoiler-free movie and TV show guide.
-NEVER reveal plot twists, endings, or major surprises.
-Focus on the premise, tone, and what makes each recommendation worth watching.
-If a user asks about plot details that would be spoilers, politely decline.`,
-  "Genre Expert": `You are a genre expert who specializes in helping people explore specific genres.
-When users mention a genre, go deep — recommend hidden gems, explain sub-genres, and trace the evolution of that genre.
-Always ask follow-up questions to narrow down what the user is looking for within a genre.`,
+  "Standard assistent": DEFAULT_SYSTEM_PROMPT,
+  "Filmkritiker": `Du er en anerkjent filmkritiker med tiårs erfaring. 
+Du analyserer filmer og TV-serier med dyp innsikt i kinematografi, narrativ struktur og tematiske elementer.
+Bruk sofistikert språk, men vær tilgjengelig. Referer til andre verk for sammenligning.
+Vær ærlig — ikke alt er et mesterverk.`,
+  "Spoilerfri guide": `Du er en spoilerfri film- og TV-serieguide.
+ALDRI avslør plottvendinger, avslutninger eller store overraskelser.
+Fokuser på premisset, tonen og hva som gjør hver anbefaling verdt å se.
+Hvis en bruker spør om plottdetaljer som ville vært spoilere, avslå høflig.`,
+  "Sjangerekspert": `Du er en sjangerekspert som spesialiserer seg på å hjelpe folk med å utforske spesifikke sjangre.
+Når brukere nevner en sjanger, gå i dybden — anbefal skjulte perler, forklar undersjangre, og spor utviklingen av den sjangeren.
+Still alltid oppfølgingsspørsmål for å avgrense hva brukeren ser etter innenfor en sjanger.`,
 };
 
 export default function PromptingPage() {
@@ -162,7 +162,7 @@ export default function PromptingPage() {
               : "text-muted-foreground hover:text-foreground"
           }`}
         >
-          Model Comparison
+          Modellsammenligning
         </button>
       </div>
 
@@ -177,7 +177,7 @@ export default function PromptingPage() {
           <div className="space-y-4">
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">Model</CardTitle>
+                <CardTitle className="text-base">Modell</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div>
@@ -198,14 +198,14 @@ export default function PromptingPage() {
                   </Select>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Selects which AI Gateway model powers chat completions.
+                  Velger hvilken AI Gateway-modell som driver chat-svar.
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">System Prompt</CardTitle>
+                <CardTitle className="text-base">Systemprompt</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex flex-wrap gap-1.5">
@@ -228,20 +228,20 @@ export default function PromptingPage() {
                   className="text-sm font-mono"
                 />
                 <p className="text-xs text-muted-foreground">
-                  The system prompt sets the AI's role and behavior. Changes
-                  apply to the next message you send.
+                  Systemprompten setter AI-ens rolle og oppførsel. Endringer
+                  gjelder fra neste melding du sender.
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">Parameters</CardTitle>
+                <CardTitle className="text-base">Parametere</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <Label className="text-sm">Temperature</Label>
+                    <Label className="text-sm">Temperatur</Label>
                     <span className="text-sm text-muted-foreground font-mono">
                       {temperature.toFixed(1)}
                     </span>
@@ -256,13 +256,13 @@ export default function PromptingPage() {
                     step={0.1}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Low = deterministic and focused. High = creative and varied.
+                    Lav = deterministisk og fokusert. Høy = kreativ og variert.
                   </p>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <Label className="text-sm">Max Tokens</Label>
+                    <Label className="text-sm">Maks tokens</Label>
                     <span className="text-sm text-muted-foreground font-mono">
                       {maxTokens}
                     </span>
@@ -285,7 +285,7 @@ export default function PromptingPage() {
               className="w-full"
               onClick={() => setMessages([])}
             >
-              Clear Conversation
+              Tøm samtale
             </Button>
           </div>
 
@@ -298,7 +298,7 @@ export default function PromptingPage() {
               <div className="space-y-4">
                 {messages.length === 0 && (
                   <p className="text-sm text-muted-foreground text-center py-12">
-                    Start a conversation about movies or TV shows...
+                    Start en samtale om filmer eller TV-serier...
                   </p>
                 )}
                 {messages.map((message: UIMessage) => {
@@ -352,7 +352,7 @@ export default function PromptingPage() {
                 {isActive && messages[messages.length - 1]?.role === "user" && (
                   <div className="flex justify-start">
                     <div className="bg-muted rounded-lg px-4 py-2 text-sm text-muted-foreground">
-                      Thinking...
+                      Tenker...
                     </div>
                   </div>
                 )}
@@ -364,7 +364,7 @@ export default function PromptingPage() {
                 ref={inputRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask for movie recommendations..."
+                placeholder="Spør om filmanbefalinger..."
                 disabled={isActive}
                 autoFocus
               />

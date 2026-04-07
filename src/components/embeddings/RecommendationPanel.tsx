@@ -79,7 +79,7 @@ export function RecommendationPanel({
                 {movie.rating && ` · ★ ${movie.rating}`}
                 {movie.distance != null && (
                   <span className="ml-1 text-primary">
-                    · {(1 - movie.distance).toFixed(2)} similarity
+                    · {(1 - movie.distance).toFixed(2)} likhet
                   </span>
                 )}
               </div>

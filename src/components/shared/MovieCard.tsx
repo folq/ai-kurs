@@ -39,7 +39,7 @@ export function MovieCard({
             <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
               {movie.year && <span>{movie.year}</span>}
               <Badge variant="outline" className="text-xs">
-                {movie.type === "tv_show" ? "TV Show" : "Movie"}
+                {movie.type === "tv_show" ? "TV-serie" : "Film"}
               </Badge>
               {movie.rating && (
                 <span className="font-medium text-foreground">
@@ -69,7 +69,7 @@ export function MovieCard({
         </div>
         {showSimilarity && movie.similarity && (
           <div className="text-xs text-muted-foreground pt-1">
-            Similarity: {(parseFloat(movie.similarity) * 100).toFixed(1)}%
+            Likhet: {(parseFloat(movie.similarity) * 100).toFixed(1)}%
           </div>
         )}
       </CardContent>

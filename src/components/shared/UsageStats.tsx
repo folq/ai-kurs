@@ -23,16 +23,16 @@ export function UsageStats({
   return (
     <div className="flex items-center gap-3 px-3 py-1.5 bg-muted border border-border rounded-md text-xs text-muted-foreground flex-wrap">
       <span>
-        <span className="text-muted-foreground/60">↑</span> {promptTokens} in
+        <span className="text-muted-foreground/60">↑</span> {promptTokens} inn
       </span>
       <span>
         <span className="text-muted-foreground/60">↓</span> {completionTokens}{" "}
-        out
+        ut
       </span>
       {reasoningTokens != null && reasoningTokens > 0 && (
         <span>
           <span className="text-muted-foreground/60">💭</span> {reasoningTokens}{" "}
-          reasoning
+          resonnering
         </span>
       )}
       <span className="w-px h-3.5 bg-border" />

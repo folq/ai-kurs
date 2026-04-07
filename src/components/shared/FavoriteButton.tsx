@@ -12,7 +12,7 @@ export function FavoriteButton({ isFavorite, onClick }: Props) {
       size="sm"
       onClick={onClick}
       className="h-8 w-8 p-0 shrink-0"
-      title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+      title={isFavorite ? "Fjern fra favoritter" : "Legg til i favoritter"}
     >
       <span className="text-lg">{isFavorite ? "♥" : "♡"}</span>
     </Button>

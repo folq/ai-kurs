@@ -8,50 +8,50 @@ const sections = [
     number: 1,
     title: "Prompting",
     description:
-      "Learn how system prompts shape AI behavior. Experiment with different prompt strategies and parameters like temperature to control how the AI recommends movies.",
+      "Lær hvordan systemprompter former AI-ens oppførsel. Eksperimenter med ulike promptstrategier og parametere som temperatur for å styre hvordan AI-en anbefaler filmer.",
     concepts: [
-      "System Prompts",
-      "Temperature",
-      "Max Tokens",
-      "Prompt Patterns",
+      "Systemprompter",
+      "Temperatur",
+      "Maks tokens",
+      "Promptmønstre",
     ],
     color: "bg-teal-50 border-teal-300",
   },
   {
     href: "/structured-outputs",
     number: 2,
-    title: "Structured Outputs",
+    title: "Strukturerte output",
     description:
-      "Extract structured, typed JSON from free-form text using Zod schemas. See how the AI can reliably parse movie descriptions, reviews, and content into well-defined data structures.",
+      "Hent ut strukturert, typet JSON fra fritekst ved hjelp av Zod-schemas. Se hvordan AI-en pålitelig kan tolke filmbeskrivelser, anmeldelser og innhold til veldefinerte datastrukturer.",
     concepts: [
       "Zod Schemas",
       "Output.object()",
-      "Type Safety",
-      "Data Extraction",
+      "Typesikkerhet",
+      "Datautvinning",
     ],
     color: "bg-information-25 border-information-300",
   },
   {
     href: "/embeddings",
     number: 3,
-    title: "Embeddings & Vector Search",
+    title: "Embeddings og vektorsøk",
     description:
-      "Understand how text embeddings capture meaning as vectors. Compare semantic search (finding movies by concept) against traditional keyword matching side-by-side.",
+      "Forstå hvordan tekstembeddings fanger mening som vektorer. Sammenlign semantisk søk (finn filmer etter konsept) mot tradisjonell nøkkelordmatching side om side.",
     concepts: [
       "Embeddings",
-      "Vector Similarity",
+      "Vektorlikhet",
       "sqlite-vec",
-      "Cosine Distance",
+      "Kosinusavstand",
     ],
     color: "bg-cornflower-100 border-cornflower-300",
   },
   {
     href: "/agent",
     number: 4,
-    title: "Agent with Tools",
+    title: "Agent med verktøy",
     description:
-      "Bring it all together with a conversational agent that can search movies, manage favorites, and find recommendations — all by deciding which tools to call and when.",
-    concepts: ["Tool Calling", "Agent Loop", "Multi-step", "Tool Composition"],
+      "Sett alt sammen med en samtalende agent som kan søke etter filmer, håndtere favoritter og finne anbefalinger — alt ved å bestemme hvilke verktøy den skal bruke og når.",
+    concepts: ["Verktøykall", "Agent-løkke", "Flersteg", "Verktøykomposisjon"],
     color: "bg-tiger-lily-05 border-tiger-lily-200",
   },
 ];
@@ -61,12 +61,13 @@ export default function HomePage() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16">
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold tracking-tight mb-4">
-          AI in Web Development
+          AI i webutvikling
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          A hands-on course exploring four key areas of AI integration, built
-          around a movie and TV show discovery app. Each section introduces a
-          concept you can experiment with directly.
+          Et praktisk kurs som utforsker fire viktige områder innen
+          AI-integrasjon, bygget rundt en app for å oppdage filmer og
+          TV-serier. Hver seksjon introduserer et konsept du kan eksperimentere
+          med direkte.
         </p>
       </div>
 
@@ -108,7 +109,7 @@ export default function HomePage() {
       <div className="mt-12 text-center">
         <Card className="inline-block text-left">
           <CardContent className="py-4 px-6">
-            <h3 className="font-semibold text-sm mb-2">Tech Stack</h3>
+            <h3 className="font-semibold text-sm mb-2">Teknologier</h3>
             <div className="flex flex-wrap gap-1.5">
               {[
                 "Next.js 16",

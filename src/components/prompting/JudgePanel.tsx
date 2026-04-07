@@ -56,7 +56,7 @@ export function JudgePanel({ originalPrompt, responses }: JudgePanelProps) {
       }
       setResult(data);
     } catch {
-      setError("Failed to run judge");
+      setError("Kunne ikke kjøre judge");
     } finally {
       setLoading(false);
     }
@@ -77,7 +77,7 @@ export function JudgePanel({ originalPrompt, responses }: JudgePanelProps) {
               onValueChange={(v) => setJudgeModelId(v as LanguageModelId)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select judge model" />
+                <SelectValue placeholder="Velg judge-modell" />
               </SelectTrigger>
               <SelectContent>
                 {LANGUAGE_MODEL_OPTIONS.map((option) => (
@@ -89,7 +89,7 @@ export function JudgePanel({ originalPrompt, responses }: JudgePanelProps) {
             </Select>
           </div>
           <Button onClick={runJudge} disabled={loading}>
-            {loading ? "Judging..." : "Run Judge"}
+            {loading ? "Vurderer..." : "Kjør judge"}
           </Button>
         </div>
 
@@ -103,7 +103,7 @@ export function JudgePanel({ originalPrompt, responses }: JudgePanelProps) {
             {result.rankings && result.rankings.length > 0 && (
               <div className="space-y-2">
                 <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-                  Rankings
+                  Rangering
                 </p>
                 {result.rankings
                   .sort((a, b) => a.rank - b.rank)

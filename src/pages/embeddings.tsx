@@ -27,7 +27,7 @@ const EmbeddingsScatter = dynamic(
     ssr: false,
     loading: () => (
       <div className="w-full h-[500px] bg-muted rounded-lg flex items-center justify-center text-sm text-muted-foreground">
-        Loading 3D visualization...
+        Laster 3D-visualisering...
       </div>
     ),
   },
@@ -184,7 +184,7 @@ export default function EmbeddingsPage() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && search()}
-          placeholder='Try: "dark sci-fi about consciousness" or "feel-good comedy about friendship"'
+          placeholder='Prøv: "mørk sci-fi om bevissthet" eller "feelgood-komedie om vennskap"'
           className="max-w-xl"
         />
         <Select
@@ -206,7 +206,7 @@ export default function EmbeddingsPage() {
           Embeddings: {embeddingModelId}
         </Badge>
         <Button onClick={search} disabled={loading || !query.trim()}>
-          {loading ? "Searching..." : "Search"}
+          {loading ? "Søker..." : "Søk"}
         </Button>
       </div>
 
@@ -214,19 +214,19 @@ export default function EmbeddingsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <h2 className="text-xl font-semibold">Semantic Search</h2>
+              <h2 className="text-xl font-semibold">Semantisk søk</h2>
               <Badge>Embeddings</Badge>
             </div>
             <p className="text-sm text-muted-foreground mb-4">
-              Finds movies by meaning — understands concepts, themes, and mood
-              even when the exact words don't match.
+              Finner filmer etter mening — forstår konsepter, temaer og stemning
+              selv når de eksakte ordene ikke stemmer.
             </p>
             {semanticResults.length === 0 ? (
               <Card>
                 <CardContent className="py-8 text-center text-muted-foreground">
-                  No results. Make sure you've run{" "}
+                  Ingen resultater. Sjekk at du har kjørt{" "}
                   <code className="bg-muted px-1 rounded">npm run seed</code>{" "}
-                  with your AI Gateway API key.
+                  med din AI Gateway API-nøkkel.
                 </CardContent>
               </Card>
             ) : (
@@ -246,17 +246,17 @@ export default function EmbeddingsPage() {
 
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <h2 className="text-xl font-semibold">Keyword Search</h2>
+              <h2 className="text-xl font-semibold">Nøkkelordsøk</h2>
               <Badge variant="outline">SQL LIKE</Badge>
             </div>
             <p className="text-sm text-muted-foreground mb-4">
-              Traditional text matching — only finds movies where the exact
-              words appear in the title, description, or genre.
+              Tradisjonell tekstmatching — finner bare filmer der de eksakte
+              ordene finnes i tittelen, beskrivelsen eller sjangeren.
             </p>
             {keywordResults.length === 0 ? (
               <Card>
                 <CardContent className="py-8 text-center text-muted-foreground">
-                  No keyword matches found for "{query}".
+                  Ingen nøkkelordtreff funnet for «{query}».
                 </CardContent>
               </Card>
             ) : (
@@ -278,28 +278,28 @@ export default function EmbeddingsPage() {
       {!searched && (
         <Card className="max-w-2xl">
           <CardHeader>
-            <CardTitle className="text-base">How it works</CardTitle>
+            <CardTitle className="text-base">Hvordan det fungerer</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-muted-foreground">
             <p>
-              <strong>Embeddings</strong> are numerical vectors that capture the
-              semantic meaning of text. Similar concepts produce similar
-              vectors.
+              <strong>Embeddings</strong> er numeriske vektorer som fanger den
+              semantiske meningen i tekst. Lignende konsepter gir lignende
+              vektorer.
             </p>
             <p>
-              When you search, your query is converted into an embedding via AI
-              Gateway's{" "}
+              Når du søker, konverteres spørringen din til en embedding via AI
+              Gateways{" "}
               <code className="bg-muted px-1 rounded">
                 text-embedding-3-small
               </code>{" "}
-              model. This embedding is compared against pre-computed embeddings
-              for every movie in the database using{" "}
-              <strong>cosine distance</strong>.
+              modell. Denne embeddingen sammenlignes med forhåndsberegnede
+              embeddings for hver film i databasen ved hjelp av{" "}
+              <strong>kosinusavstand</strong>.
             </p>
             <p>
-              The vector search is powered by{" "}
-              <code className="bg-muted px-1 rounded">sqlite-vec</code>, a
-              SQLite extension for vector similarity search.
+              Vektorsøket drives av{" "}
+              <code className="bg-muted px-1 rounded">sqlite-vec</code>, en
+              SQLite-utvidelse for vektorlikhetssøk.
             </p>
           </CardContent>
         </Card>

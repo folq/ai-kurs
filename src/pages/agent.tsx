@@ -37,12 +37,12 @@ type FavoriteMovie = {
 };
 
 const TOOL_LABELS: Record<string, string> = {
-  searchMovies: "Searching movies",
-  getMovieDetails: "Getting details",
-  addToFavorites: "Adding to favorites",
-  removeFromFavorites: "Removing from favorites",
-  getFavorites: "Getting favorites",
-  recommendSimilar: "Finding similar",
+  searchMovies: "Søker etter filmer",
+  getMovieDetails: "Henter detaljer",
+  addToFavorites: "Legger til i favoritter",
+  removeFromFavorites: "Fjerner fra favoritter",
+  getFavorites: "Henter favoritter",
+  recommendSimilar: "Finner lignende",
 };
 
 function ToolCallCard({
@@ -60,7 +60,7 @@ function ToolCallCard({
     <Collapsible open={open} onOpenChange={setOpen}>
       <CollapsibleTrigger className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-md bg-muted/50 border text-xs hover:bg-muted transition-colors">
         <Badge variant="outline" className="text-xs shrink-0">
-          Tool
+          Verktøy
         </Badge>
         <span className="font-medium">{TOOL_LABELS[toolName] || toolName}</span>
         {args && Object.keys(args).length > 0 && (
@@ -78,7 +78,7 @@ function ToolCallCard({
       </CollapsibleTrigger>
       <CollapsibleContent>
         <div className="mt-1 p-3 bg-muted rounded-md text-xs font-mono overflow-x-auto max-h-[200px] overflow-y-auto">
-          <div className="text-muted-foreground mb-1">Result:</div>
+          <div className="text-muted-foreground mb-1">Resultat:</div>
           <pre className="whitespace-pre-wrap">
             {JSON.stringify(result, null, 2)}
           </pre>
@@ -203,9 +203,9 @@ export default function AgentPage() {
         <Card className="flex flex-col h-[calc(100vh-220px)]">
           <CardHeader className="pb-3 shrink-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <CardTitle className="text-base">Agent Chat</CardTitle>
+              <CardTitle className="text-base">Agent-chat</CardTitle>
               <Badge variant="secondary" className="text-xs">
-                {Object.keys(TOOL_LABELS).length} tools available
+                {Object.keys(TOOL_LABELS).length} verktøy tilgjengelig
               </Badge>
               <div className="ml-auto min-w-[220px]">
                 <Select
@@ -213,7 +213,7 @@ export default function AgentPage() {
                   onValueChange={(v) => setModel(v as LanguageModelId)}
                 >
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select model" />
+                    <SelectValue placeholder="Velg modell" />
                   </SelectTrigger>
                   <SelectContent>
                     {LANGUAGE_MODEL_OPTIONS.map((option) => (
@@ -232,14 +232,14 @@ export default function AgentPage() {
               {messages.length === 0 && (
                 <div className="text-center py-12 space-y-3">
                   <p className="text-sm text-muted-foreground">
-                    Try asking the agent to find movies for you!
+                    Prøv å be agenten finne filmer for deg!
                   </p>
                   <div className="flex flex-wrap gap-2 justify-center">
                     {[
-                      "Find me dark sci-fi movies about AI",
-                      "What's in my favorites?",
-                      "Recommend something like Inception",
-                      "Find feel-good comedies and add the best one to my favorites",
+                      "Finn mørke sci-fi-filmer om AI",
+                      "Hva er i favorittene mine?",
+                      "Anbefal noe lignende som Inception",
+                      "Finn feelgood-komedier og legg den beste til i favorittene mine",
                     ].map((suggestion) => (
                       <Button
                         key={suggestion}
@@ -325,7 +325,7 @@ export default function AgentPage() {
               {isActive && messages[messages.length - 1]?.role === "user" && (
                 <div className="flex justify-start">
                   <div className="bg-muted rounded-lg px-4 py-2 text-sm text-muted-foreground">
-                    Thinking...
+                    Tenker...
                   </div>
                 </div>
               )}
@@ -337,7 +337,7 @@ export default function AgentPage() {
               ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask the agent about movies..."
+              placeholder="Spør agenten om filmer..."
               disabled={isActive}
               autoFocus
             />
@@ -351,13 +351,13 @@ export default function AgentPage() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base">
-                Favorites ({favorites.length})
+                Favoritter ({favorites.length})
               </CardTitle>
             </CardHeader>
             <CardContent>
               {favorites.length === 0 ? (
                 <p className="text-xs text-muted-foreground">
-                  No favorites yet. Ask the agent to add some!
+                  Ingen favoritter ennå. Be agenten om å legge til noen!
                 </p>
               ) : (
                 <div className="space-y-2">
@@ -380,7 +380,7 @@ export default function AgentPage() {
 
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-base">Available Tools</CardTitle>
+              <CardTitle className="text-base">Tilgjengelige verktøy</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               {Object.entries(TOOL_LABELS).map(([key, label]) => (

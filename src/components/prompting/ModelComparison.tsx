@@ -82,7 +82,7 @@ export function ModelComparison({
     <div className="space-y-4">
       <div>
         <p className="text-xs text-muted-foreground mb-2">
-          Select 2–4 models to compare (click to toggle):
+          Velg 2–4 modeller å sammenligne (klikk for å veksle):
         </p>
         <div className="flex flex-wrap gap-1.5">
           {LANGUAGE_MODEL_OPTIONS.map((option) => (
@@ -113,7 +113,7 @@ export function ModelComparison({
       <Textarea
         value={comparePrompt}
         onChange={(e) => setComparePrompt(e.target.value)}
-        placeholder="Enter the prompt to run on all selected models…"
+        placeholder="Skriv inn prompten som skal kjøres på alle valgte modeller…"
         rows={3}
         className="text-sm"
       />
@@ -123,7 +123,7 @@ export function ModelComparison({
         disabled={loading || selectedModels.length < 2 || !comparePrompt.trim()}
         className="w-full"
       >
-        {loading ? "Running comparison..." : "Run Comparison"}
+        {loading ? "Kjører sammenligning..." : "Kjør sammenligning"}
       </Button>
 
       {results.length > 0 && (
