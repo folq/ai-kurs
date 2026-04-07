@@ -1,21 +1,47 @@
 /**
  * PCA dimensionality reduction via power iteration.
  * Reduces high-dimensional embeddings (e.g. 1536-d) to 3D for visualization.
+ *
+ * All vectors are L2-normalized before PCA so that the 3D layout reflects
+ * cosine similarity (direction only), matching the distance metric used by
+ * sqlite-vec for nearest-neighbor search.
  */
-export function pca3d(
-  embeddings: number[][],
-): { x: number; y: number; z: number }[] {
+export type Pca3dPoint = { x: number; y: number; z: number };
+
+function l2Normalize(vec: number[]): number[] {
+  let norm = 0;
+  for (const v of vec) norm += v * v;
+  norm = Math.sqrt(norm);
+  if (norm === 0) return vec;
+  return vec.map((v) => v / norm);
+}
+
+/**
+ * Fits 3D PCA on `embeddings` and returns normalized movie points plus `project` for
+ * mapping any same-dimension vector into the same space (e.g. a search query).
+ */
+export function fitPca3d(embeddings: number[][]): {
+  points: Pca3dPoint[];
+  project: (query: number[]) => Pca3dPoint;
+} {
   const n = embeddings.length;
-  if (n === 0) return [];
+  if (n === 0) {
+    return {
+      points: [],
+      project: () => ({ x: 0, y: 0, z: 0 }),
+    };
+  }
   const d = embeddings[0].length;
 
+  const normed = embeddings.map(l2Normalize);
+
   const means = new Float64Array(d);
-  for (const row of embeddings) {
+  for (const row of normed) {
     for (let j = 0; j < d; j++) means[j] += row[j];
   }
   for (let j = 0; j < d; j++) means[j] /= n;
 
-  const centered: number[][] = embeddings.map((row) =>
+  const centered: number[][] = normed.map((row) =>
     row.map((val, j) => val - means[j]),
   );
 
@@ -64,13 +90,33 @@ export function pca3d(
   for (const p of points) {
     maxAbs = Math.max(maxAbs, Math.abs(p.x), Math.abs(p.y), Math.abs(p.z));
   }
-  if (maxAbs > 0) {
-    for (const p of points) {
-      p.x /= maxAbs;
-      p.y /= maxAbs;
-      p.z /= maxAbs;
-    }
+  const pcaScale = maxAbs > 0 ? maxAbs : 1;
+  for (const p of points) {
+    p.x /= pcaScale;
+    p.y /= pcaScale;
+    p.z /= pcaScale;
   }
 
-  return points;
+  const project = (query: number[]): Pca3dPoint => {
+    if (query.length !== d) {
+      return { x: 0, y: 0, z: 0 };
+    }
+    const q = l2Normalize(query);
+    let x = 0;
+    let y = 0;
+    let z = 0;
+    for (let j = 0; j < d; j++) {
+      const c = q[j] - means[j];
+      x += c * components[0][j];
+      y += c * components[1][j];
+      z += c * components[2][j];
+    }
+    return { x: x / pcaScale, y: y / pcaScale, z: z / pcaScale };
+  };
+
+  return { points, project };
+}
+
+export function pca3d(embeddings: number[][]): Pca3dPoint[] {
+  return fitPca3d(embeddings).points;
 }

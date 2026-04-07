@@ -12,6 +12,12 @@ export const embeddingsSearchBodySchema = z.object({
   embeddingModel: embeddingModelSelectorSchema.optional(),
 });
 
+export const queryMovieDistanceBodySchema = z.object({
+  movieId: z.coerce.number().int().positive(),
+  query: z.string().min(1),
+  embeddingModel: embeddingModelSelectorSchema.optional(),
+});
+
 /** Dynamic route segment `pages/api/.../[id].ts` */
 export const pagesMovieIdQuerySchema = z.object({
   id: z.coerce.number().int().positive(),

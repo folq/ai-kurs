@@ -1,5 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { keywordSearch, semanticSearch } from "@/lib/embeddings";
+import { getEmbeddingScatterSpace } from "@/lib/embedding-scatter-space";
+import {
+  generateEmbedding,
+  keywordSearch,
+  semanticSearchWithEmbedding,
+} from "@/lib/embeddings";
 import type { EmbeddingModelId } from "@/lib/model-selectors";
 import { embeddingsSearchBodySchema } from "@/lib/pages-api-schemas";
 import { validatePagesBody } from "@/lib/validate-api";
@@ -14,10 +19,14 @@ async function search(
   }: { query: string; limit: number; embeddingModel?: EmbeddingModelId },
 ) {
   try {
+    const embedding = await generateEmbedding(query, embeddingModel);
     const [semanticResults, keywordResults] = await Promise.all([
-      semanticSearch(query, limit, embeddingModel),
+      Promise.resolve(semanticSearchWithEmbedding(embedding, limit)),
       keywordSearch(query, limit),
     ]);
+
+    const { points, projectQuery } = getEmbeddingScatterSpace();
+    const queryPoint = points.length > 0 ? projectQuery(embedding) : undefined;
 
     return res.json({
       semantic: semanticResults.map((r) => ({
@@ -25,6 +34,7 @@ async function search(
         similarity: (1 - r.distance).toFixed(4),
       })),
       keyword: keywordResults,
+      queryPoint,
     });
   } catch (error) {
     console.error("Search error:", error);

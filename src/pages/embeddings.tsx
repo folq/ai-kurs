@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { PageShell } from "@/components/layout/PageShell";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { QueryScatterPoint } from "@/components/embeddings/EmbeddingsScatter";
 import { RecommendationPanel } from "@/components/embeddings/RecommendationPanel";
+import { PageShell } from "@/components/layout/PageShell";
 import { MovieCard } from "@/components/shared/MovieCard";
 import { EmbeddingsTheory } from "@/components/theory/EmbeddingsTheory";
 import { Badge } from "@/components/ui/badge";
@@ -82,6 +83,18 @@ export default function EmbeddingsPage() {
   const [similarMovies, setSimilarMovies] = useState<SimilarMovie[]>([]);
   const [loadingSimilar, setLoadingSimilar] = useState(false);
   const [vizLoaded, setVizLoaded] = useState(false);
+  const [queryInSpace, setQueryInSpace] = useState<QueryScatterPoint | null>(
+    null,
+  );
+  const [queryToSelectedDistance, setQueryToSelectedDistance] = useState<
+    number | null
+  >(null);
+  const [queryDistanceLoading, setQueryDistanceLoading] = useState(false);
+  const [highlightedSimilarId, setHighlightedSimilarId] = useState<
+    number | null
+  >(null);
+  const lastSimilarClickTimeRef = useRef(0);
+  const lastSimilarClickMovieIdRef = useRef<number | null>(null);
 
   const fetchFavorites = useCallback(async () => {
     const res = await fetch("/api/favorites");
@@ -101,7 +114,45 @@ export default function EmbeddingsPage() {
       .catch(console.error);
   }, []);
 
+  useEffect(() => {
+    if (selectedMovieId == null || queryInSpace == null) {
+      setQueryToSelectedDistance(null);
+      setQueryDistanceLoading(false);
+      return;
+    }
+    const ac = new AbortController();
+    setQueryDistanceLoading(true);
+    setQueryToSelectedDistance(null);
+    fetch("/api/embeddings/query-movie-distance", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        movieId: selectedMovieId,
+        query: queryInSpace.query,
+        embeddingModel: embeddingModelId,
+      }),
+      signal: ac.signal,
+    })
+      .then((r) => r.json())
+      .then((data: { distance?: number }) => {
+        if (ac.signal.aborted) return;
+        if (typeof data.distance === "number") {
+          setQueryToSelectedDistance(data.distance);
+        } else {
+          setQueryToSelectedDistance(null);
+        }
+      })
+      .catch(() => {
+        if (!ac.signal.aborted) setQueryToSelectedDistance(null);
+      })
+      .finally(() => {
+        if (!ac.signal.aborted) setQueryDistanceLoading(false);
+      });
+    return () => ac.abort();
+  }, [selectedMovieId, queryInSpace, embeddingModelId]);
+
   const handleSelectMovie = useCallback(async (id: number | null) => {
+    setHighlightedSimilarId(null);
     setSelectedMovieId(id);
     if (id == null) {
       setSimilarMovies([]);
@@ -123,10 +174,40 @@ export default function EmbeddingsPage() {
     }
   }, []);
 
+  /** Second click on the same row within this window skips toggle (double-click selects). */
+  const SIMILAR_DOUBLE_CLICK_GUARD_MS = 350;
+
+  const handleSimilarSingleClick = useCallback((movieId: number) => {
+    const now = Date.now();
+    const isRapidSecondOnSameRow =
+      lastSimilarClickMovieIdRef.current === movieId &&
+      now - lastSimilarClickTimeRef.current < SIMILAR_DOUBLE_CLICK_GUARD_MS;
+
+    if (isRapidSecondOnSameRow) {
+      return;
+    }
+
+    lastSimilarClickTimeRef.current = now;
+    lastSimilarClickMovieIdRef.current = movieId;
+
+    setHighlightedSimilarId((prev) => (prev === movieId ? null : movieId));
+  }, []);
+
+  const handleSimilarDoubleClick = useCallback(
+    (movieId: number) => {
+      lastSimilarClickTimeRef.current = 0;
+      lastSimilarClickMovieIdRef.current = null;
+      void handleSelectMovie(movieId);
+    },
+    [handleSelectMovie],
+  );
+
   const search = async () => {
     if (!query.trim()) return;
+    const trimmed = query.trim();
     setLoading(true);
     setSearched(true);
+    setQueryInSpace(null);
 
     try {
       const [searchRes] = await Promise.all([
@@ -134,7 +215,7 @@ export default function EmbeddingsPage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            query,
+            query: trimmed,
             limit: 8,
             embeddingModel: embeddingModelId,
           }),
@@ -144,12 +225,27 @@ export default function EmbeddingsPage() {
       const data = await searchRes.json();
       if (data.error) {
         console.error(data.error);
+        setQueryInSpace(null);
         return;
       }
       setSemanticResults(data.semantic);
       setKeywordResults(data.keyword);
+      const qp = data.queryPoint as
+        | { x: number; y: number; z: number }
+        | undefined;
+      if (
+        qp &&
+        typeof qp.x === "number" &&
+        typeof qp.y === "number" &&
+        typeof qp.z === "number"
+      ) {
+        setQueryInSpace({ x: qp.x, y: qp.y, z: qp.z, query: trimmed });
+      } else {
+        setQueryInSpace(null);
+      }
     } catch (error) {
       console.error("Search failed:", error);
+      setQueryInSpace(null);
     } finally {
       setLoading(false);
     }
@@ -316,6 +412,20 @@ export default function EmbeddingsPage() {
               selectedId={selectedMovieId}
               neighborIds={similarMovies.map((m) => m.id)}
               searchHitIds={semanticResults.map((m) => m.id)}
+              queryInSpace={queryInSpace}
+              neighborDistances={similarMovies.map((m) => ({
+                movieId: m.id,
+                distance: m.distance,
+              }))}
+              queryLineDistance={
+                selectedMovieId != null && queryInSpace
+                  ? {
+                      loading: queryDistanceLoading,
+                      distance: queryToSelectedDistance,
+                    }
+                  : null
+              }
+              listHighlightId={highlightedSimilarId}
               onSelectMovie={handleSelectMovie}
             />
             <Card>
@@ -328,6 +438,9 @@ export default function EmbeddingsPage() {
                   }
                   similarMovies={similarMovies}
                   loading={loadingSimilar}
+                  highlightedSimilarId={highlightedSimilarId}
+                  onSimilarClick={handleSimilarSingleClick}
+                  onSimilarDoubleClick={handleSimilarDoubleClick}
                   onClear={() => handleSelectMovie(null)}
                 />
               </CardContent>

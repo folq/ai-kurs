@@ -1,7 +1,8 @@
-import { useState, useMemo, useRef } from "react";
-import { Canvas, type ThreeEvent } from "@react-three/fiber";
-import { OrbitControls, Html, Line } from "@react-three/drei";
-import type { Mesh } from "three";
+import { Html, Line, OrbitControls } from "@react-three/drei";
+import { Canvas, type ThreeEvent, useFrame } from "@react-three/fiber";
+import { Search } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
+import type { Group, Mesh } from "three";
 
 type MoviePoint = {
   id: number;
@@ -33,10 +34,106 @@ function getGenreColor(genre: string): string {
   return GENRE_COLORS[primary] || "#8A8A8A";
 }
 
+function LabeledLineSegment({
+  from,
+  to,
+  distanceLabel,
+  color,
+  opacity = 0.45,
+}: {
+  from: [number, number, number];
+  to: [number, number, number];
+  distanceLabel: string;
+  color: string;
+  opacity?: number;
+}) {
+  const mid: [number, number, number] = [
+    (from[0] + to[0]) / 2,
+    (from[1] + to[1]) / 2,
+    (from[2] + to[2]) / 2,
+  ];
+  return (
+    <>
+      <Line
+        points={[from, to]}
+        color={color}
+        lineWidth={1}
+        opacity={opacity}
+        transparent
+      />
+      <Html position={mid} center style={{ pointerEvents: "none" }}>
+        <div
+          className="rounded border border-border/90 bg-card/95 px-1.5 py-0.5 font-mono text-[10px] tabular-nums text-foreground/95 shadow-sm"
+          title="sqlite-vec avstand (samme som i søk og naboer)"
+        >
+          {distanceLabel}
+        </div>
+      </Html>
+    </>
+  );
+}
+
+function QueryEmbeddingMarker({
+  x,
+  y,
+  z,
+  label,
+}: {
+  x: number;
+  y: number;
+  z: number;
+  label: string;
+}) {
+  const groupRef = useRef<Group>(null);
+  useFrame(({ clock }) => {
+    const g = groupRef.current;
+    if (!g) return;
+    const s = 1 + Math.sin(clock.elapsedTime * 2.4) * 0.07;
+    g.scale.setScalar(s);
+  });
+
+  return (
+    <group ref={groupRef} position={[x * 5, y * 5, z * 5]}>
+      <mesh>
+        <octahedronGeometry args={[0.16, 0]} />
+        <meshStandardMaterial
+          color="#d8b4fe"
+          emissive="#7c3aed"
+          emissiveIntensity={1}
+          metalness={0.35}
+          roughness={0.28}
+        />
+      </mesh>
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[0.28, 0.024, 10, 36]} />
+        <meshBasicMaterial color="#f5e1ff" transparent opacity={0.92} />
+      </mesh>
+      <mesh rotation={[0, 0, Math.PI / 2]}>
+        <torusGeometry args={[0.28, 0.024, 10, 36]} />
+        <meshBasicMaterial color="#f5e1ff" transparent opacity={0.55} />
+      </mesh>
+      <Html position={[0, 0.42, 0]} center style={{ pointerEvents: "none" }}>
+        <div
+          className="flex max-w-[min(280px,72vw)] items-center gap-1.5 rounded-md border border-border bg-card/85 px-2 py-1 text-xs text-foreground/90 shadow-sm backdrop-blur-sm"
+          title={label}
+        >
+          <Search
+            className="size-3.5 shrink-0 text-muted-foreground"
+            strokeWidth={2}
+            aria-hidden
+          />
+          <span className="min-w-0 truncate font-medium">{label}</span>
+        </div>
+      </Html>
+    </group>
+  );
+}
+
 function MovieDot({
   point,
   isSelected,
   isNeighbor,
+  isListHighlight,
   isDimmed,
   isSearchHit,
   onSelect,
@@ -45,6 +142,7 @@ function MovieDot({
   point: MoviePoint;
   isSelected: boolean;
   isNeighbor: boolean;
+  isListHighlight: boolean;
   isDimmed: boolean;
   isSearchHit: boolean;
   onSelect: (id: number) => void;
@@ -52,8 +150,31 @@ function MovieDot({
 }) {
   const ref = useRef<Mesh>(null);
   const color = getGenreColor(point.genre);
-  const scale = isSelected ? 2 : isNeighbor ? 1.5 : isSearchHit ? 1.3 : 1;
+  const scale = isSelected
+    ? 2
+    : isListHighlight
+      ? 1.88
+      : isNeighbor
+        ? 1.5
+        : isSearchHit
+          ? 1.3
+          : 1;
   const opacity = isDimmed ? 0.15 : 1;
+
+  const emissiveColor = isSelected
+    ? "#FFD967"
+    : isListHighlight
+      ? "#38bdf8"
+      : isSearchHit
+        ? color
+        : "#000000";
+  const emissiveIntensity = isSelected
+    ? 0.5
+    : isListHighlight
+      ? 0.55
+      : isSearchHit
+        ? 0.3
+        : 0;
 
   return (
     <mesh
@@ -69,21 +190,43 @@ function MovieDot({
     >
       <sphereGeometry args={[0.08, 16, 16]} />
       <meshStandardMaterial
-        color={isSelected ? "#FFD967" : color}
+        color={isSelected ? "#FFD967" : isListHighlight ? "#7dd3fc" : color}
         transparent
         opacity={opacity}
-        emissive={isSelected ? "#FFD967" : isSearchHit ? color : "#000000"}
-        emissiveIntensity={isSelected ? 0.5 : isSearchHit ? 0.3 : 0}
+        emissive={emissiveColor}
+        emissiveIntensity={emissiveIntensity}
       />
     </mesh>
   );
 }
+
+export type QueryScatterPoint = {
+  x: number;
+  y: number;
+  z: number;
+  query: string;
+};
+
+export type NeighborLinkDistance = { movieId: number; distance: number };
+
+export type QueryLineDistanceState = {
+  loading: boolean;
+  distance: number | null;
+};
 
 interface EmbeddingsScatterProps {
   points: MoviePoint[];
   selectedId: number | null;
   neighborIds: number[];
   searchHitIds: number[];
+  /** Last semantic search query projected into the same PCA space as the movies. */
+  queryInSpace: QueryScatterPoint | null;
+  /** Neighbor sqlite-vec distances (same order / values as anbefalinger). */
+  neighborDistances: NeighborLinkDistance[];
+  /** Distance from search query embedding to selected movie; null prop = hide query line. */
+  queryLineDistance: QueryLineDistanceState | null;
+  /** Neighbor picked from the side panel — shown larger / cyan in the scatter. */
+  listHighlightId: number | null;
   onSelectMovie: (id: number | null) => void;
 }
 
@@ -92,6 +235,10 @@ export default function EmbeddingsScatter({
   selectedId,
   neighborIds,
   searchHitIds,
+  queryInSpace,
+  neighborDistances,
+  queryLineDistance,
+  listHighlightId,
   onSelectMovie,
 }: EmbeddingsScatterProps) {
   const [hoveredId, setHoveredId] = useState<number | null>(null);
@@ -106,6 +253,14 @@ export default function EmbeddingsScatter({
     () => points.filter((p) => neighborIds.includes(p.id)),
     [points, neighborIds],
   );
+
+  const distanceByNeighborId = useMemo(() => {
+    const m = new Map<number, number>();
+    for (const row of neighborDistances) {
+      m.set(row.movieId, row.distance);
+    }
+    return m;
+  }, [neighborDistances]);
 
   const hoveredPoint = useMemo(
     () => points.find((p) => p.id === hoveredId),
@@ -149,13 +304,24 @@ export default function EmbeddingsScatter({
         Math.abs(z - cz),
       );
     }
+    if (queryInSpace) {
+      const qx = queryInSpace.x * 5;
+      const qy = queryInSpace.y * 5;
+      const qz = queryInSpace.z * 5;
+      maxD = Math.max(
+        maxD,
+        Math.abs(qx - cx),
+        Math.abs(qy - cy),
+        Math.abs(qz - cz),
+      );
+    }
     return {
       gx: cx,
       gy: cy,
       gz: cz,
       axisHalfExtent: Math.max(maxD * 1.4, 3),
     };
-  }, [points]);
+  }, [points, queryInSpace]);
 
   const E = axisHalfExtent;
 
@@ -203,6 +369,11 @@ export default function EmbeddingsScatter({
             point={point}
             isSelected={point.id === selectedId}
             isNeighbor={neighborIds.includes(point.id)}
+            isListHighlight={
+              listHighlightId != null &&
+              point.id === listHighlightId &&
+              point.id !== selectedId
+            }
             isDimmed={
               hasSelection &&
               point.id !== selectedId &&
@@ -214,20 +385,54 @@ export default function EmbeddingsScatter({
           />
         ))}
 
+        {queryInSpace && (
+          <QueryEmbeddingMarker
+            x={queryInSpace.x}
+            y={queryInSpace.y}
+            z={queryInSpace.z}
+            label={queryInSpace.query}
+          />
+        )}
+
         {selectedPoint &&
-          neighborPoints.map((np) => (
-            <Line
-              key={`line-${np.id}`}
-              points={[
-                [selectedPoint.x * 5, selectedPoint.y * 5, selectedPoint.z * 5],
-                [np.x * 5, np.y * 5, np.z * 5],
-              ]}
-              color="#FFD967"
-              lineWidth={1}
-              opacity={0.4}
-              transparent
-            />
-          ))}
+          neighborPoints.map((np) => {
+            const d = distanceByNeighborId.get(np.id);
+            const label = d !== undefined ? d.toFixed(4) : "—";
+            return (
+              <LabeledLineSegment
+                key={`line-${np.id}`}
+                from={[
+                  selectedPoint.x * 5,
+                  selectedPoint.y * 5,
+                  selectedPoint.z * 5,
+                ]}
+                to={[np.x * 5, np.y * 5, np.z * 5]}
+                distanceLabel={label}
+                color="#FFD967"
+                opacity={0.42}
+              />
+            );
+          })}
+
+        {selectedPoint && queryInSpace && queryLineDistance && (
+          <LabeledLineSegment
+            from={[
+              selectedPoint.x * 5,
+              selectedPoint.y * 5,
+              selectedPoint.z * 5,
+            ]}
+            to={[queryInSpace.x * 5, queryInSpace.y * 5, queryInSpace.z * 5]}
+            distanceLabel={
+              queryLineDistance.loading
+                ? "…"
+                : queryLineDistance.distance != null
+                  ? queryLineDistance.distance.toFixed(4)
+                  : "—"
+            }
+            color="#c084fc"
+            opacity={0.5}
+          />
+        )}
 
         {hoveredPoint && (
           <Html
