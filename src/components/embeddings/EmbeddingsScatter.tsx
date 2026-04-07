@@ -1,8 +1,7 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { Canvas, type ThreeEvent } from "@react-three/fiber";
 import { OrbitControls, Html, Line } from "@react-three/drei";
-import type * as THREE from "three";
-import { useRef } from "react";
+import type { Mesh } from "three";
 
 type MoviePoint = {
   id: number;
@@ -51,7 +50,7 @@ function MovieDot({
   onSelect: (id: number) => void;
   onHover: (id: number | null) => void;
 }) {
-  const ref = useRef<THREE.Mesh>(null);
+  const ref = useRef<Mesh>(null);
   const color = getGenreColor(point.genre);
   const scale = isSelected ? 2 : isNeighbor ? 1.5 : isSearchHit ? 1.3 : 1;
   const opacity = isDimmed ? 0.15 : 1;
@@ -113,11 +112,90 @@ export default function EmbeddingsScatter({
     [points, hoveredId],
   );
 
+  /** Cloud center + half-length for axis ticks: only world axes (X/Y/Z) through center, no cell grid. */
+  const { gx, gy, gz, axisHalfExtent } = useMemo(() => {
+    if (points.length === 0) {
+      return { gx: 0, gy: 0, gz: 0, axisHalfExtent: 6 };
+    }
+    let minX = Infinity;
+    let maxX = -Infinity;
+    let minY = Infinity;
+    let maxY = -Infinity;
+    let minZ = Infinity;
+    let maxZ = -Infinity;
+    for (const p of points) {
+      const x = p.x * 5;
+      const y = p.y * 5;
+      const z = p.z * 5;
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
+      if (y < minY) minY = y;
+      if (y > maxY) maxY = y;
+      if (z < minZ) minZ = z;
+      if (z > maxZ) maxZ = z;
+    }
+    const cx = (minX + maxX) / 2;
+    const cy = (minY + maxY) / 2;
+    const cz = (minZ + maxZ) / 2;
+    let maxD = 0;
+    for (const p of points) {
+      const x = p.x * 5;
+      const y = p.y * 5;
+      const z = p.z * 5;
+      maxD = Math.max(
+        maxD,
+        Math.abs(x - cx),
+        Math.abs(y - cy),
+        Math.abs(z - cz),
+      );
+    }
+    return {
+      gx: cx,
+      gy: cy,
+      gz: cz,
+      axisHalfExtent: Math.max(maxD * 1.4, 3),
+    };
+  }, [points]);
+
+  const E = axisHalfExtent;
+
   return (
     <div className="w-full h-[500px] bg-card border border-border rounded-lg overflow-hidden">
       <Canvas camera={{ position: [8, 6, 8], fov: 50 }}>
         <ambientLight intensity={0.6} />
         <pointLight position={[10, 10, 10]} intensity={0.8} />
+
+        {/* Axis cross through cloud center: each coordinate plane’s “zero” lines are these three world axes. */}
+        <Line
+          points={[
+            [gx - E, gy, gz],
+            [gx + E, gy, gz],
+          ]}
+          color="#b56565"
+          lineWidth={1}
+          transparent
+          opacity={0.75}
+        />
+        <Line
+          points={[
+            [gx, gy - E, gz],
+            [gx, gy + E, gz],
+          ]}
+          color="#5a9e8a"
+          lineWidth={1}
+          transparent
+          opacity={0.75}
+        />
+        <Line
+          points={[
+            [gx, gy, gz - E],
+            [gx, gy, gz + E],
+          ]}
+          color="#6f82c4"
+          lineWidth={1}
+          transparent
+          opacity={0.75}
+        />
 
         {points.map((point) => (
           <MovieDot
