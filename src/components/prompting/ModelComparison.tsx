@@ -3,6 +3,7 @@ import { UsageStats } from "@/components/shared/UsageStats";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   LANGUAGE_MODEL_OPTIONS,
@@ -13,6 +14,8 @@ import { JudgePanel } from "./JudgePanel";
 
 interface ModelComparisonProps {
   systemPrompt: string;
+  onSystemPromptChange: (prompt: string) => void;
+  presetPrompts: Record<string, string>;
   temperature: number;
   maxTokens: number;
 }
@@ -30,6 +33,8 @@ type CompareResult = {
 
 export function ModelComparison({
   systemPrompt,
+  onSystemPromptChange,
+  presetPrompts,
   temperature,
   maxTokens,
 }: ModelComparisonProps) {
@@ -80,9 +85,14 @@ export function ModelComparison({
 
   return (
     <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">
+        Send samme prompt til flere modeller samtidig og sammenlign svarene
+        side om side. Velg en systemprompt for å gi modellene en rolle, og se
+        hvordan ulike modeller håndterer samme oppgave.
+      </p>
       <div>
         <p className="text-xs text-muted-foreground mb-2">
-          Velg 2–4 modeller å sammenligne (klikk for å veksle):
+          Velg 2–4 modeller å sammenligne
         </p>
         <div className="flex flex-wrap gap-1.5">
           {LANGUAGE_MODEL_OPTIONS.map((option) => (
@@ -108,6 +118,29 @@ export function ModelComparison({
             ))}
           </div>
         )}
+      </div>
+
+      <div className="space-y-2">
+        <Label className="text-xs text-muted-foreground">Systemprompt</Label>
+        <div className="flex flex-wrap gap-1.5">
+          {Object.entries(presetPrompts).map(([name, prompt]) => (
+            <Button
+              key={name}
+              variant={systemPrompt === prompt ? "default" : "outline"}
+              size="sm"
+              className="text-xs"
+              onClick={() => onSystemPromptChange(prompt)}
+            >
+              {name}
+            </Button>
+          ))}
+        </div>
+        <Textarea
+          value={systemPrompt}
+          onChange={(e) => onSystemPromptChange(e.target.value)}
+          rows={6}
+          className="text-sm font-mono"
+        />
       </div>
 
       <Textarea

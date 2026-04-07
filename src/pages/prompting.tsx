@@ -169,6 +169,8 @@ export default function PromptingPage() {
       {workshopTab === "comparison" ? (
         <ModelComparison
           systemPrompt={systemPrompt}
+          onSystemPromptChange={setSystemPrompt}
+          presetPrompts={PRESET_PROMPTS}
           temperature={temperature}
           maxTokens={maxTokens}
         />
