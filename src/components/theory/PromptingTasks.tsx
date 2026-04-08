@@ -81,11 +81,65 @@ export function PromptingTasks() {
 
       <div className="bg-card border border-border rounded-lg p-5">
         <div className="mb-2">
+          <span className="text-xs font-semibold bg-teal-100 text-teal-800 px-2 py-0.5 rounded">
+            UI
+          </span>
+        </div>
+        <h3 className="font-semibold text-sm mb-1">
+          4. Vinner den &laquo;beste&raquo; modellen alltid?
+        </h3>
+        <p className="text-sm text-foreground/80 leading-relaxed">
+          Bruk Modellsammenligning med 3–4 modeller. Test med ulike typer
+          filmspørsmål — et faktabasert (f.eks. &laquo;Hvilke filmer vant
+          Gullpalmen på 2020-tallet?&raquo;), et kreativt (f.eks.
+          &laquo;Pitch en originalfilm som blander noir og sci-fi&raquo;) og et
+          som krever et kort, konsist svar (f.eks. &laquo;Anbefal én
+          skrekk&shy;film på under 90 minutter&raquo;). Kjør judge for hvert.
+          Vinner den &laquo;sterkeste&raquo; modellen hver gang, eller avhenger
+          det av oppgavetypen?
+        </p>
+      </div>
+
+      <div className="bg-card border border-border rounded-lg p-5">
+        <div className="mb-2">
+          <span className="text-xs font-semibold bg-teal-100 text-teal-800 px-2 py-0.5 rounded">
+            UI
+          </span>
+        </div>
+        <h3 className="font-semibold text-sm mb-1">5. Dommer-bias</h3>
+        <p className="text-sm text-foreground/80 leading-relaxed">
+          Spør om en filmanbefaling i Modellsammenligning og kjør judge — noter
+          rangeringen. Bytt deretter judge-modell og kjør på nytt med de samme
+          svarene. Er rangeringen den samme? Reflekter over hva forskjellene
+          sier om dommerens egne biaser.
+        </p>
+      </div>
+
+      <div className="bg-card border border-border rounded-lg p-5">
+        <div className="mb-2">
+          <span className="text-xs font-semibold bg-teal-100 text-teal-800 px-2 py-0.5 rounded">
+            UI
+          </span>
+        </div>
+        <h3 className="font-semibold text-sm mb-1">
+          6. Er du enig med dommeren?
+        </h3>
+        <p className="text-sm text-foreground/80 leading-relaxed">
+          Be om filmanbefalinger i Modellsammenligning. Les svarene selv og lag
+          din egen rangering <em>før</em> du trykker &laquo;Kjør
+          judge&raquo;. Hvilken modell ga de beste filmtipsene? Sammenlign din
+          vurdering med dommerens — hvor er dere enige og uenige? Prøv å
+          formulere hvorfor dommeren vurderte annerledes.
+        </p>
+      </div>
+
+      <div className="bg-card border border-border rounded-lg p-5">
+        <div className="mb-2">
           <span className="text-xs font-semibold bg-amber-100 text-amber-800 px-2 py-0.5 rounded">
             Kode
           </span>
         </div>
-        <h3 className="font-semibold text-sm mb-1">4. Ny prompt-preset</h3>
+        <h3 className="font-semibold text-sm mb-1">7. Ny prompt-preset</h3>
         <p className="text-sm text-foreground/80 leading-relaxed">
           Legg til en ny prompt-preset med en kreativ persona (f.eks.
           &quot;Filmhistoriker fra 1920-tallet&quot; eller &quot;Overdramatisk
@@ -105,7 +159,7 @@ export function PromptingTasks() {
           </span>
         </div>
         <h3 className="font-semibold text-sm mb-1">
-          5. Egendefinerte evalueringskriterier for LLM-dommer
+          8. Egendefinerte evalueringskriterier for LLM-dommer
         </h3>
         <p className="text-sm text-foreground/80 leading-relaxed">
           Utvid LLM-as-judge med et felt der brukeren skriver inn hva dommeren
