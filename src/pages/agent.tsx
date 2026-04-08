@@ -119,18 +119,18 @@ export default function AgentPage() {
   const [favorites, setFavorites] = useState<FavoriteMovie[]>([]);
   const [toolDescriptions, setToolDescriptions] = useState<
     Record<string, string>
-  >(() => {
-    if (typeof window === "undefined") return { ...DEFAULT_TOOL_DESCRIPTIONS };
+  >({ ...DEFAULT_TOOL_DESCRIPTIONS });
+
+  useEffect(() => {
     try {
       const stored = localStorage.getItem("agent-tool-descriptions");
       if (stored) {
-        return { ...DEFAULT_TOOL_DESCRIPTIONS, ...JSON.parse(stored) };
+        setToolDescriptions((prev) => ({ ...prev, ...JSON.parse(stored) }));
       }
     } catch {
       // ignore corrupt data
     }
-    return { ...DEFAULT_TOOL_DESCRIPTIONS };
-  });
+  }, []);
   const [streamStats, setStreamStats] = useState<
     Map<
       string,
