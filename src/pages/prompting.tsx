@@ -1,4 +1,4 @@
-import { type UIMessage, useChat } from "@ai-sdk/react";
+import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PageShell } from "@/components/layout/PageShell";
@@ -19,6 +19,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
+import type { ChatUIMessage } from "@/lib/chat-api-schemas";
 import {
   DEFAULT_LANGUAGE_MODEL,
   LANGUAGE_MODEL_OPTIONS,
@@ -80,37 +81,32 @@ export default function PromptingPage() {
     [],
   );
 
-  const { messages, sendMessage, status, setMessages } = useChat({
-    transport,
-    onFinish: ({ message }) => {
-      const metadata = (message as { metadata?: unknown }).metadata as
-        | {
-            usage?: {
-              inputTokens: number;
-              outputTokens: number;
-              reasoningTokens?: number;
-            };
-          }
-        | undefined;
-      const usage = metadata?.usage;
-      const startTime = streamStartRef.current;
-      streamStartRef.current = null;
-      if (usage && startTime) {
-        const elapsed = (Date.now() - startTime) / 1000;
-        const tokPerSec = elapsed > 0 ? usage.outputTokens / elapsed : 0;
-        setStreamStats((prev) => {
-          const next = new Map(prev);
-          next.set(message.id, {
-            promptTokens: usage.inputTokens,
-            completionTokens: usage.outputTokens,
-            tokensPerSecond: tokPerSec,
-            reasoningTokens: usage.reasoningTokens,
+  const { messages, sendMessage, status, setMessages } = useChat<ChatUIMessage>(
+    {
+      transport,
+      onFinish: ({ message }) => {
+        const usage = message.metadata?.usage;
+        const startTime = streamStartRef.current;
+        streamStartRef.current = null;
+        const input = usage?.inputTokens ?? 0;
+        const output = usage?.outputTokens ?? 0;
+        if (usage && startTime) {
+          const elapsed = (Date.now() - startTime) / 1000;
+          const tokPerSec = elapsed > 0 ? output / elapsed : 0;
+          setStreamStats((prev) => {
+            const next = new Map(prev);
+            next.set(message.id, {
+              promptTokens: input,
+              completionTokens: output,
+              tokensPerSecond: tokPerSec,
+              reasoningTokens: usage.reasoningTokens,
+            });
+            return next;
           });
-          return next;
-        });
-      }
+        }
+      },
     },
-  });
+  );
 
   const isActive = status === "submitted" || status === "streaming";
 
@@ -302,7 +298,7 @@ export default function PromptingPage() {
                     Start en samtale om filmer eller TV-serier...
                   </p>
                 )}
-                {messages.map((message: UIMessage) => {
+                {messages.map((message) => {
                   const assistantStats =
                     message.role === "assistant"
                       ? streamStats.get(message.id)
@@ -319,22 +315,20 @@ export default function PromptingPage() {
                             : "bg-muted"
                         }`}
                       >
-                        {message.parts.map(
-                          (part: UIMessage["parts"][number], i: number) => {
-                            if (part.type === "text") {
-                              const textPartKey = `${message.id}-text-${i}`;
-                              return (
-                                <div
-                                  key={textPartKey}
-                                  className="whitespace-pre-wrap"
-                                >
-                                  {part.text}
-                                </div>
-                              );
-                            }
-                            return null;
-                          },
-                        )}
+                        {message.parts.map((part, i) => {
+                          if (part.type === "text") {
+                            const textPartKey = `${message.id}-text-${i}`;
+                            return (
+                              <div
+                                key={textPartKey}
+                                className="whitespace-pre-wrap"
+                              >
+                                {part.text}
+                              </div>
+                            );
+                          }
+                          return null;
+                        })}
                       </div>
                       {assistantStats != null && (
                         <div className="mt-1 max-w-[80%]">

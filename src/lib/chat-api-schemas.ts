@@ -1,4 +1,4 @@
-import type { UIMessage } from "ai";
+import type { LanguageModelUsage, UIMessage } from "ai";
 import { z } from "zod";
 import {
   DEFAULT_LANGUAGE_MODEL,
@@ -15,6 +15,14 @@ const uiMessageShape = z.looseObject({
 export const uiMessageSchema: z.ZodType<UIMessage> = z.custom<UIMessage>(
   (val): val is UIMessage => uiMessageShape.safeParse(val).success,
 );
+
+/** Metadata shape sent from chat/agent routes via `messageMetadata`. */
+export type ChatMessageMetadata = {
+  usage?: LanguageModelUsage;
+};
+
+/** `UIMessage` parameterised with our metadata so `.metadata` is typed. */
+export type ChatUIMessage = UIMessage<ChatMessageMetadata>;
 
 export const agentChatBodySchema = z.object({
   messages: z.array(uiMessageSchema),

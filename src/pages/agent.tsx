@@ -1,4 +1,4 @@
-import { type UIMessage, useChat } from "@ai-sdk/react";
+import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PageShell } from "@/components/layout/PageShell";
@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import type { ChatUIMessage } from "@/lib/chat-api-schemas";
 import {
   DEFAULT_LANGUAGE_MODEL,
   LANGUAGE_MODEL_OPTIONS,
@@ -118,29 +119,22 @@ export default function AgentPage() {
     [],
   );
 
-  const { messages, sendMessage, status } = useChat({
+  const { messages, sendMessage, status } = useChat<ChatUIMessage>({
     transport,
     onFinish: ({ message }) => {
-      const metadata = (message as { metadata?: unknown }).metadata as
-        | {
-            usage?: {
-              inputTokens: number;
-              outputTokens: number;
-              reasoningTokens?: number;
-            };
-          }
-        | undefined;
-      const usage = metadata?.usage;
+      const usage = message.metadata?.usage;
       const startTime = streamStartRef.current;
       streamStartRef.current = null;
+      const input = usage?.inputTokens ?? 0;
+      const output = usage?.outputTokens ?? 0;
       if (usage && startTime) {
         const elapsed = (Date.now() - startTime) / 1000;
-        const tokPerSec = elapsed > 0 ? usage.outputTokens / elapsed : 0;
+        const tokPerSec = elapsed > 0 ? output / elapsed : 0;
         setStreamStats((prev) => {
           const next = new Map(prev);
           next.set(message.id, {
-            promptTokens: usage.inputTokens,
-            completionTokens: usage.outputTokens,
+            promptTokens: input,
+            completionTokens: output,
             tokensPerSecond: tokPerSec,
             reasoningTokens: usage.reasoningTokens,
           });
@@ -256,7 +250,7 @@ export default function AgentPage() {
                   </div>
                 </div>
               )}
-              {messages.map((message: UIMessage) => {
+              {messages.map((message) => {
                 const assistantStats =
                   message.role === "assistant"
                     ? streamStats.get(message.id)
@@ -267,46 +261,44 @@ export default function AgentPage() {
                     className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
                   >
                     <div className="max-w-[85%] space-y-2">
-                      {message.parts.map(
-                        (part: UIMessage["parts"][number], i: number) => {
-                          if (part.type === "text" && part.text) {
-                            const textPartKey = `${message.id}-text-${i}`;
-                            return (
-                              <div
-                                key={textPartKey}
-                                className={`rounded-lg px-4 py-2 text-sm ${
-                                  message.role === "user"
-                                    ? "bg-primary text-primary-foreground"
-                                    : "bg-muted"
-                                }`}
-                              >
-                                <div className="whitespace-pre-wrap">
-                                  {part.text}
-                                </div>
+                      {message.parts.map((part, i) => {
+                        if (part.type === "text" && part.text) {
+                          const textPartKey = `${message.id}-text-${i}`;
+                          return (
+                            <div
+                              key={textPartKey}
+                              className={`rounded-lg px-4 py-2 text-sm ${
+                                message.role === "user"
+                                  ? "bg-primary text-primary-foreground"
+                                  : "bg-muted"
+                              }`}
+                            >
+                              <div className="whitespace-pre-wrap">
+                                {part.text}
                               </div>
-                            );
-                          }
-                          if (part.type?.startsWith("tool-")) {
-                            const toolPart = part as unknown as {
-                              type: string;
-                              toolCallId: string;
-                              toolName: string;
-                              args: Record<string, unknown>;
-                              state: string;
-                              result?: unknown;
-                            };
-                            return (
-                              <ToolCallCard
-                                key={toolPart.toolCallId}
-                                toolName={toolPart.toolName}
-                                args={toolPart.args}
-                                result={toolPart.result}
-                              />
-                            );
-                          }
-                          return null;
-                        },
-                      )}
+                            </div>
+                          );
+                        }
+                        if (part.type?.startsWith("tool-")) {
+                          const toolPart = part as unknown as {
+                            type: string;
+                            toolCallId: string;
+                            toolName: string;
+                            args: Record<string, unknown>;
+                            state: string;
+                            result?: unknown;
+                          };
+                          return (
+                            <ToolCallCard
+                              key={toolPart.toolCallId}
+                              toolName={toolPart.toolName}
+                              args={toolPart.args}
+                              result={toolPart.result}
+                            />
+                          );
+                        }
+                        return null;
+                      })}
                       {assistantStats != null && (
                         <div className="mt-1">
                           <UsageStats

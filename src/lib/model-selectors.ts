@@ -68,6 +68,18 @@ export const MODEL_PRICING: Partial<
   "deepseek/deepseek-v3.2": { input: 0.28, output: 0.42 },
 };
 
+/**
+ * Estimates USD cost from token counts.
+ *
+ * Pass through the same numbers as AI SDK `LanguageModelUsage` after
+ * normalization (`asLanguageModelUsage` in `ai`): **`outputTokens` is already the
+ * total output count** (the provider’s `outputTokens.total`). Top-level
+ * **`reasoningTokens`** and **`outputTokenDetails.reasoningTokens`** are a
+ * **breakdown slice** of that total — do not add them again for pricing or you
+ * double-count.
+ *
+ * @see https://sdk.vercel.ai/docs/reference/ai-sdk-core/generate-text (usage / LanguageModelUsage)
+ */
 export function calculateCost(
   modelId: string,
   promptTokens: number,
