@@ -1,5 +1,9 @@
 import { ArrowDownToLine, ArrowUpFromLine, Brain } from "lucide-react";
-import { calculateCost, getModelLabel } from "@/lib/model-selectors";
+import {
+  calculateCost,
+  formatCostInNok,
+  getModelLabel,
+} from "@/lib/model-selectors";
 
 interface UsageStatsProps {
   promptTokens: number;
@@ -18,7 +22,9 @@ export function UsageStats({
   durationMs,
   reasoningTokens,
 }: UsageStatsProps) {
-  const cost = calculateCost(modelId, promptTokens, completionTokens);
+  const costNok = formatCostInNok(
+    calculateCost(modelId, promptTokens, completionTokens),
+  );
   const label = getModelLabel(modelId);
   const reasoningDisplay = reasoningTokens != null ? reasoningTokens : "—";
 
@@ -61,10 +67,8 @@ export function UsageStats({
       {(tokensPerSecond != null || durationMs != null) && (
         <span className="w-px h-3.5 bg-border" />
       )}
-      {cost != null && (
-        <span className="text-primary font-medium">
-          ${cost < 0.0001 ? cost.toExponential(1) : cost.toFixed(4)}
-        </span>
+      {costNok != null && (
+        <span className="text-primary font-medium">{costNok}</span>
       )}
       <span className="ml-auto text-[10px] text-muted-foreground/60">
         {label}

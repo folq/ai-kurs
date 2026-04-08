@@ -81,6 +81,22 @@ export function calculateCost(
   );
 }
 
+/** USD → NOK multiplier for displaying usage cost (approximate). */
+export const USD_TO_NOK_RATE = 9.58;
+
+/** Formats a USD cost from `calculateCost` as Norwegian kroner for UI. */
+export function formatCostInNok(usdCost: number | null): string | null {
+  if (usdCost == null) return null;
+  const nok = usdCost * USD_TO_NOK_RATE;
+  if (nok > 0 && nok < 0.001) {
+    return `${nok.toExponential(1)} kr`;
+  }
+  return `${new Intl.NumberFormat("nb-NO", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 4,
+  }).format(nok)}\u00A0kr`;
+}
+
 export function getModelLabel(modelId: string): string {
   const option = LANGUAGE_MODEL_OPTIONS.find((o) => o.id === modelId);
   return option?.label ?? modelId;
