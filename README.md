@@ -32,23 +32,9 @@ Edit `.env.local` with your values:
 
 ```
 AI_GATEWAY_API_KEY=your-vercel-ai-gateway-key
-# Optional: custom gateway endpoint
-# AI_GATEWAY_BASE_URL=https://ai-gateway.vercel.sh/v1/ai
 ```
 
-### 3. Seed the database
-
-This creates the SQLite database, inserts ~60 movies/shows, and generates embeddings for vector search:
-
-```bash
-npm run seed
-```
-
-The seed script uses your `AI_GATEWAY_API_KEY` to generate embeddings. If the
-key isn't set, it will skip embedding generation — you can re-run it after
-configuring `.env.local`.
-
-### 4. Start the dev server
+### 3. Start the dev server
 
 ```bash
 npm run dev
