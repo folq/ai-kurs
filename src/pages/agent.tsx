@@ -12,6 +12,7 @@ import { PageShell } from "@/components/layout/PageShell";
 import { ModelResponseMarkdown } from "@/components/prompting/ModelResponseMarkdown";
 import { LanguageModelSelect } from "@/components/shared/LanguageModelSelect";
 import { UsageStats } from "@/components/shared/UsageStats";
+import { AgentTasks } from "@/components/theory/AgentTasks";
 import { AgentTheory } from "@/components/theory/AgentTheory";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -212,6 +213,7 @@ export default function AgentPage() {
     <PageShell
       title="4. Agent"
       description="En samtalende agent med verktøy som binder alt sammen."
+      tasks={<AgentTasks />}
       theory={<AgentTheory />}
     >
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
