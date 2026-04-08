@@ -127,9 +127,11 @@ export default function AgentPage() {
       streamStartRef.current = null;
       const input = usage?.inputTokens ?? 0;
       const output = usage?.outputTokens ?? 0;
+      const textTokens =
+        usage?.outputTokenDetails?.textTokens ?? output;
       if (usage && startTime) {
         const elapsed = (Date.now() - startTime) / 1000;
-        const tokPerSec = elapsed > 0 ? output / elapsed : 0;
+        const tokPerSec = elapsed > 0 ? textTokens / elapsed : 0;
         setStreamStats((prev) => {
           const next = new Map(prev);
           next.set(message.id, {
