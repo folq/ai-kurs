@@ -43,7 +43,8 @@ export function StructuredOutputsTheory() {
           </div>
           <div className="text-sm leading-relaxed">
             <strong>Streaming structured output</strong> —{" "}
-            <code>streamObject</code> bygger JSON gradvis i stedet for alt på en
+            <code>streamText</code> med <code>Output.object</code> bygger JSON
+            gradvis i stedet for alt på en
             gang. Gir raskere opplevd responstid.
           </div>
         </div>

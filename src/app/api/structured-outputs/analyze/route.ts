@@ -1,15 +1,14 @@
 import { generateText, Output } from "ai";
+import { formatApiError } from "@/lib/format-api-error";
 import type { LanguageModelId } from "@/lib/model-selectors";
 import { getModel } from "@/lib/openai";
 import {
   analyzeBodySchema,
-  contentAdvisorySchema,
-  contentClassificationSchema,
-  movieAnalysisSchema,
-  reviewSentimentSchema,
-  versionedAnalysisSchema,
   type SchemaName,
+  structuredOutputSchemaByName,
 } from "@/lib/schemas";
+import { buildStructuredOutputErrorPayload } from "@/lib/structured-output-failure";
+import { STRUCTURED_OUTPUT_SYSTEM } from "@/lib/structured-output-prompt";
 import { validateRequest } from "@/lib/validate-api";
 
 async function analyzeWithSchema(
@@ -19,56 +18,17 @@ async function analyzeWithSchema(
 ) {
   const prompt = `Analyze the following text and extract structured information:\n\n${text}`;
   const model = getModel(modelId);
+  const schema = structuredOutputSchemaByName[schemaName];
 
-  const telemetry = { isEnabled: true } as const;
+  const { output, usage } = await generateText({
+    model,
+    system: STRUCTURED_OUTPUT_SYSTEM,
+    output: Output.object({ schema }),
+    prompt,
+    experimental_telemetry: { isEnabled: true },
+  });
 
-  switch (schemaName) {
-    case "Filmanalyse": {
-      const { output, usage } = await generateText({
-        model,
-        output: Output.object({ schema: movieAnalysisSchema }),
-        prompt,
-        experimental_telemetry: telemetry,
-      });
-      return { output, usage };
-    }
-    case "Sentimentanalyse": {
-      const { output, usage } = await generateText({
-        model,
-        output: Output.object({ schema: reviewSentimentSchema }),
-        prompt,
-        experimental_telemetry: telemetry,
-      });
-      return { output, usage };
-    }
-    case "Innholdsvarsel": {
-      const { output, usage } = await generateText({
-        model,
-        output: Output.object({ schema: contentAdvisorySchema }),
-        prompt,
-        experimental_telemetry: telemetry,
-      });
-      return { output, usage };
-    }
-    case "Innholdsklassifisering": {
-      const { output, usage } = await generateText({
-        model,
-        output: Output.object({ schema: contentClassificationSchema }),
-        prompt,
-        experimental_telemetry: telemetry,
-      });
-      return { output, usage };
-    }
-    case "Versjonert analyse": {
-      const { output, usage } = await generateText({
-        model,
-        output: Output.object({ schema: versionedAnalysisSchema }),
-        prompt,
-        experimental_telemetry: telemetry,
-      });
-      return { output, usage };
-    }
-  }
+  return { output, usage };
 }
 
 export const POST = validateRequest(
@@ -79,10 +39,11 @@ export const POST = validateRequest(
       return Response.json(result);
     } catch (error) {
       console.error("Structured output error:", error);
-      return Response.json(
-        { error: "Failed to generate structured output" },
-        { status: 500 },
-      );
+      const { status, body } = buildStructuredOutputErrorPayload(error);
+      if (!body.error?.trim()) {
+        body.error = formatApiError(error);
+      }
+      return Response.json(body, { status });
     }
   },
 );
