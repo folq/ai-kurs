@@ -6,9 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  getModelLabel,
   LANGUAGE_MODEL_OPTIONS,
   type LanguageModelId,
-  getModelLabel,
 } from "@/lib/model-selectors";
 import { JudgePanel } from "./JudgePanel";
 
@@ -53,6 +53,15 @@ export function ModelComparison({
     );
   };
 
+  const successfulResults = results.filter((r) => !r.error);
+  const canRunJudge = successfulResults.length >= 2;
+  const judgeDisabledReason =
+    results.length === 0
+      ? "Kjør en sammenligning først — judge trenger svar fra modellene."
+      : !canRunJudge
+        ? "Judge krever minst to vellykkede svar (uten feil)."
+        : undefined;
+
   const runComparison = async () => {
     if (selectedModels.length < 2 || !comparePrompt.trim()) return;
     setLoading(true);
@@ -86,9 +95,9 @@ export function ModelComparison({
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        Send samme prompt til flere modeller samtidig og sammenlign svarene
-        side om side. Velg en systemprompt for å gi modellene en rolle, og se
-        hvordan ulike modeller håndterer samme oppgave.
+        Send samme prompt til flere modeller samtidig og sammenlign svarene side
+        om side. Velg en systemprompt for å gi modellene en rolle, og se hvordan
+        ulike modeller håndterer samme oppgave.
       </p>
       <div>
         <p className="text-xs text-muted-foreground mb-2">
@@ -160,46 +169,47 @@ export function ModelComparison({
       </Button>
 
       {results.length > 0 && (
-        <>
-          <div
-            className={`grid gap-4 ${results.length === 2 ? "grid-cols-1 lg:grid-cols-2" : results.length === 3 ? "grid-cols-1 lg:grid-cols-3" : "grid-cols-1 lg:grid-cols-2 xl:grid-cols-4"}`}
-          >
-            {results.map((result) => (
-              <Card key={result.modelId} className="flex flex-col">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm">
-                    {getModelLabel(result.modelId)}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="flex-1 space-y-2">
-                  {result.error ? (
-                    <p className="text-sm text-destructive">{result.error}</p>
-                  ) : (
-                    <>
-                      <div className="text-sm whitespace-pre-wrap max-h-[300px] overflow-y-auto">
-                        {result.text}
-                      </div>
-                      <UsageStats
-                        promptTokens={result.usage.inputTokens}
-                        completionTokens={result.usage.outputTokens}
-                        reasoningTokens={result.usage.reasoningTokens}
-                        modelId={result.modelId}
-                      />
-                    </>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <JudgePanel
-            originalPrompt={comparePrompt}
-            responses={results
-              .filter((r) => !r.error)
-              .map((r) => ({ modelId: r.modelId, text: r.text }))}
-          />
-        </>
+        <div
+          className={`grid gap-4 ${results.length === 2 ? "grid-cols-1 lg:grid-cols-2" : results.length === 3 ? "grid-cols-1 lg:grid-cols-3" : "grid-cols-1 lg:grid-cols-2 xl:grid-cols-4"}`}
+        >
+          {results.map((result) => (
+            <Card key={result.modelId} className="flex flex-col min-h-[200px]">
+              <CardHeader className="pb-2 shrink-0">
+                <CardTitle className="text-sm">
+                  {getModelLabel(result.modelId)}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-1 flex-col gap-2 min-h-0 pt-0">
+                {result.error ? (
+                  <p className="text-sm text-destructive">{result.error}</p>
+                ) : (
+                  <>
+                    <div className="text-sm whitespace-pre-wrap max-h-[300px] min-h-0 flex-1 overflow-y-auto">
+                      {result.text}
+                    </div>
+                    <UsageStats
+                      promptTokens={result.usage.inputTokens}
+                      completionTokens={result.usage.outputTokens}
+                      reasoningTokens={result.usage.reasoningTokens}
+                      modelId={result.modelId}
+                    />
+                  </>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       )}
+
+      <JudgePanel
+        originalPrompt={comparePrompt}
+        responses={successfulResults.map((r) => ({
+          modelId: r.modelId,
+          text: r.text,
+        }))}
+        disabled={!canRunJudge}
+        disabledReason={judgeDisabledReason}
+      />
     </div>
   );
 }

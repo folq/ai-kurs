@@ -11,14 +11,17 @@ import {
 } from "@/components/ui/select";
 import {
   DEFAULT_LANGUAGE_MODEL,
+  getModelLabel,
   LANGUAGE_MODEL_OPTIONS,
   type LanguageModelId,
-  getModelLabel,
 } from "@/lib/model-selectors";
+import { cn } from "@/lib/utils";
 
 interface JudgePanelProps {
   originalPrompt: string;
   responses: Array<{ modelId: string; text: string }>;
+  disabled?: boolean;
+  disabledReason?: string;
 }
 
 type JudgeResult = {
@@ -26,7 +29,12 @@ type JudgeResult = {
   rankings: Array<{ modelId: string; rank: number; reasoning: string }>;
 };
 
-export function JudgePanel({ originalPrompt, responses }: JudgePanelProps) {
+export function JudgePanel({
+  originalPrompt,
+  responses,
+  disabled = false,
+  disabledReason,
+}: JudgePanelProps) {
   const [judgeModelId, setJudgeModelId] = useState<LanguageModelId>(
     DEFAULT_LANGUAGE_MODEL,
   );
@@ -35,6 +43,7 @@ export function JudgePanel({ originalPrompt, responses }: JudgePanelProps) {
   const [error, setError] = useState<string | null>(null);
 
   const runJudge = async () => {
+    if (disabled || responses.length < 2) return;
     setLoading(true);
     setError(null);
     setResult(null);
@@ -62,10 +71,11 @@ export function JudgePanel({ originalPrompt, responses }: JudgePanelProps) {
     }
   };
 
-  if (responses.length < 2) return null;
-
   return (
-    <Card>
+    <Card
+      className={cn(disabled && "opacity-60")}
+      title={disabled ? disabledReason : undefined}
+    >
       <CardHeader className="pb-3">
         <CardTitle className="text-sm">Judge</CardTitle>
       </CardHeader>
@@ -75,8 +85,9 @@ export function JudgePanel({ originalPrompt, responses }: JudgePanelProps) {
             <Select
               value={judgeModelId}
               onValueChange={(v) => setJudgeModelId(v as LanguageModelId)}
+              disabled={disabled}
             >
-              <SelectTrigger>
+              <SelectTrigger disabled={disabled}>
                 <SelectValue placeholder="Velg judge-modell" />
               </SelectTrigger>
               <SelectContent>
@@ -88,7 +99,7 @@ export function JudgePanel({ originalPrompt, responses }: JudgePanelProps) {
               </SelectContent>
             </Select>
           </div>
-          <Button onClick={runJudge} disabled={loading}>
+          <Button onClick={runJudge} disabled={loading || disabled}>
             {loading ? "Vurderer..." : "Kjør judge"}
           </Button>
         </div>

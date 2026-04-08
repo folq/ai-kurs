@@ -1,3 +1,4 @@
+import { ArrowDownToLine, ArrowUpFromLine, Brain } from "lucide-react";
 import { calculateCost, getModelLabel } from "@/lib/model-selectors";
 
 interface UsageStatsProps {
@@ -19,22 +20,31 @@ export function UsageStats({
 }: UsageStatsProps) {
   const cost = calculateCost(modelId, promptTokens, completionTokens);
   const label = getModelLabel(modelId);
+  const reasoningDisplay = reasoningTokens != null ? reasoningTokens : "—";
 
   return (
     <div className="flex items-center gap-3 px-3 py-1.5 bg-muted border border-border rounded-md text-xs text-muted-foreground flex-wrap">
-      <span>
-        <span className="text-muted-foreground/60">↑</span> {promptTokens} inn
+      <span className="inline-flex items-center gap-1" title="Tokens input">
+        <ArrowDownToLine
+          className="size-3.5 shrink-0 text-muted-foreground/70"
+          aria-hidden
+        />
+        {promptTokens}
       </span>
-      <span>
-        <span className="text-muted-foreground/60">↓</span> {completionTokens}{" "}
-        ut
+      <span className="inline-flex items-center gap-1" title="tokens output">
+        <ArrowUpFromLine
+          className="size-3.5 shrink-0 text-muted-foreground/70"
+          aria-hidden
+        />
+        {completionTokens}
       </span>
-      {reasoningTokens != null && reasoningTokens > 0 && (
-        <span>
-          <span className="text-muted-foreground/60">💭</span> {reasoningTokens}{" "}
-          resonnering
-        </span>
-      )}
+      <span className="inline-flex items-center gap-1" title="reasoning tokens">
+        <Brain
+          className="size-3.5 shrink-0 text-muted-foreground/70"
+          aria-hidden
+        />
+        {reasoningDisplay}
+      </span>
       <span className="w-px h-3.5 bg-border" />
       {tokensPerSecond != null && (
         <span>
