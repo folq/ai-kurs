@@ -35,7 +35,8 @@ export const promptingChatBodySchema = z.object({
   messages: z.array(uiMessageSchema),
   systemPrompt: z.string().optional(),
   temperature: z.number().optional(),
-  maxTokens: z.number().optional(),
+  /** 0 = omit cap; use provider default. Omitted field defaults to 1024 in the API. */
+  maxTokens: z.number().int().min(0).optional(),
   modelId: languageModelSelectorSchema
     .optional()
     .default(DEFAULT_LANGUAGE_MODEL),

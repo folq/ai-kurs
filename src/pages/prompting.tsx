@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { PageShell } from "@/components/layout/PageShell";
 import { ModelComparison } from "@/components/prompting/ModelComparison";
 import { UsageStats } from "@/components/shared/UsageStats";
+import { PromptingTasks } from "@/components/theory/PromptingTasks";
 import { PromptingTheory } from "@/components/theory/PromptingTheory";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -136,6 +137,7 @@ export default function PromptingPage() {
       title="1. Prompting"
       description="Eksperimenter med systemprompter og parametere for å se hvordan de påvirker AI-ens svar."
       theory={<PromptingTheory />}
+      tasks={<PromptingTasks />}
     >
       <div className="mb-6 flex gap-0 border-b border-border">
         <button
@@ -194,9 +196,6 @@ export default function PromptingPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Velger hvilken AI Gateway-modell som driver chat-svar.
-                </p>
               </CardContent>
             </Card>
 
@@ -261,7 +260,7 @@ export default function PromptingPage() {
                   <div className="flex justify-between">
                     <Label className="text-sm">Maks tokens</Label>
                     <span className="text-sm text-muted-foreground font-mono">
-                      {maxTokens}
+                      {maxTokens === 0 ? "Standard" : maxTokens}
                     </span>
                   </div>
                   <Slider
@@ -269,7 +268,7 @@ export default function PromptingPage() {
                     onValueChange={(v) =>
                       setMaxTokens(Array.isArray(v) ? v[0] : v)
                     }
-                    min={64}
+                    min={0}
                     max={4096}
                     step={64}
                   />
