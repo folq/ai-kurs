@@ -1,5 +1,5 @@
 import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport } from "ai";
+import { DefaultChatTransport, getToolName, isToolUIPart } from "ai";
 import {
   useCallback,
   useEffect,
@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import { PageShell } from "@/components/layout/PageShell";
+import { ModelResponseMarkdown } from "@/components/prompting/ModelResponseMarkdown";
 import { LanguageModelSelect } from "@/components/shared/LanguageModelSelect";
 import { UsageStats } from "@/components/shared/UsageStats";
 import { AgentTheory } from "@/components/theory/AgentTheory";
@@ -48,14 +49,38 @@ const TOOL_LABELS: Record<string, string> = {
 
 function ToolCallCard({
   toolName,
-  args,
-  result,
+  input,
+  state,
+  output,
+  errorText,
 }: {
   toolName: string;
-  args: Record<string, unknown>;
-  result: unknown;
+  input: unknown;
+  state: string;
+  output?: unknown;
+  errorText?: string;
 }) {
   const [open, setOpen] = useState(false);
+
+  const inputRecord =
+    input != null && typeof input === "object" && !Array.isArray(input)
+      ? (input as Record<string, unknown>)
+      : null;
+  const inputSummary =
+    inputRecord && Object.keys(inputRecord).length > 0
+      ? Object.entries(inputRecord)
+          .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
+          .join(", ")
+      : input !== undefined
+        ? JSON.stringify(input)
+        : "";
+
+  const resultBody =
+    state === "output-available"
+      ? JSON.stringify(output ?? null, null, 2)
+      : state === "output-error"
+        ? JSON.stringify({ error: errorText }, null, 2)
+        : JSON.stringify({ state, input: input ?? null }, null, 2);
 
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
@@ -64,15 +89,11 @@ function ToolCallCard({
           Verktøy
         </Badge>
         <span className="font-medium">{TOOL_LABELS[toolName] || toolName}</span>
-        {args && Object.keys(args).length > 0 && (
+        {inputSummary ? (
           <span className="text-muted-foreground truncate">
-            (
-            {Object.entries(args)
-              .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
-              .join(", ")}
-            )
+            ({inputSummary})
           </span>
-        )}
+        ) : null}
         <span className="ml-auto text-muted-foreground">
           {open ? "▲" : "▼"}
         </span>
@@ -80,9 +101,7 @@ function ToolCallCard({
       <CollapsibleContent>
         <div className="mt-1 p-3 bg-muted rounded-md text-xs font-mono overflow-x-auto max-h-[200px] overflow-y-auto">
           <div className="text-muted-foreground mb-1">Resultat:</div>
-          <pre className="whitespace-pre-wrap">
-            {JSON.stringify(result, null, 2)}
-          </pre>
+          <pre className="whitespace-pre-wrap">{resultBody}</pre>
         </div>
       </CollapsibleContent>
     </Collapsible>
@@ -127,8 +146,7 @@ export default function AgentPage() {
       streamStartRef.current = null;
       const input = usage?.inputTokens ?? 0;
       const output = usage?.outputTokens ?? 0;
-      const textTokens =
-        usage?.outputTokenDetails?.textTokens ?? output;
+      const textTokens = usage?.outputTokenDetails?.textTokens ?? output;
       if (usage && startTime) {
         const elapsed = (Date.now() - startTime) / 1000;
         const tokPerSec = elapsed > 0 ? textTokens / elapsed : 0;
@@ -266,27 +284,35 @@ export default function AgentPage() {
                                   : "bg-muted"
                               }`}
                             >
-                              <div className="whitespace-pre-wrap">
-                                {part.text}
-                              </div>
+                              {message.role === "assistant" ? (
+                                <ModelResponseMarkdown>
+                                  {part.text}
+                                </ModelResponseMarkdown>
+                              ) : (
+                                <div className="whitespace-pre-wrap">
+                                  {part.text}
+                                </div>
+                              )}
                             </div>
                           );
                         }
-                        if (part.type?.startsWith("tool-")) {
-                          const toolPart = part as unknown as {
-                            type: string;
-                            toolCallId: string;
-                            toolName: string;
-                            args: Record<string, unknown>;
-                            state: string;
-                            result?: unknown;
-                          };
+                        if (isToolUIPart(part)) {
                           return (
                             <ToolCallCard
-                              key={toolPart.toolCallId}
-                              toolName={toolPart.toolName}
-                              args={toolPart.args}
-                              result={toolPart.result}
+                              key={part.toolCallId}
+                              toolName={getToolName(part)}
+                              input={"input" in part ? part.input : undefined}
+                              state={part.state}
+                              output={
+                                part.state === "output-available"
+                                  ? part.output
+                                  : undefined
+                              }
+                              errorText={
+                                part.state === "output-error"
+                                  ? part.errorText
+                                  : undefined
+                              }
                             />
                           );
                         }
