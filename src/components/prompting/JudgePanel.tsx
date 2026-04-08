@@ -1,18 +1,11 @@
 import { useState } from "react";
+import { LanguageModelSelect } from "@/components/shared/LanguageModelSelect";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   DEFAULT_LANGUAGE_MODEL,
   getModelLabel,
-  LANGUAGE_MODEL_OPTIONS,
   type LanguageModelId,
 } from "@/lib/model-selectors";
 import { cn } from "@/lib/utils";
@@ -91,22 +84,13 @@ export function JudgePanel({
       <CardContent className="space-y-3">
         <div className="flex gap-2 items-end">
           <div className="flex-1">
-            <Select
+            <LanguageModelSelect
               value={judgeModelId}
-              onValueChange={(v) => setJudgeModelId(v as LanguageModelId)}
+              onValueChange={setJudgeModelId}
               disabled={disabled}
-            >
-              <SelectTrigger disabled={disabled}>
-                <SelectValue placeholder="Velg judge-modell" />
-              </SelectTrigger>
-              <SelectContent>
-                {LANGUAGE_MODEL_OPTIONS.map((option) => (
-                  <SelectItem key={option.id} value={option.id}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              placeholder="Velg judge-modell"
+              triggerClassName="w-full"
+            />
           </div>
           <Button onClick={runJudge} disabled={loading || disabled}>
             {loading ? "Vurderer..." : "Kjør judge"}

@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   getModelLabel,
-  LANGUAGE_MODEL_OPTIONS,
+  LANGUAGE_MODEL_GROUPS,
   type LanguageModelId,
 } from "@/lib/model-selectors";
 import { JudgePanel, type JudgeResult } from "./JudgePanel";
@@ -107,20 +107,33 @@ export function ModelComparison({
         <p className="text-xs text-muted-foreground mb-2">
           Velg 2–4 modeller å sammenligne
         </p>
-        <div className="flex flex-wrap gap-1.5">
-          {LANGUAGE_MODEL_OPTIONS.map((option) => (
-            <Button
-              key={option.id}
-              variant={
-                selectedModels.includes(option.id) ? "default" : "outline"
-              }
-              size="sm"
-              className="text-xs"
-              onClick={() => toggleModel(option.id)}
-            >
-              {option.label}
-            </Button>
-          ))}
+        <div className="space-y-3">
+          {LANGUAGE_MODEL_GROUPS.map(
+            ({ providerId, providerLabel, models }) => (
+              <div key={providerId} className="space-y-1.5">
+                <p className="text-xs font-medium text-muted-foreground">
+                  {providerLabel}
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {models.map((option) => (
+                    <Button
+                      key={option.id}
+                      variant={
+                        selectedModels.includes(option.id)
+                          ? "default"
+                          : "outline"
+                      }
+                      size="sm"
+                      className="text-xs"
+                      onClick={() => toggleModel(option.id)}
+                    >
+                      {option.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            ),
+          )}
         </div>
         {selectedModels.length > 0 && (
           <div className="flex gap-1 mt-2">

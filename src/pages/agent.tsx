@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import { PageShell } from "@/components/layout/PageShell";
+import { LanguageModelSelect } from "@/components/shared/LanguageModelSelect";
 import { UsageStats } from "@/components/shared/UsageStats";
 import { AgentTheory } from "@/components/theory/AgentTheory";
 import { Badge } from "@/components/ui/badge";
@@ -20,18 +21,10 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import type { ChatUIMessage } from "@/lib/chat-api-schemas";
 import {
   DEFAULT_LANGUAGE_MODEL,
-  LANGUAGE_MODEL_OPTIONS,
   type LanguageModelId,
 } from "@/lib/model-selectors";
 
@@ -210,21 +203,11 @@ export default function AgentPage() {
                 {Object.keys(TOOL_LABELS).length} verktøy tilgjengelig
               </Badge>
               <div className="ml-auto min-w-[220px]">
-                <Select
+                <LanguageModelSelect
                   value={model}
-                  onValueChange={(v) => setModel(v as LanguageModelId)}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Velg modell" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {LANGUAGE_MODEL_OPTIONS.map((option) => (
-                      <SelectItem key={option.id} value={option.id}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  onValueChange={setModel}
+                  placeholder="Velg modell"
+                />
               </div>
             </div>
           </CardHeader>

@@ -1,25 +1,73 @@
 import { z } from "zod";
 
+/**
+ * Catalog of chat models. Each entry has a `tier`: lower = smaller / faster /
+ * cheaper within the same provider; higher = larger / more capable.
+ */
 export const LANGUAGE_MODEL_OPTIONS = [
-  // Powerful flagship models
-  { id: "anthropic/claude-opus-4.6", label: "Claude Opus 4.6" },
-  { id: "openai/gpt-5.4", label: "GPT-5.4" },
-  { id: "google/gemini-3.1-pro-preview", label: "Gemini 3.1 Pro" },
+  { id: "anthropic/claude-opus-4.6", label: "Claude Opus 4.6", tier: 3 },
+  { id: "openai/gpt-5.4", label: "GPT-5.4", tier: 3 },
+  { id: "google/gemini-3.1-pro-preview", label: "Gemini 3.1 Pro", tier: 3 },
 
-  // Strong mid-tier models
-  { id: "anthropic/claude-sonnet-4.6", label: "Claude Sonnet 4.6" },
-  { id: "openai/gpt-4o", label: "GPT-4o" },
-  { id: "google/gemini-2.5-flash", label: "Gemini 2.5 Flash" },
+  { id: "anthropic/claude-sonnet-4.6", label: "Claude Sonnet 4.6", tier: 2 },
+  { id: "openai/gpt-4o", label: "GPT-4o", tier: 2 },
+  { id: "google/gemini-2.5-flash", label: "Gemini 2.5 Flash", tier: 2 },
 
-  // Lightweight / fast models
-  { id: "openai/gpt-4o-mini", label: "GPT-4o mini" },
-  { id: "anthropic/claude-haiku-4.5", label: "Claude Haiku 4.5" },
-  { id: "google/gemini-2.5-flash-lite", label: "Gemini 2.5 Flash Lite" },
-
-  // Reasoning-only models — no function calling / tool use
-  { id: "deepseek/deepseek-r1", label: "DeepSeek R1 (no tools)" },
-  { id: "deepseek/deepseek-v3.2", label: "DeepSeek V3.2" },
+  { id: "openai/gpt-4o-mini", label: "GPT-4o mini", tier: 1 },
+  { id: "anthropic/claude-haiku-4.5", label: "Claude Haiku 4.5", tier: 1 },
+  {
+    id: "google/gemini-2.5-flash-lite",
+    label: "Gemini 2.5 Flash Lite",
+    tier: 1,
+  },
+  {
+    id: "deepseek/deepseek-v3.2",
+    label: "DeepSeek V3.2 Speciale",
+    tier: 1,
+  },
+  { id: "deepseek/deepseek-r1", label: "DeepSeek R1 (no tools)", tier: 2 },
 ] as const;
+
+export type LanguageModelOption = (typeof LANGUAGE_MODEL_OPTIONS)[number];
+
+const PROVIDER_LABELS: Record<string, string> = {
+  anthropic: "Anthropic",
+  deepseek: "DeepSeek",
+  google: "Google",
+  openai: "OpenAI",
+};
+
+export type LanguageModelProviderGroup = {
+  providerId: string;
+  providerLabel: string;
+  models: LanguageModelOption[];
+};
+
+/** Groups models by provider; providers A–Z, models smallest tier first within each. */
+export function getLanguageModelGroups(): LanguageModelProviderGroup[] {
+  const byProvider = new Map<string, LanguageModelOption[]>();
+  for (const opt of LANGUAGE_MODEL_OPTIONS) {
+    const providerId = opt.id.split("/")[0] ?? opt.id;
+    const list = byProvider.get(providerId);
+    if (list) list.push(opt);
+    else byProvider.set(providerId, [opt]);
+  }
+  const providerIds = [...byProvider.keys()].sort((a, b) => a.localeCompare(b));
+  return providerIds.map((providerId) => {
+    const models = [...(byProvider.get(providerId) ?? [])].sort(
+      (a, b) => a.tier - b.tier
+    );
+    return {
+      providerId,
+      providerLabel: PROVIDER_LABELS[providerId] ?? providerId,
+      models,
+    };
+  });
+}
+
+/** Cached grouping for UI lists (same order as `getLanguageModelGroups()`). */
+export const LANGUAGE_MODEL_GROUPS: LanguageModelProviderGroup[] =
+  getLanguageModelGroups();
 
 export const EMBEDDING_MODEL_OPTIONS = [
   {
@@ -29,17 +77,17 @@ export const EMBEDDING_MODEL_OPTIONS = [
 ] as const;
 
 const LANGUAGE_MODEL_IDS = LANGUAGE_MODEL_OPTIONS.map(
-  (option) => option.id,
+  (option) => option.id
 ) as [
   (typeof LANGUAGE_MODEL_OPTIONS)[number]["id"],
-  ...(typeof LANGUAGE_MODEL_OPTIONS)[number]["id"][],
+  ...(typeof LANGUAGE_MODEL_OPTIONS)[number]["id"][]
 ];
 
 const EMBEDDING_MODEL_IDS = EMBEDDING_MODEL_OPTIONS.map(
-  (option) => option.id,
+  (option) => option.id
 ) as [
   (typeof EMBEDDING_MODEL_OPTIONS)[number]["id"],
-  ...(typeof EMBEDDING_MODEL_OPTIONS)[number]["id"][],
+  ...(typeof EMBEDDING_MODEL_OPTIONS)[number]["id"][]
 ];
 
 export const languageModelSelectorSchema = z.enum(LANGUAGE_MODEL_IDS);
@@ -83,7 +131,7 @@ export const MODEL_PRICING: Partial<
 export function calculateCost(
   modelId: string,
   promptTokens: number,
-  completionTokens: number,
+  completionTokens: number
 ): number | null {
   const pricing = MODEL_PRICING[modelId as LanguageModelId];
   if (!pricing) return null;

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { PageShell } from "@/components/layout/PageShell";
+import { LanguageModelSelect } from "@/components/shared/LanguageModelSelect";
 import { UsageStats } from "@/components/shared/UsageStats";
 import { StructuredOutputsTheory } from "@/components/theory/StructuredOutputsTheory";
 import { Badge } from "@/components/ui/badge";
@@ -16,7 +17,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import {
   DEFAULT_LANGUAGE_MODEL,
-  LANGUAGE_MODEL_OPTIONS,
   type LanguageModelId,
 } from "@/lib/model-selectors";
 import { parseSseStream } from "@/lib/structured-output-stream-lines";
@@ -482,21 +482,11 @@ export default function StructuredOutputsPage() {
             <CardContent className="space-y-3">
               <div>
                 <Label className="text-sm">Modell</Label>
-                <Select
+                <LanguageModelSelect
                   value={modelId}
-                  onValueChange={(v) => setModelId(v as LanguageModelId)}
-                >
-                  <SelectTrigger className="mt-1">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {LANGUAGE_MODEL_OPTIONS.map((option) => (
-                      <SelectItem key={option.id} value={option.id}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  onValueChange={setModelId}
+                  triggerClassName="mt-1"
+                />
               </div>
               <div>
                 <Label className="text-sm">Genereringsmodus</Label>

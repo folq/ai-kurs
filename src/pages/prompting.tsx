@@ -3,6 +3,7 @@ import { DefaultChatTransport } from "ai";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { PageShell } from "@/components/layout/PageShell";
 import { ModelComparison } from "@/components/prompting/ModelComparison";
+import { LanguageModelSelect } from "@/components/shared/LanguageModelSelect";
 import { UsageStats } from "@/components/shared/UsageStats";
 import { PromptingTasks } from "@/components/theory/PromptingTasks";
 import { PromptingTheory } from "@/components/theory/PromptingTheory";
@@ -10,20 +11,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
 import type { ChatUIMessage } from "@/lib/chat-api-schemas";
 import {
   DEFAULT_LANGUAGE_MODEL,
-  LANGUAGE_MODEL_OPTIONS,
   type LanguageModelId,
 } from "@/lib/model-selectors";
 
@@ -181,21 +174,10 @@ export default function PromptingPage() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <div>
-                  <Select
+                  <LanguageModelSelect
                     value={modelId}
-                    onValueChange={(v) => setModelId(v as LanguageModelId)}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {LANGUAGE_MODEL_OPTIONS.map((option) => (
-                        <SelectItem key={option.id} value={option.id}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    onValueChange={setModelId}
+                  />
                 </div>
               </CardContent>
             </Card>
