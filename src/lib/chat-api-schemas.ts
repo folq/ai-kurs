@@ -32,6 +32,7 @@ export const agentChatBodySchema = z.object({
   modelId: languageModelSelectorSchema
     .optional()
     .default(DEFAULT_LANGUAGE_MODEL),
+  toolDescriptions: z.record(z.string(), z.string()).optional(),
 });
 
 export const promptingChatBodySchema = z.object({

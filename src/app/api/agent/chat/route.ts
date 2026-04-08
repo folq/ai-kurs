@@ -1,5 +1,5 @@
 import { convertToModelMessages, stepCountIs, streamText } from "ai";
-import { agentTools } from "@/lib/agent-tools";
+import { buildAgentTools } from "@/lib/agent-tools";
 import { agentChatBodySchema } from "@/lib/chat-api-schemas";
 import { DEFAULT_LANGUAGE_MODEL } from "@/lib/model-selectors";
 import { getModel } from "@/lib/openai";
@@ -24,13 +24,14 @@ Be conversational, enthusiastic, and helpful. You're a movie buff who loves shar
 
 export const POST = validateRequest(
   agentChatBodySchema,
-  async ({ messages, modelId }) => {
+  async ({ messages, modelId, toolDescriptions }) => {
     const resolvedModelId = modelId ?? DEFAULT_LANGUAGE_MODEL;
+    const tools = buildAgentTools(toolDescriptions);
     const result = streamText({
       model: getModel(resolvedModelId),
       system: SYSTEM_PROMPT,
       messages: await convertToModelMessages(messages),
-      tools: agentTools,
+      tools,
       stopWhen: stepCountIs(5),
       experimental_telemetry: { isEnabled: true },
     });

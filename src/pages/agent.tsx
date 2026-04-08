@@ -1,5 +1,6 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, getToolName, isToolUIPart } from "ai";
+import { RotateCcw } from "lucide-react";
 import {
   useCallback,
   useEffect,
@@ -23,7 +24,10 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
+import { DEFAULT_TOOL_DESCRIPTIONS } from "@/lib/agent-tool-descriptions";
 import type { ChatUIMessage } from "@/lib/chat-api-schemas";
 import {
   DEFAULT_LANGUAGE_MODEL,
@@ -113,6 +117,20 @@ export default function AgentPage() {
   const [input, setInput] = useState("");
   const [model, setModel] = useState<LanguageModelId>(DEFAULT_LANGUAGE_MODEL);
   const [favorites, setFavorites] = useState<FavoriteMovie[]>([]);
+  const [toolDescriptions, setToolDescriptions] = useState<
+    Record<string, string>
+  >(() => {
+    if (typeof window === "undefined") return { ...DEFAULT_TOOL_DESCRIPTIONS };
+    try {
+      const stored = localStorage.getItem("agent-tool-descriptions");
+      if (stored) {
+        return { ...DEFAULT_TOOL_DESCRIPTIONS, ...JSON.parse(stored) };
+      }
+    } catch {
+      // ignore corrupt data
+    }
+    return { ...DEFAULT_TOOL_DESCRIPTIONS };
+  });
   const [streamStats, setStreamStats] = useState<
     Map<
       string,
@@ -129,12 +147,32 @@ export default function AgentPage() {
   const streamStartRef = useRef<number | null>(null);
   const modelRef = useRef(model);
   modelRef.current = model;
+  const toolDescriptionsRef = useRef(toolDescriptions);
+  toolDescriptionsRef.current = toolDescriptions;
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        "agent-tool-descriptions",
+        JSON.stringify(toolDescriptions),
+      );
+    } catch {
+      // storage full or unavailable
+    }
+  }, [toolDescriptions]);
+
+  const hasCustomDescriptions = Object.entries(toolDescriptions).some(
+    ([key, val]) => val !== DEFAULT_TOOL_DESCRIPTIONS[key],
+  );
 
   const transport = useMemo(
     () =>
       new DefaultChatTransport({
         api: "/api/agent/chat",
-        body: () => ({ modelId: modelRef.current }),
+        body: () => ({
+          modelId: modelRef.current,
+          toolDescriptions: toolDescriptionsRef.current,
+        }),
       }),
     [],
   );
@@ -216,7 +254,7 @@ export default function AgentPage() {
       tasks={<AgentTasks />}
       theory={<AgentTheory />}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
         <Card className="flex flex-col h-[calc(100vh-220px)]">
           <CardHeader className="pb-3 shrink-0">
             <div className="flex items-center gap-2 flex-wrap">
@@ -395,22 +433,89 @@ export default function AgentPage() {
           </Card>
 
           <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Tilgjengelige verktøy</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {Object.entries(TOOL_LABELS).map(([key, label]) => (
-                <div key={key} className="flex items-center gap-2">
-                  <Badge
-                    variant="outline"
-                    className="text-xs font-mono shrink-0"
-                  >
-                    {key}
-                  </Badge>
-                  <span className="text-xs text-muted-foreground">{label}</span>
+            <Collapsible defaultOpen>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <CollapsibleTrigger className="flex items-center gap-2 text-left">
+                    <CardTitle className="text-base">
+                      Verktøybeskrivelser
+                    </CardTitle>
+                    {hasCustomDescriptions && (
+                      <span className="size-2 rounded-full bg-amber-500 shrink-0" />
+                    )}
+                  </CollapsibleTrigger>
+                  {hasCustomDescriptions && (
+                    <Button
+                      variant="ghost"
+                      size="icon-xs"
+                      className="ml-auto text-muted-foreground hover:text-foreground"
+                      onClick={() =>
+                        setToolDescriptions({ ...DEFAULT_TOOL_DESCRIPTIONS })
+                      }
+                      aria-label="Tilbakestill alle"
+                    >
+                      <RotateCcw className="size-3" />
+                    </Button>
+                  )}
                 </div>
-              ))}
-            </CardContent>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Rediger beskrivelsene AI-en ser for hvert verktøy.
+                </p>
+              </CardHeader>
+              <CollapsibleContent>
+                <CardContent className="space-y-4 pt-0">
+                  {Object.entries(TOOL_LABELS).map(([key, label]) => {
+                    const isModified =
+                      toolDescriptions[key] !== DEFAULT_TOOL_DESCRIPTIONS[key];
+                    return (
+                      <div key={key} className="space-y-1">
+                        <div className="flex items-center gap-1.5">
+                          <Label
+                            htmlFor={`tool-desc-${key}`}
+                            className="text-xs font-medium"
+                          >
+                            {label}
+                          </Label>
+                          <Badge
+                            variant="outline"
+                            className="text-[10px] font-mono"
+                          >
+                            {key}
+                          </Badge>
+                          {isModified && (
+                            <button
+                              type="button"
+                              className="ml-auto text-muted-foreground hover:text-foreground"
+                              onClick={() =>
+                                setToolDescriptions((prev) => ({
+                                  ...prev,
+                                  [key]: DEFAULT_TOOL_DESCRIPTIONS[key],
+                                }))
+                              }
+                              aria-label={`Tilbakestill ${key}`}
+                            >
+                              <RotateCcw className="size-3" />
+                            </button>
+                          )}
+                        </div>
+                        <Textarea
+                          id={`tool-desc-${key}`}
+                          value={toolDescriptions[key] ?? ""}
+                          onChange={(e) =>
+                            setToolDescriptions((prev) => ({
+                              ...prev,
+                              [key]: e.target.value,
+                            }))
+                          }
+                          rows={2}
+                          className="text-xs resize-y min-h-[3rem]"
+                        />
+                      </div>
+                    );
+                  })}
+                </CardContent>
+              </CollapsibleContent>
+            </Collapsible>
           </Card>
         </div>
       </div>
