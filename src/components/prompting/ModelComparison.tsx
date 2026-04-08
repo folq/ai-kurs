@@ -17,7 +17,6 @@ interface ModelComparisonProps {
   onSystemPromptChange: (prompt: string) => void;
   presetPrompts: Record<string, string>;
   temperature: number;
-  maxTokens: number;
 }
 
 type CompareResult = {
@@ -36,7 +35,6 @@ export function ModelComparison({
   onSystemPromptChange,
   presetPrompts,
   temperature,
-  maxTokens,
 }: ModelComparisonProps) {
   const [selectedModels, setSelectedModels] = useState<LanguageModelId[]>([]);
   const [comparePrompt, setComparePrompt] = useState("");
@@ -76,7 +74,7 @@ export function ModelComparison({
           systemPrompt,
           modelIds: selectedModels,
           temperature,
-          maxTokens,
+          maxTokens: null,
         }),
       });
       const data = await res.json();

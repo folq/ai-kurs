@@ -38,7 +38,7 @@ export const compareBodSchema = z.object({
   systemPrompt: z.string().optional(),
   modelIds: z.array(languageModelSelectorSchema).min(2).max(4),
   temperature: z.number().min(0).max(2).optional(),
-  maxTokens: z.number().int().positive().optional(),
+  maxTokens: z.number().int().positive().nullable(),
 });
 
 export const judgeBodSchema = z.object({

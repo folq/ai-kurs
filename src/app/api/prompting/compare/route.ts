@@ -18,7 +18,7 @@ export const POST = validateRequest(
             system: systemPrompt || defaultSystemPrompt,
             prompt,
             temperature: temperature ?? 0.7,
-            maxOutputTokens: maxTokens ?? 1024,
+            ...(maxTokens != null ? { maxOutputTokens: maxTokens } : {}),
             experimental_telemetry: { isEnabled: true },
           });
           return {

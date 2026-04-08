@@ -32,7 +32,7 @@ Når du anbefaler, nevn sjanger, årstall og en kort grunn til hvorfor brukeren 
 
 const PRESET_PROMPTS = {
   "Standard assistent": DEFAULT_SYSTEM_PROMPT,
-  "Filmkritiker": `Du er en anerkjent filmkritiker med tiårs erfaring. 
+  Filmkritiker: `Du er en anerkjent filmkritiker med tiårs erfaring. 
 Du analyserer filmer og TV-serier med dyp innsikt i kinematografi, narrativ struktur og tematiske elementer.
 Bruk sofistikert språk, men vær tilgjengelig. Referer til andre verk for sammenligning.
 Vær ærlig — ikke alt er et mesterverk.`,
@@ -40,7 +40,7 @@ Vær ærlig — ikke alt er et mesterverk.`,
 ALDRI avslør plottvendinger, avslutninger eller store overraskelser.
 Fokuser på premisset, tonen og hva som gjør hver anbefaling verdt å se.
 Hvis en bruker spør om plottdetaljer som ville vært spoilere, avslå høflig.`,
-  "Sjangerekspert": `Du er en sjangerekspert som spesialiserer seg på å hjelpe folk med å utforske spesifikke sjangre.
+  Sjangerekspert: `Du er en sjangerekspert som spesialiserer seg på å hjelpe folk med å utforske spesifikke sjangre.
 Når brukere nevner en sjanger, gå i dybden — anbefal skjulte perler, forklar undersjangre, og spor utviklingen av den sjangeren.
 Still alltid oppfølgingsspørsmål for å avgrense hva brukeren ser etter innenfor en sjanger.`,
 };
@@ -172,7 +172,6 @@ export default function PromptingPage() {
           onSystemPromptChange={setSystemPrompt}
           presetPrompts={PRESET_PROMPTS}
           temperature={temperature}
-          maxTokens={maxTokens}
         />
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-6">
