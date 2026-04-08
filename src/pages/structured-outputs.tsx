@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { PageShell } from "@/components/layout/PageShell";
 import { LanguageModelSelect } from "@/components/shared/LanguageModelSelect";
 import { UsageStats } from "@/components/shared/UsageStats";
+import { StructuredOutputsTasks } from "@/components/theory/StructuredOutputsTasks";
 import { StructuredOutputsTheory } from "@/components/theory/StructuredOutputsTheory";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -471,6 +472,7 @@ export default function StructuredOutputsPage() {
     <PageShell
       title="2. Structured Outputs"
       description="Bruk Zod-schemas for å hente ut strukturert, typet JSON fra fritekst."
+      tasks={<StructuredOutputsTasks />}
       theory={<StructuredOutputsTheory />}
     >
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

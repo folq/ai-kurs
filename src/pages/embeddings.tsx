@@ -4,6 +4,7 @@ import type { QueryScatterPoint } from "@/components/embeddings/EmbeddingsScatte
 import { RecommendationPanel } from "@/components/embeddings/RecommendationPanel";
 import { PageShell } from "@/components/layout/PageShell";
 import { MovieCard } from "@/components/shared/MovieCard";
+import { EmbeddingsTasks } from "@/components/theory/EmbeddingsTasks";
 import { EmbeddingsTheory } from "@/components/theory/EmbeddingsTheory";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -273,6 +274,7 @@ export default function EmbeddingsPage() {
     <PageShell
       title="3. Embeddings & Vector Search"
       description="Søk etter filmer basert på mening, ikke bare nøkkelord."
+      tasks={<EmbeddingsTasks />}
       theory={<EmbeddingsTheory />}
     >
       <div className="flex gap-2 mb-8">
