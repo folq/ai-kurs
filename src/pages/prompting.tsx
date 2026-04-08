@@ -362,7 +362,6 @@ export default function PromptingPage() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Spør om filmanbefalinger..."
-                disabled={isActive}
                 autoFocus
               />
               <Button type="submit" disabled={isActive || !input.trim()}>
