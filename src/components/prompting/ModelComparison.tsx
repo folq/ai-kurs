@@ -10,7 +10,7 @@ import {
   LANGUAGE_MODEL_OPTIONS,
   type LanguageModelId,
 } from "@/lib/model-selectors";
-import { JudgePanel } from "./JudgePanel";
+import { JudgePanel, type JudgeResult } from "./JudgePanel";
 
 interface ModelComparisonProps {
   systemPrompt: string;
@@ -40,6 +40,9 @@ export function ModelComparison({
   const [comparePrompt, setComparePrompt] = useState("");
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<CompareResult[]>([]);
+  const [judgeResult, setJudgeResult] = useState<JudgeResult | null>(null);
+  const [judgeError, setJudgeError] = useState<string | null>(null);
+  const [judgeLoading, setJudgeLoading] = useState(false);
 
   const toggleModel = (modelId: LanguageModelId) => {
     setSelectedModels((prev) =>
@@ -62,6 +65,9 @@ export function ModelComparison({
 
   const runComparison = async () => {
     if (selectedModels.length < 2 || !comparePrompt.trim()) return;
+    setJudgeResult(null);
+    setJudgeError(null);
+    setJudgeLoading(false);
     setLoading(true);
     setResults([]);
 
@@ -207,6 +213,12 @@ export function ModelComparison({
         }))}
         disabled={!canRunJudge}
         disabledReason={judgeDisabledReason}
+        result={judgeResult}
+        error={judgeError}
+        loading={judgeLoading}
+        onResultChange={setJudgeResult}
+        onErrorChange={setJudgeError}
+        onLoadingChange={setJudgeLoading}
       />
     </div>
   );

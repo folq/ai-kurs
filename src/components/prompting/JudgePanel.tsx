@@ -17,36 +17,45 @@ import {
 } from "@/lib/model-selectors";
 import { cn } from "@/lib/utils";
 
+export type JudgeResult = {
+  verdict: string;
+  rankings: Array<{ modelId: string; rank: number; reasoning: string }>;
+};
+
 interface JudgePanelProps {
   originalPrompt: string;
   responses: Array<{ modelId: string; text: string }>;
   disabled?: boolean;
   disabledReason?: string;
+  result: JudgeResult | null;
+  error: string | null;
+  loading: boolean;
+  onResultChange: (value: JudgeResult | null) => void;
+  onErrorChange: (value: string | null) => void;
+  onLoadingChange: (value: boolean) => void;
 }
-
-type JudgeResult = {
-  verdict: string;
-  rankings: Array<{ modelId: string; rank: number; reasoning: string }>;
-};
 
 export function JudgePanel({
   originalPrompt,
   responses,
   disabled = false,
   disabledReason,
+  result,
+  error,
+  loading,
+  onResultChange,
+  onErrorChange,
+  onLoadingChange,
 }: JudgePanelProps) {
   const [judgeModelId, setJudgeModelId] = useState<LanguageModelId>(
     DEFAULT_LANGUAGE_MODEL,
   );
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<JudgeResult | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   const runJudge = async () => {
     if (disabled || responses.length < 2) return;
-    setLoading(true);
-    setError(null);
-    setResult(null);
+    onLoadingChange(true);
+    onErrorChange(null);
+    onResultChange(null);
 
     try {
       const res = await fetch("/api/prompting/judge", {
@@ -60,14 +69,14 @@ export function JudgePanel({
       });
       const data = await res.json();
       if (data.error) {
-        setError(data.error);
+        onErrorChange(data.error);
         return;
       }
-      setResult(data);
+      onResultChange(data);
     } catch {
-      setError("Kunne ikke kjøre judge");
+      onErrorChange("Kunne ikke kjøre judge");
     } finally {
-      setLoading(false);
+      onLoadingChange(false);
     }
   };
 
