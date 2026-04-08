@@ -8,14 +8,13 @@ import {
   structuredOutputSchemaByName,
 } from "@/lib/schemas";
 import { buildStructuredOutputErrorPayload } from "@/lib/structured-output-failure";
-import { getStructuredOutputSystem } from "@/lib/structured-output-prompt";
+import { STRUCTURED_OUTPUT_SYSTEM } from "@/lib/structured-output-prompt";
 import { encodeSseFromEvent } from "@/lib/structured-output-stream-lines";
-import { getThinkingProviderOptions } from "@/lib/thinking-provider-options";
 import { validateRequest } from "@/lib/validate-api";
 
 export const POST = validateRequest(
   analyzeBodySchema,
-  async ({ text, schemaName, modelId, thinking }) => {
+  async ({ text, schemaName, modelId }) => {
     const schema = structuredOutputSchemaByName[schemaName as SchemaName];
     if (!schema) {
       return Response.json({ error: "Unknown schema" }, { status: 400 });
@@ -26,11 +25,10 @@ export const POST = validateRequest(
     try {
       const result = streamText({
         model: getModel(modelId),
-        system: getStructuredOutputSystem(thinking),
+        system: STRUCTURED_OUTPUT_SYSTEM,
         output: Output.object({ schema }),
         prompt,
         experimental_telemetry: { isEnabled: true },
-        ...(thinking ? { providerOptions: getThinkingProviderOptions() } : {}),
       });
 
       const body = new ReadableStream<Uint8Array>({

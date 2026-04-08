@@ -180,5 +180,4 @@ export const analyzeBodySchema = z.object({
   modelId: languageModelSelectorSchema
     .optional()
     .default(DEFAULT_LANGUAGE_MODEL),
-  thinking: z.boolean().optional().default(false),
 });

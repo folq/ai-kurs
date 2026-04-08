@@ -261,12 +261,10 @@ export default function StructuredOutputsPage() {
   } | null>(null);
   const [durationMs, setDurationMs] = useState<number | null>(null);
   const [mode, setMode] = useState<"full" | "streaming">("full");
-  const [thinking, setThinking] = useState(false);
   const [analyzeError, setAnalyzeError] = useState<string | null>(null);
   const [thinkingSteps, setThinkingSteps] = useState<string[]>([]);
   const [debugModelText, setDebugModelText] = useState<string | null>(null);
   const [providerReasoningText, setProviderReasoningText] = useState("");
-  const [rawModelText, setRawModelText] = useState<string | null>(null);
   const [thinkingDurationMs, setThinkingDurationMs] = useState<number | null>(
     null,
   );
@@ -279,7 +277,6 @@ export default function StructuredOutputsPage() {
     setThinkingSteps([]);
     setDebugModelText(null);
     setProviderReasoningText("");
-    setRawModelText(null);
     setThinkingDurationMs(null);
   };
 
@@ -303,12 +300,7 @@ export default function StructuredOutputsPage() {
         const res = await fetch("/api/structured-outputs/stream", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            text: inputText,
-            schemaName,
-            modelId,
-            thinking,
-          }),
+          body: JSON.stringify({ text: inputText, schemaName, modelId }),
         });
 
         if (!res.ok) {
@@ -383,7 +375,6 @@ export default function StructuredOutputsPage() {
         }
 
         setDurationMs(Date.now() - startTime);
-        setRawModelText(streamJsonText || null);
 
         const finalPrep = prepareModelJsonText(streamJsonText);
         if (finalPrep.thinkingSegments.length > 0) {
@@ -418,12 +409,7 @@ export default function StructuredOutputsPage() {
         const res = await fetch("/api/structured-outputs/analyze", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            text: inputText,
-            schemaName,
-            modelId,
-            thinking,
-          }),
+          body: JSON.stringify({ text: inputText, schemaName, modelId }),
         });
         const data = (await res.json()) as StructuredOutputErrorJson & {
           output?: Record<string, unknown>;
@@ -434,7 +420,6 @@ export default function StructuredOutputsPage() {
           };
           reasoning?: { text: string }[];
           reasoningText?: string | null;
-          rawModelText?: string;
         };
         setDurationMs(Date.now() - startTime);
         if (!res.ok || data.error) {
@@ -465,11 +450,6 @@ export default function StructuredOutputsPage() {
               ? data.reasoning.map((r) => r.text).join("\n---\n")
               : "";
         setProviderReasoningText(reasoningFromApi);
-        setRawModelText(
-          typeof data.rawModelText === "string" && data.rawModelText.length > 0
-            ? data.rawModelText
-            : null,
-        );
       }
     } catch (error) {
       const message =
@@ -538,23 +518,6 @@ export default function StructuredOutputsPage() {
                     Strømming
                   </Button>
                 </div>
-              </div>
-              <div>
-                <div className="flex items-center justify-between">
-                  <Label className="text-sm">Thinking mode</Label>
-                  <Button
-                    variant={thinking ? "default" : "outline"}
-                    size="sm"
-                    className="text-xs h-7 px-3"
-                    onClick={() => setThinking((t) => !t)}
-                  >
-                    {thinking ? "På" : "Av"}
-                  </Button>
-                </div>
-                <p className="text-[11px] text-muted-foreground mt-1">
-                  Sender providerOptions for å aktivere utvidet tenking /
-                  resonnering. Vis resonneringstekst i sanntid og token-bruk.
-                </p>
               </div>
               <div>
                 <Label className="text-sm">Velg skjema</Label>
@@ -630,7 +593,7 @@ export default function StructuredOutputsPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               {/* Live / final reasoning panel */}
-              {(hasReasoning || (loading && thinking)) && (
+              {hasReasoning && (
                 <div className="rounded-lg border border-teal-600/25 bg-teal-500/5 px-3 py-2 space-y-2">
                   <div className="flex items-center gap-2">
                     <Label className="text-xs text-teal-800 dark:text-teal-200 uppercase tracking-wide">
@@ -669,11 +632,6 @@ export default function StructuredOutputsPage() {
                         </pre>
                       ))}
                     </div>
-                  )}
-                  {loading && !providerReasoningText.trim() && thinking && (
-                    <p className="text-xs text-muted-foreground italic">
-                      Venter på resonneringsdata fra modellen...
-                    </p>
                   )}
                 </div>
               )}
@@ -745,18 +703,6 @@ export default function StructuredOutputsPage() {
                 <pre className="p-3 bg-muted rounded-md text-xs font-mono overflow-x-auto whitespace-pre max-h-[400px] overflow-y-auto">
                   {rawJson}
                 </pre>
-              )}
-
-              {/* Raw model text (collapsible) */}
-              {rawModelText && !analyzeError && !loading && (
-                <details className="rounded-lg border border-foreground/15 bg-muted/40 px-3 py-2 text-sm">
-                  <summary className="cursor-pointer text-muted-foreground select-none">
-                    Rå modelltekst (<code className="text-xs">text</code>)
-                  </summary>
-                  <pre className="mt-2 text-xs font-mono whitespace-pre-wrap break-words max-h-64 overflow-y-auto">
-                    {rawModelText}
-                  </pre>
-                </details>
               )}
 
               {/* Usage stats */}
