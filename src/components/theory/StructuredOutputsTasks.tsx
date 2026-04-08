@@ -88,10 +88,11 @@ export function StructuredOutputsTasks() {
           3. Discriminated union i praksis
         </h3>
         <p className="text-sm text-foreground/80 leading-relaxed">
-          Test Content Classification-schemat med tre ulike input-typer: en
-          filmanmeldelse, et handlingssammendrag, og et spørsmål. Observer
-          at AI-en automatisk klassifiserer typen og tilpasser feltene. Prøv
-          med tvetydige tekster — kan du lure den?
+          Velg <strong>Innholdsklassifisering</strong> under «Velg skjema» på
+          workshop-fanen. Test med tre ulike input-typer: en filmanmeldelse, et
+          handlingssammendrag og et spørsmål. Observer at AI-en automatisk
+          klassifiserer typen og tilpasser feltene. Prøv med tvetydige tekster
+          — kan du lure den?
         </p>
         <p className="text-xs text-foreground/50 mt-2 italic">
           Læringsmål: Dynamiske schemas med discriminated unions; AI-en
@@ -145,10 +146,10 @@ export function StructuredOutputsTasks() {
         </h3>
         <p className="text-sm text-foreground/80 leading-relaxed">
           Bygg en tilpasset visualisering for et av schemaene. Eksempler: et
-          sentimentgauge (0–100) for Review Sentiment, en visuell
-          aldersmerke-badge for Content Advisory, eller et radar-chart for
-          Movie Analysis. Design og implementer komponenten slik at den
-          brukes i output-visningen.
+          sentimentgauge (0–100) for <strong>Sentimentanalyse</strong>, en
+          visuell aldersmerke-badge for <strong>Innholdsvarsel</strong>, eller
+          et radar-chart for <strong>Filmanalyse</strong>. Design og implementer
+          komponenten slik at den brukes i output-visningen.
         </p>
         <p className="text-xs text-foreground/50 mt-2 italic">
           Læringsmål: Komponentdesign, data-drevet UI, Tailwind-styling,
