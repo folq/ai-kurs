@@ -101,7 +101,48 @@ export function AgentTasks() {
           </span>
         </div>
         <h3 className="font-semibold text-sm mb-1">
-          3. Grenser og feilhåndtering
+          3. Modellkvalitet og verktøyinput
+        </h3>
+        <p className="text-sm text-foreground/80 leading-relaxed">
+          Samme prompt, ulik modell — se hvordan kvaliteten på verktøykallet
+          endrer seg:
+        </p>
+        <ol className="text-sm text-foreground/80 leading-relaxed mt-2 list-decimal pl-5 space-y-1.5">
+          <li>
+            Velg en <strong>billig modell</strong> (f.eks. GPT-4o mini eller
+            Gemini 2.5 Flash Lite) og skriv: &quot;Finn filmer som handler om
+            ensomhet i verdensrommet.&quot;
+          </li>
+          <li>
+            Klikk på verktøykortet for{" "}
+            <code className="bg-foreground/5 px-1 rounded">searchMovies</code>{" "}
+            og noter deg <strong>query</strong>-argumentet modellen sendte inn.
+          </li>
+          <li>
+            Bytt til en <strong>dyr modell</strong> (f.eks. Claude Opus 4.6
+            eller GPT-5.4), tøm chatten, og send{" "}
+            <em>nøyaktig samme prompt</em>.
+          </li>
+          <li>
+            Sammenlign query-argumentene: Hvilken modell laget den mest
+            beskrivende søketeksten? Hvilken ga best resultater?
+          </li>
+        </ol>
+        <p className="text-xs text-foreground/50 mt-2 italic">
+          Læringsmål: Modellvalg påvirker ikke bare svarteksten, men også
+          kvaliteten på argumentene modellen sender til verktøyene. En bedre
+          modell kan formulere mer nyanserte søk — men koster mer.
+        </p>
+      </div>
+
+      <div className="bg-card border border-border rounded-lg p-5">
+        <div className="mb-2">
+          <span className="text-xs font-semibold bg-teal-100 text-teal-800 px-2 py-0.5 rounded">
+            UI
+          </span>
+        </div>
+        <h3 className="font-semibold text-sm mb-1">
+          4. Grenser og feilhåndtering
         </h3>
         <p className="text-sm text-foreground/80 leading-relaxed">
           Finn ut hva agenten <em>ikke</em> kan gjøre. Prøv å gi den oppgaver
@@ -140,7 +181,7 @@ export function AgentTasks() {
           </span>
         </div>
         <h3 className="font-semibold text-sm mb-1">
-          4. Styr agentens personlighet
+          5. Styr agentens personlighet
         </h3>
         <p className="text-sm text-foreground/80 leading-relaxed">
           Du kan når som helst endre hvordan agenten oppfører seg — midt i
@@ -174,7 +215,7 @@ export function AgentTasks() {
           </span>
         </div>
         <h3 className="font-semibold text-sm mb-1">
-          5. Human-in-the-loop: sikkerhet via beskrivelser
+          6. Human-in-the-loop: sikkerhet via beskrivelser
         </h3>
         <p className="text-sm text-foreground/80 leading-relaxed">
           Bruk verktøybeskrivelsene i sidebaren til å styre agentens oppførsel
@@ -216,7 +257,7 @@ export function AgentTasks() {
             Kode
           </span>
         </div>
-        <h3 className="font-semibold text-sm mb-1">6. Nytt agent-verktøy</h3>
+        <h3 className="font-semibold text-sm mb-1">7. Nytt agent-verktøy</h3>
         <p className="text-sm text-foreground/80 leading-relaxed">
           Implementer et nytt verktøy{" "}
           <code className="bg-foreground/5 px-1 rounded">getMoviesByGenre</code>{" "}
