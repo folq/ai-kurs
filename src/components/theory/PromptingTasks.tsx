@@ -1,3 +1,39 @@
+"use client";
+
+import { Check, Copy } from "lucide-react";
+import { useCallback, useState } from "react";
+import { Button } from "@/components/ui/button";
+
+function FilePathCopy({ path }: { path: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const copy = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(path);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // Clipboard can fail without permission; no toast in this UI
+    }
+  }, [path]);
+
+  return (
+    <span className="inline-flex items-center gap-0.5 align-baseline">
+      <code className="bg-foreground/5 px-1 rounded">{path}</code>
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon-xs"
+        className="text-foreground/45 hover:text-foreground -my-0.5 shrink-0"
+        onClick={copy}
+        aria-label={`Kopier filsti: ${path}`}
+      >
+        {copied ? <Check className="size-3" /> : <Copy className="size-3" />}
+      </Button>
+    </span>
+  );
+}
+
 export function PromptingTasks() {
   return (
     <div className="max-w-2xl space-y-4">
@@ -58,9 +94,7 @@ export function PromptingTasks() {
         </p>
         <p className="text-xs text-foreground/50 mt-2">
           Hint: Presetene er definert som et objekt i{" "}
-          <code className="bg-foreground/5 px-1 rounded">
-            src/pages/prompting.tsx
-          </code>
+          <FilePathCopy path="src/pages/prompting.tsx" />
         </p>
       </div>
 
@@ -79,15 +113,11 @@ export function PromptingTasks() {
           &quot;kreativitet&quot;). Send kriteriene med i judge-prompten og vis
           dem i resultatet.
         </p>
-        <p className="text-xs text-foreground/50 mt-2">
-          Filer:{" "}
-          <code className="bg-foreground/5 px-1 rounded">
-            src/components/prompting/JudgePanel.tsx
-          </code>
-          ,{" "}
-          <code className="bg-foreground/5 px-1 rounded">
-            src/app/api/prompting/judge/route.ts
-          </code>
+        <p className="text-xs text-foreground/50 mt-2 flex flex-wrap items-baseline gap-x-1 gap-y-1">
+          <span>Filer:</span>
+          <FilePathCopy path="src/components/prompting/JudgePanel.tsx" />
+          <span aria-hidden>,</span>
+          <FilePathCopy path="src/app/api/prompting/judge/route.ts" />
         </p>
       </div>
     </div>
