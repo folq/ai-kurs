@@ -96,7 +96,7 @@ export const embeddingModelSelectorSchema = z.enum(EMBEDDING_MODEL_IDS);
 export type LanguageModelId = z.infer<typeof languageModelSelectorSchema>;
 export type EmbeddingModelId = z.infer<typeof embeddingModelSelectorSchema>;
 
-export const DEFAULT_LANGUAGE_MODEL: LanguageModelId = "openai/gpt-4o-mini";
+export const DEFAULT_LANGUAGE_MODEL: LanguageModelId = "anthropic/claude-haiku-4.5";
 export const DEFAULT_EMBEDDING_MODEL: EmbeddingModelId =
   "openai/text-embedding-3-small";
 
