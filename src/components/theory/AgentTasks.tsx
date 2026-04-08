@@ -110,8 +110,7 @@ export function AgentTasks() {
         <ol className="text-sm text-foreground/80 leading-relaxed mt-2 list-decimal pl-5 space-y-1.5">
           <li>
             Velg en <strong>billig modell</strong> (f.eks. GPT-4o mini eller
-            Gemini 2.5 Flash Lite) og skriv: &quot;Finn filmer som handler om
-            ensomhet i verdensrommet.&quot;
+            Gemini 2.5 Flash Lite) og skriv: &quot;Gi meg filmer om mat.&quot;
           </li>
           <li>
             Klikk på verktøykortet for{" "}
@@ -126,6 +125,12 @@ export function AgentTasks() {
           <li>
             Sammenlign query-argumentene: Hvilken modell laget den mest
             beskrivende søketeksten? Hvilken ga best resultater?
+          </li>
+          <li>
+            Prøv også med en mer sammensatt forespørsel, f.eks. &quot;Finn
+            filmer om mat, vis meg detaljer på den best ratede, og legg den til
+            i favorittene mine.&quot; Ser du forskjell i hvordan modellene
+            kjeder verktøykallene?
           </li>
         </ol>
         <p className="text-xs text-foreground/50 mt-2 italic">
