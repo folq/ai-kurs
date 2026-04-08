@@ -140,7 +140,41 @@ export function AgentTasks() {
           </span>
         </div>
         <h3 className="font-semibold text-sm mb-1">
-          4. Human-in-the-loop: sikkerhet via beskrivelser
+          4. Styr agentens personlighet
+        </h3>
+        <p className="text-sm text-foreground/80 leading-relaxed">
+          Du kan når som helst endre hvordan agenten oppfører seg — midt i
+          samtalen. Prøv å gi den instruksjoner om tone og stil:
+        </p>
+        <ul className="text-sm text-foreground/80 leading-relaxed mt-2 list-disc pl-5 space-y-1.5">
+          <li>
+            &quot;Snakk som en pirat&quot; — og be den deretter anbefale
+            filmer. Holder den seg i karakter?
+          </li>
+          <li>
+            &quot;Jeg synes du snakker for hverdagslig. Snakk overdrevent
+            profesjonelt&quot; — endrer den tonen sin?
+          </li>
+          <li>
+            Prøv å kombinere: gi den en personlighet <em>og</em> en oppgave i
+            samme melding. Klarer den å gjøre begge deler?
+          </li>
+        </ul>
+        <p className="text-xs text-foreground/50 mt-2 italic">
+          Læringsmål: Brukeren kan styre agentens oppførsel med vanlig språk.
+          AI-en tilpasser seg dynamisk — men verktøybruken forblir den samme
+          uavhengig av tone.
+        </p>
+      </div>
+
+      <div className="bg-card border border-border rounded-lg p-5">
+        <div className="mb-2">
+          <span className="text-xs font-semibold bg-teal-100 text-teal-800 px-2 py-0.5 rounded">
+            UI
+          </span>
+        </div>
+        <h3 className="font-semibold text-sm mb-1">
+          5. Human-in-the-loop: sikkerhet via beskrivelser
         </h3>
         <p className="text-sm text-foreground/80 leading-relaxed">
           Bruk verktøybeskrivelsene i sidebaren til å styre agentens oppførsel
@@ -182,7 +216,7 @@ export function AgentTasks() {
             Kode
           </span>
         </div>
-        <h3 className="font-semibold text-sm mb-1">5. Nytt agent-verktøy</h3>
+        <h3 className="font-semibold text-sm mb-1">6. Nytt agent-verktøy</h3>
         <p className="text-sm text-foreground/80 leading-relaxed">
           Implementer et nytt verktøy{" "}
           <code className="bg-foreground/5 px-1 rounded">getMoviesByGenre</code>{" "}
