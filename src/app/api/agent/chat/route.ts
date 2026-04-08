@@ -1,6 +1,7 @@
 import { convertToModelMessages, stepCountIs, streamText } from "ai";
 import { agentTools } from "@/lib/agent-tools";
 import { agentChatBodySchema } from "@/lib/chat-api-schemas";
+import { DEFAULT_LANGUAGE_MODEL } from "@/lib/model-selectors";
 import { getModel } from "@/lib/openai";
 import { validateRequest } from "@/lib/validate-api";
 
@@ -24,8 +25,9 @@ Be conversational, enthusiastic, and helpful. You're a movie buff who loves shar
 export const POST = validateRequest(
   agentChatBodySchema,
   async ({ messages, modelId }) => {
+    const resolvedModelId = modelId ?? DEFAULT_LANGUAGE_MODEL;
     const result = streamText({
-      model: getModel(modelId),
+      model: getModel(resolvedModelId),
       system: SYSTEM_PROMPT,
       messages: await convertToModelMessages(messages),
       tools: agentTools,
@@ -41,6 +43,7 @@ export const POST = validateRequest(
                 ...part.totalUsage,
                 reasoningTokens: part.totalUsage.reasoningTokens,
               },
+              modelId: resolvedModelId,
             }
           : undefined,
     });

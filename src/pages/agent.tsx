@@ -306,7 +306,10 @@ export default function AgentPage() {
                             completionTokens={assistantStats.completionTokens}
                             tokensPerSecond={assistantStats.tokensPerSecond}
                             reasoningTokens={assistantStats.reasoningTokens}
-                            modelId={model}
+                            modelId={
+                              message.metadata?.modelId ??
+                              DEFAULT_LANGUAGE_MODEL
+                            }
                           />
                         </div>
                       )}

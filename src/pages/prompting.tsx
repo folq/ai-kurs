@@ -336,7 +336,10 @@ export default function PromptingPage() {
                             completionTokens={assistantStats.completionTokens}
                             tokensPerSecond={assistantStats.tokensPerSecond}
                             reasoningTokens={assistantStats.reasoningTokens}
-                            modelId={modelId}
+                            modelId={
+                              message.metadata?.modelId ??
+                              DEFAULT_LANGUAGE_MODEL
+                            }
                           />
                         </div>
                       )}

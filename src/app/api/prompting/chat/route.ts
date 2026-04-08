@@ -12,10 +12,11 @@ When recommending, mention the genre, year, and a brief reason why the user migh
 export const POST = validateRequest(
   promptingChatBodySchema,
   async ({ messages, systemPrompt, temperature, maxTokens, modelId }) => {
+    const resolvedModelId = modelId ?? DEFAULT_LANGUAGE_MODEL;
     const capped =
       maxTokens === undefined ? 1024 : maxTokens > 0 ? maxTokens : undefined;
     const result = streamText({
-      model: getModel(modelId ?? DEFAULT_LANGUAGE_MODEL),
+      model: getModel(resolvedModelId),
       system: systemPrompt || defaultSystemPrompt,
       messages: await convertToModelMessages(messages),
       temperature: temperature ?? 0.7,
@@ -31,6 +32,7 @@ export const POST = validateRequest(
                 ...part.totalUsage,
                 reasoningTokens: part.totalUsage.reasoningTokens,
               },
+              modelId: resolvedModelId,
             }
           : undefined,
     });

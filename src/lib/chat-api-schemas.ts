@@ -2,6 +2,7 @@ import type { LanguageModelUsage, UIMessage } from "ai";
 import { z } from "zod";
 import {
   DEFAULT_LANGUAGE_MODEL,
+  type LanguageModelId,
   languageModelSelectorSchema,
 } from "@/lib/model-selectors";
 
@@ -19,6 +20,8 @@ export const uiMessageSchema: z.ZodType<UIMessage> = z.custom<UIMessage>(
 /** Metadata shape sent from chat/agent routes via `messageMetadata`. */
 export type ChatMessageMetadata = {
   usage?: LanguageModelUsage;
+  /** Model that produced this assistant message (for usage/cost display). */
+  modelId?: LanguageModelId;
 };
 
 /** `UIMessage` parameterised with our metadata so `.metadata` is typed. */
