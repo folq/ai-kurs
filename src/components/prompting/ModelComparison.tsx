@@ -137,12 +137,17 @@ export function ModelComparison({
           )}
         </div>
         {selectedModels.length > 0 && (
-          <div className="flex gap-1 mt-2">
-            {selectedModels.map((id) => (
-              <Badge key={id} variant="secondary" className="text-xs">
-                {getModelLabel(id)}
-              </Badge>
-            ))}
+          <div className="mt-3 space-y-1.5">
+            <p className="text-xs font-medium text-muted-foreground">
+              Valgte modeller
+            </p>
+            <div className="flex flex-wrap gap-1">
+              {selectedModels.map((id) => (
+                <Badge key={id} variant="secondary" className="text-xs">
+                  {getModelLabel(id)}
+                </Badge>
+              ))}
+            </div>
           </div>
         )}
       </div>
