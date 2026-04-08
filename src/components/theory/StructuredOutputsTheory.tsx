@@ -44,8 +44,8 @@ export function StructuredOutputsTheory() {
           <div className="text-sm leading-relaxed">
             <strong>Streaming structured output</strong> —{" "}
             <code>streamText</code> med <code>Output.object</code> bygger JSON
-            gradvis. API-et strømmer NDJSON-linjer (<code>reasoning</code>,{" "}
-            <code>text</code>, <code>finish</code> med bruk) slik at du kan vise
+            gradvis. API-et strømmer SSE-events (<code>reasoning</code>,{" "}
+            <code>text-delta</code>, <code>finish</code> med bruk) slik at du kan vise
             provider-resonnering og ferdig strukturert resultat parallelt.
           </div>
         </div>
