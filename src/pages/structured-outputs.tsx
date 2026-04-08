@@ -19,6 +19,92 @@ import {
   LANGUAGE_MODEL_OPTIONS,
   type LanguageModelId,
 } from "@/lib/model-selectors";
+import { prepareModelJsonText } from "@/lib/thinking-json";
+
+type StructuredOutputErrorJson = {
+  error?: string;
+  thinking?: string[];
+  modelOutput?: string;
+  validationMessage?: string;
+};
+
+function formatFieldKey(key: string) {
+  return key.replace(/([A-Z])/g, " $1").trim();
+}
+
+function StructuredValue({ value }: { value: unknown }) {
+  if (value === null || value === undefined) {
+    return <p className="text-sm text-muted-foreground">—</p>;
+  }
+  if (Array.isArray(value)) {
+    if (value.length === 0) {
+      return <p className="text-sm text-muted-foreground">—</p>;
+    }
+    const primitivesOnly = value.every(
+      (v) => v === null || v === undefined || typeof v !== "object",
+    );
+    if (primitivesOnly) {
+      const counts = new Map<string, number>();
+      return (
+        <div className="flex flex-wrap gap-1">
+          {value.map((v) => {
+            const base = String(v);
+            const n = counts.get(base) ?? 0;
+            counts.set(base, n + 1);
+            const key = n === 0 ? base : `${base}__${n}`;
+            return (
+              <Badge key={key} variant="secondary" className="text-xs">
+                {String(v)}
+              </Badge>
+            );
+          })}
+        </div>
+      );
+    }
+    return (
+      <ul className="list-disc pl-4 space-y-2 text-sm">
+        {value.map((v) => (
+          <li
+            key={
+              typeof v === "object" && v !== null
+                ? JSON.stringify(v)
+                : String(v)
+            }
+          >
+            <StructuredValue value={v} />
+          </li>
+        ))}
+      </ul>
+    );
+  }
+  if (typeof value === "object") {
+    return (
+      <div className="mt-1 rounded-md border bg-muted/30 p-2 space-y-3">
+        {Object.entries(value as Record<string, unknown>).map(([k, v]) => (
+          <div key={k}>
+            <Label className="text-xs text-muted-foreground uppercase tracking-wide">
+              {formatFieldKey(k)}
+            </Label>
+            <div className="mt-0.5">
+              <StructuredValue value={v} />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  if (typeof value === "boolean") {
+    return (
+      <Badge variant={value ? "default" : "destructive"} className="text-xs">
+        {value ? "Ja" : "Nei"}
+      </Badge>
+    );
+  }
+  if (typeof value === "number") {
+    return <span className="text-sm font-mono font-medium">{value}</span>;
+  }
+  return <p className="text-sm">{String(value)}</p>;
+}
 
 const SCHEMAS = {
   Filmanalyse: {
@@ -30,7 +116,14 @@ const SCHEMAS = {
   title: z.string(),
   genres: z.array(z.string()),
   themes: z.array(z.string()),
-  mood: z.enum(["dark", "light", "mixed", "intense", "whimsical"]),
+  mood: z.enum([
+    "dark",
+    "light",
+    "mixed",
+    "intense",
+    "whimsical",
+    "melancholic",
+  ]),
   targetAudience: z.string(),
   similarTo: z.array(z.string()),
   summary: z.string(),
@@ -68,60 +161,64 @@ const SCHEMAS = {
       "Klassifiser input som anmeldelse, synopsis eller spørsmål med typespesifikke felt",
     exampleInput:
       "Hva bør jeg se hvis jeg likte Inception? Jeg er i humør for noe tankevridende med flott visuelt og et komplekst plott.",
-    zodCode: `z.union([
-  z.object({
-    type: z.literal("review"),
-    sentiment: z.enum(["very_positive", "positive", "mixed", "negative", "very_negative"]),
-    score: z.number().min(0).max(100),
-    pros: z.array(z.string()),
-    cons: z.array(z.string()),
-  }),
-  z.object({
-    type: z.literal("synopsis"),
-    title: z.string(),
-    genre: z.string(),
-    plotSummary: z.string(),
-    characters: z.array(z.string()),
-  }),
-  z.object({
-    type: z.literal("question"),
-    topic: z.string(),
-    intent: z.string(),
-    suggestedAction: z.string(),
-  }),
-])`,
+    zodCode: `z.object({
+  classification: z.union([
+    z.object({
+      type: z.literal("review"),
+      sentiment: z.enum(["very_positive", "positive", "mixed", "negative", "very_negative"]),
+      score: z.number().min(0).max(100),
+      pros: z.array(z.string()),
+      cons: z.array(z.string()),
+    }),
+    z.object({
+      type: z.literal("synopsis"),
+      title: z.string(),
+      genre: z.string(),
+      plotSummary: z.string(),
+      characters: z.array(z.string()),
+    }),
+    z.object({
+      type: z.literal("question"),
+      topic: z.string(),
+      intent: z.string(),
+      suggestedAction: z.string(),
+    }),
+  ]),
+})`,
   },
   "Versjonert analyse": {
     description:
       "Analyser med økende detaljnivå — v1 (enkel), v2 (detaljert), v3 (omfattende)",
     exampleInput:
       "En ensom forfatter i et nær-fremtidig Los Angeles utvikler et forhold til et AI-operativsystem. Filmen utforsker temaer som kjærlighet, ensomhet og hva det betyr å være menneske.",
-    zodCode: `z.union([
-  z.object({
-    version: z.literal(1),
-    title: z.string(),
-    rating: z.number().min(1).max(10),
-  }),
-  z.object({
-    version: z.literal(2),
-    title: z.string(),
-    rating: z.number().min(1).max(10),
-    genres: z.array(z.string()),
-    themes: z.array(z.string()),
-    mood: z.enum(["dark", "light", "mixed", "intense", "whimsical"]),
-  }),
-  z.object({
-    version: z.literal(3),
-    title: z.string(),
-    rating: z.number().min(1).max(10),
-    genres: z.array(z.string()),
-    themes: z.array(z.string()),
-    mood: z.enum(["dark", "light", "mixed", "intense", "whimsical"]),
-    targetAudience: z.string(),
-    contentWarnings: z.array(z.string()),
-    similarTo: z.array(z.string()),
-  }),
-])`,
+    zodCode: `z.object({
+  analysis: z.union([
+    z.object({
+      version: z.literal("1"),
+      title: z.string(),
+      rating: z.number().min(1).max(10),
+    }),
+    z.object({
+      version: z.literal("2"),
+      title: z.string(),
+      rating: z.number().min(1).max(10),
+      genres: z.array(z.string()),
+      themes: z.array(z.string()),
+      mood: z.enum(["dark", "light", "mixed", "intense", "whimsical", "melancholic"]),
+    }),
+    z.object({
+      version: z.literal("3"),
+      title: z.string(),
+      rating: z.number().min(1).max(10),
+      genres: z.array(z.string()),
+      themes: z.array(z.string()),
+      mood: z.enum(["dark", "light", "mixed", "intense", "whimsical", "melancholic"]),
+      targetAudience: z.string(),
+      contentWarnings: z.array(z.string()),
+      similarTo: z.array(z.string()),
+    }),
+  ]),
+})`,
   },
 };
 
@@ -143,6 +240,9 @@ export default function StructuredOutputsPage() {
   } | null>(null);
   const [durationMs, setDurationMs] = useState<number | null>(null);
   const [mode, setMode] = useState<"full" | "streaming">("full");
+  const [analyzeError, setAnalyzeError] = useState<string | null>(null);
+  const [thinkingSteps, setThinkingSteps] = useState<string[]>([]);
+  const [debugModelText, setDebugModelText] = useState<string | null>(null);
 
   const handleSchemaChange = (name: string) => {
     const schema = SCHEMAS[name as SchemaName];
@@ -151,6 +251,9 @@ export default function StructuredOutputsPage() {
     setOutput(null);
     setRawJson("");
     setUsage(null);
+    setAnalyzeError(null);
+    setThinkingSteps([]);
+    setDebugModelText(null);
   };
 
   const analyze = async () => {
@@ -159,6 +262,9 @@ export default function StructuredOutputsPage() {
     setOutput(null);
     setRawJson("");
     setDurationMs(null);
+    setAnalyzeError(null);
+    setThinkingSteps([]);
+    setDebugModelText(null);
 
     try {
       const startTime = Date.now();
@@ -171,24 +277,48 @@ export default function StructuredOutputsPage() {
         });
 
         if (!res.ok) {
-          const err = await res.json();
-          console.error(err.error);
+          let message = `Forespørsel feilet (${res.status})`;
+          try {
+            const err = (await res.json()) as StructuredOutputErrorJson;
+            if (typeof err.error === "string" && err.error.trim()) {
+              message = err.error;
+            }
+            if (Array.isArray(err.thinking) && err.thinking.length > 0) {
+              setThinkingSteps(err.thinking);
+            }
+            if (typeof err.modelOutput === "string" && err.modelOutput.trim()) {
+              setDebugModelText(err.modelOutput);
+            }
+          } catch {
+            /* ignore */
+          }
+          setAnalyzeError(message);
           return;
         }
 
         const reader = res.body?.getReader();
-        if (!reader) return;
+        if (!reader) {
+          setAnalyzeError("Ingen svarstrøm mottatt.");
+          return;
+        }
 
         const decoder = new TextDecoder();
         let accumulated = "";
+        let streamParsed: Record<string, unknown> | null = null;
 
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
           accumulated += decoder.decode(value, { stream: true });
           setRawJson(accumulated);
+          const { thinkingSegments, jsonCandidate } =
+            prepareModelJsonText(accumulated);
+          if (thinkingSegments.length > 0) {
+            setThinkingSteps(thinkingSegments);
+          }
           try {
-            const parsed = JSON.parse(accumulated);
+            const parsed = JSON.parse(jsonCandidate) as Record<string, unknown>;
+            streamParsed = parsed;
             setOutput(parsed);
           } catch {
             // partial JSON, keep accumulating
@@ -197,23 +327,69 @@ export default function StructuredOutputsPage() {
 
         setDurationMs(Date.now() - startTime);
         setUsage(null); // streaming may not return usage in text stream
+
+        const finalPrep = prepareModelJsonText(accumulated);
+        if (finalPrep.thinkingSegments.length > 0) {
+          setThinkingSteps(finalPrep.thinkingSegments);
+        }
+        if (!streamParsed) {
+          try {
+            const parsed = JSON.parse(finalPrep.jsonCandidate) as Record<
+              string,
+              unknown
+            >;
+            setOutput(parsed);
+            setRawJson(JSON.stringify(parsed, null, 2));
+          } catch {
+            if (accumulated.trim()) {
+              setAnalyzeError(
+                "Kunne ikke tolke ferdig strøm som JSON. Sjekk rå tekst under — tenkeblokker er forsøkt fjernet.",
+              );
+              setDebugModelText(finalPrep.jsonCandidate || accumulated);
+            }
+          }
+        } else {
+          setRawJson(JSON.stringify(streamParsed, null, 2));
+        }
       } else {
         const res = await fetch("/api/structured-outputs/analyze", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ text: inputText, schemaName, modelId }),
         });
-        const data = await res.json();
+        const data = (await res.json()) as StructuredOutputErrorJson & {
+          output?: Record<string, unknown>;
+          usage?: { promptTokens: number; completionTokens: number };
+        };
         setDurationMs(Date.now() - startTime);
-        if (data.error) {
-          console.error(data.error);
+        if (!res.ok || data.error) {
+          const message =
+            typeof data.error === "string" && data.error.trim()
+              ? data.error
+              : `Forespørsel feilet (${res.status})`;
+          setAnalyzeError(message);
+          if (Array.isArray(data.thinking) && data.thinking.length > 0) {
+            setThinkingSteps(data.thinking);
+          }
+          if (typeof data.modelOutput === "string" && data.modelOutput.trim()) {
+            setDebugModelText(data.modelOutput);
+          }
+          return;
+        }
+        if (data.output === undefined) {
+          setAnalyzeError("Uventet svar: mangler output.");
           return;
         }
         setOutput(data.output);
         setRawJson(JSON.stringify(data.output, null, 2));
-        setUsage(data.usage);
+        setUsage(data.usage ?? null);
       }
     } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Nettverks- eller ukjent feil.";
+      setAnalyzeError(message);
       console.error("Analysis failed:", error);
     } finally {
       setLoading(false);
@@ -346,8 +522,42 @@ export default function StructuredOutputsPage() {
                 )}
               </div>
             </CardHeader>
-            <CardContent>
-              {!output && !loading && (
+            <CardContent className="space-y-3">
+              {thinkingSteps.length > 0 && (
+                <div className="rounded-lg border border-teal-600/25 bg-teal-500/5 px-3 py-2 space-y-2">
+                  <Label className="text-xs text-teal-800 dark:text-teal-200 uppercase tracking-wide">
+                    Modellens tenking / resonnering
+                  </Label>
+                  {thinkingSteps.map((step, i) => (
+                    <pre
+                      // biome-ignore lint/suspicious/noArrayIndexKey: stable order from model
+                      key={`think-${i}`}
+                      className="text-xs font-mono whitespace-pre-wrap break-words text-foreground/90 max-h-48 overflow-y-auto"
+                    >
+                      {step}
+                    </pre>
+                  ))}
+                </div>
+              )}
+              {analyzeError && !loading && (
+                <div
+                  role="alert"
+                  className="rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive whitespace-pre-wrap break-words"
+                >
+                  {analyzeError}
+                </div>
+              )}
+              {analyzeError && debugModelText && !loading && (
+                <details className="rounded-lg border border-foreground/15 bg-muted/40 px-3 py-2 text-sm">
+                  <summary className="cursor-pointer text-muted-foreground select-none">
+                    Rå modelltekst (etter fjerning av tenkeblokker)
+                  </summary>
+                  <pre className="mt-2 text-xs font-mono whitespace-pre-wrap break-words max-h-64 overflow-y-auto">
+                    {debugModelText}
+                  </pre>
+                </details>
+              )}
+              {!output && !loading && !analyzeError && (
                 <p className="text-sm text-muted-foreground text-center py-12">
                   Kjør utvinningen for å se strukturert resultat her.
                 </p>
@@ -367,35 +577,10 @@ export default function StructuredOutputsPage() {
                   {Object.entries(output).map(([key, value]) => (
                     <div key={key}>
                       <Label className="text-xs text-muted-foreground uppercase tracking-wide">
-                        {key.replace(/([A-Z])/g, " $1").trim()}
+                        {formatFieldKey(key)}
                       </Label>
                       <div className="mt-0.5">
-                        {Array.isArray(value) ? (
-                          <div className="flex flex-wrap gap-1">
-                            {value.map((v) => (
-                              <Badge
-                                key={`${key}-${String(v)}`}
-                                variant="secondary"
-                                className="text-xs"
-                              >
-                                {String(v)}
-                              </Badge>
-                            ))}
-                          </div>
-                        ) : typeof value === "boolean" ? (
-                          <Badge
-                            variant={value ? "default" : "destructive"}
-                            className="text-xs"
-                          >
-                            {value ? "Ja" : "Nei"}
-                          </Badge>
-                        ) : typeof value === "number" ? (
-                          <span className="text-sm font-mono font-medium">
-                            {value}
-                          </span>
-                        ) : (
-                          <p className="text-sm">{String(value)}</p>
-                        )}
+                        <StructuredValue value={value} />
                       </div>
                     </div>
                   ))}

@@ -1,16 +1,24 @@
+import type { ZodType } from "zod";
 import { z } from "zod";
 import {
   DEFAULT_LANGUAGE_MODEL,
   languageModelSelectorSchema,
 } from "@/lib/model-selectors";
 
+const filmMoodEnum = z.enum([
+  "dark",
+  "light",
+  "mixed",
+  "intense",
+  "whimsical",
+  "melancholic",
+]);
+
 export const movieAnalysisSchema = z.object({
   title: z.string().describe("The title of the movie or show"),
   genres: z.array(z.string()).describe("List of genres"),
   themes: z.array(z.string()).describe("Key themes explored"),
-  mood: z
-    .enum(["dark", "light", "mixed", "intense", "whimsical"])
-    .describe("Overall mood"),
+  mood: filmMoodEnum.describe("Overall mood"),
   targetAudience: z.string().describe("Who would enjoy this"),
   similarTo: z.array(z.string()).describe("Similar well-known movies or shows"),
   summary: z.string().describe("A concise one-paragraph summary"),
@@ -45,61 +53,71 @@ export const contentAdvisorySchema = z.object({
   parentalGuidanceNote: z.string().describe("Brief note for parents"),
 });
 
-export const contentClassificationSchema = z.union([
-  z.object({
-    type: z.literal("review"),
-    sentiment: z.enum([
-      "very_positive",
-      "positive",
-      "mixed",
-      "negative",
-      "very_negative",
-    ]),
-    score: z.number().min(0).max(100),
-    pros: z.array(z.string()),
-    cons: z.array(z.string()),
-  }),
-  z.object({
-    type: z.literal("synopsis"),
-    title: z.string(),
-    genre: z.string(),
-    plotSummary: z.string(),
-    characters: z.array(z.string()),
-  }),
-  z.object({
-    type: z.literal("question"),
-    topic: z.string(),
-    intent: z.string(),
-    suggestedAction: z.string(),
-  }),
-]);
+/**
+ * Root must be `z.object` for gateway/OpenAI `response_format`.
+ * Use `z.union` for the nested branch (not `discriminatedUnion`): Zod emits JSON Schema `anyOf`;
+ * `discriminatedUnion` becomes `oneOf`, which OpenAI rejects under a property (`classification`).
+ */
+export const contentClassificationSchema = z.object({
+  classification: z.union([
+    z.object({
+      type: z.literal("review"),
+      sentiment: z.enum([
+        "very_positive",
+        "positive",
+        "mixed",
+        "negative",
+        "very_negative",
+      ]),
+      score: z.number().min(0).max(100),
+      pros: z.array(z.string()),
+      cons: z.array(z.string()),
+    }),
+    z.object({
+      type: z.literal("synopsis"),
+      title: z.string(),
+      genre: z.string(),
+      plotSummary: z.string(),
+      characters: z.array(z.string()),
+    }),
+    z.object({
+      type: z.literal("question"),
+      topic: z.string(),
+      intent: z.string(),
+      suggestedAction: z.string(),
+    }),
+  ]),
+});
 
-export const versionedAnalysisSchema = z.union([
-  z.object({
-    version: z.literal(1),
-    title: z.string(),
-    rating: z.number().min(1).max(10),
-  }),
-  z.object({
-    version: z.literal(2),
-    title: z.string(),
-    rating: z.number().min(1).max(10),
-    genres: z.array(z.string()),
-    themes: z.array(z.string()),
-    mood: z.enum(["dark", "light", "mixed", "intense", "whimsical"]),
-  }),
-  z.object({
-    version: z.literal(3),
-    title: z.string(),
-    rating: z.number().min(1).max(10),
-    genres: z.array(z.string()),
-    themes: z.array(z.string()),
-    mood: z.enum(["dark", "light", "mixed", "intense", "whimsical"]),
-    targetAudience: z.string(),
-    contentWarnings: z.array(z.string()),
-    similarTo: z.array(z.string()),
-  }),
-]);
+/** String version literals for Gemini/Vertex; nested `z.union` avoids OpenAI `oneOf` under `analysis`. */
+export const versionedAnalysisSchema = z.object({
+  analysis: z.union([
+    z.object({
+      version: z.literal("1"),
+      title: z.string(),
+      rating: z.number().min(1).max(10),
+    }),
+    z.object({
+      version: z.literal("2"),
+      title: z.string(),
+      rating: z.number().min(1).max(10),
+      genres: z.array(z.string()),
+      themes: z.array(z.string()),
+      mood: filmMoodEnum,
+    }),
+    z.object({
+      version: z.literal("3"),
+      title: z.string(),
+      rating: z.number().min(1).max(10),
+      genres: z.array(z.string()),
+      themes: z.array(z.string()),
+      mood: filmMoodEnum,
+      targetAudience: z.string(),
+      contentWarnings: z.array(z.string()),
+      similarTo: z.array(z.string()),
+    }),
+  ]),
+});
 
 export const schemas = {
   Filmanalyse: {
@@ -138,6 +156,15 @@ export const schemas = {
 } as const;
 
 export type SchemaName = keyof typeof schemas;
+
+/** Per-schema Zod root for `generateText` / `streamText` + `Output.object` (typed union over schemas). */
+export const structuredOutputSchemaByName: Record<SchemaName, ZodType> = {
+  Filmanalyse: movieAnalysisSchema,
+  Sentimentanalyse: reviewSentimentSchema,
+  Innholdsvarsel: contentAdvisorySchema,
+  Innholdsklassifisering: contentClassificationSchema,
+  "Versjonert analyse": versionedAnalysisSchema,
+};
 
 export const schemaNameSchema = z.enum([
   "Filmanalyse",
