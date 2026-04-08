@@ -11,6 +11,7 @@ import {
   type LanguageModelId,
 } from "@/lib/model-selectors";
 import { JudgePanel, type JudgeResult } from "./JudgePanel";
+import { ModelResponseMarkdown } from "./ModelResponseMarkdown";
 
 interface ModelComparisonProps {
   systemPrompt: string;
@@ -201,8 +202,10 @@ export function ModelComparison({
                   <p className="text-sm text-destructive">{result.error}</p>
                 ) : (
                   <>
-                    <div className="text-sm whitespace-pre-wrap max-h-[300px] min-h-0 flex-1 overflow-y-auto">
-                      {result.text}
+                    <div className="max-h-[300px] min-h-0 flex-1 overflow-y-auto">
+                      <ModelResponseMarkdown>
+                        {result.text}
+                      </ModelResponseMarkdown>
                     </div>
                     <UsageStats
                       promptTokens={result.usage.inputTokens}

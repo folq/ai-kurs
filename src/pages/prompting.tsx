@@ -3,6 +3,7 @@ import { DefaultChatTransport } from "ai";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { PageShell } from "@/components/layout/PageShell";
 import { ModelComparison } from "@/components/prompting/ModelComparison";
+import { ModelResponseMarkdown } from "@/components/prompting/ModelResponseMarkdown";
 import { LanguageModelSelect } from "@/components/shared/LanguageModelSelect";
 import { UsageStats } from "@/components/shared/UsageStats";
 import { PromptingTasks } from "@/components/theory/PromptingTasks";
@@ -84,8 +85,7 @@ export default function PromptingPage() {
         streamStartRef.current = null;
         const input = usage?.inputTokens ?? 0;
         const output = usage?.outputTokens ?? 0;
-        const textTokens =
-          usage?.outputTokenDetails?.textTokens ?? output;
+        const textTokens = usage?.outputTokenDetails?.textTokens ?? output;
         if (usage && startTime) {
           const elapsed = (Date.now() - startTime) / 1000;
           const tokPerSec = elapsed > 0 ? textTokens / elapsed : 0;
@@ -302,7 +302,11 @@ export default function PromptingPage() {
                         {message.parts.map((part, i) => {
                           if (part.type === "text") {
                             const textPartKey = `${message.id}-text-${i}`;
-                            return (
+                            return message.role === "assistant" ? (
+                              <ModelResponseMarkdown key={textPartKey}>
+                                {part.text ?? ""}
+                              </ModelResponseMarkdown>
+                            ) : (
                               <div
                                 key={textPartKey}
                                 className="whitespace-pre-wrap"

@@ -9,6 +9,7 @@ import {
   type LanguageModelId,
 } from "@/lib/model-selectors";
 import { cn } from "@/lib/utils";
+import { ModelResponseMarkdown } from "./ModelResponseMarkdown";
 
 export type JudgeResult = {
   verdict: string;
@@ -102,7 +103,7 @@ export function JudgePanel({
         {result && (
           <div className="space-y-3">
             <div className="p-4 bg-muted rounded-lg">
-              <p className="text-sm whitespace-pre-wrap">{result.verdict}</p>
+              <ModelResponseMarkdown>{result.verdict}</ModelResponseMarkdown>
             </div>
             {result.rankings && result.rankings.length > 0 && (
               <div className="space-y-2">
