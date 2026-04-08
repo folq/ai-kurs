@@ -45,7 +45,7 @@ export const contentAdvisorySchema = z.object({
   parentalGuidanceNote: z.string().describe("Brief note for parents"),
 });
 
-export const contentClassificationSchema = z.discriminatedUnion("type", [
+export const contentClassificationSchema = z.union([
   z.object({
     type: z.literal("review"),
     sentiment: z.enum([
@@ -74,7 +74,7 @@ export const contentClassificationSchema = z.discriminatedUnion("type", [
   }),
 ]);
 
-export const versionedAnalysisSchema = z.discriminatedUnion("version", [
+export const versionedAnalysisSchema = z.union([
   z.object({
     version: z.literal(1),
     title: z.string(),
@@ -104,7 +104,8 @@ export const versionedAnalysisSchema = z.discriminatedUnion("version", [
 export const schemas = {
   Filmanalyse: {
     schema: movieAnalysisSchema,
-    description: "Hent ut strukturerte detaljer fra en film- eller seriebeskrivelse",
+    description:
+      "Hent ut strukturerte detaljer fra en film- eller seriebeskrivelse",
     exampleInput:
       "En ensom forfatter i et nær-fremtidig Los Angeles utvikler et forhold til et AI-operativsystem. Filmen utforsker temaer som kjærlighet, ensomhet og hva det betyr å være menneske i en stadig mer digital verden. Den har vakker kinematografi og et melankolsk lydspor.",
   },

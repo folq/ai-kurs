@@ -22,7 +22,8 @@ import {
 
 const SCHEMAS = {
   Filmanalyse: {
-    description: "Hent ut strukturerte detaljer fra en film- eller seriebeskrivelse",
+    description:
+      "Hent ut strukturerte detaljer fra en film- eller seriebeskrivelse",
     exampleInput:
       "En ensom forfatter i et nær-fremtidig Los Angeles utvikler et forhold til et AI-operativsystem. Filmen utforsker temaer som kjærlighet, ensomhet og hva det betyr å være menneske i en stadig mer digital verden. Den har vakker kinematografi og et melankolsk lydspor.",
     zodCode: `z.object({
@@ -67,7 +68,7 @@ const SCHEMAS = {
       "Klassifiser input som anmeldelse, synopsis eller spørsmål med typespesifikke felt",
     exampleInput:
       "Hva bør jeg se hvis jeg likte Inception? Jeg er i humør for noe tankevridende med flott visuelt og et komplekst plott.",
-    zodCode: `z.discriminatedUnion("type", [
+    zodCode: `z.union([
   z.object({
     type: z.literal("review"),
     sentiment: z.enum(["very_positive", "positive", "mixed", "negative", "very_negative"]),
@@ -95,7 +96,7 @@ const SCHEMAS = {
       "Analyser med økende detaljnivå — v1 (enkel), v2 (detaljert), v3 (omfattende)",
     exampleInput:
       "En ensom forfatter i et nær-fremtidig Los Angeles utvikler et forhold til et AI-operativsystem. Filmen utforsker temaer som kjærlighet, ensomhet og hva det betyr å være menneske.",
-    zodCode: `z.discriminatedUnion("version", [
+    zodCode: `z.union([
   z.object({
     version: z.literal(1),
     title: z.string(),
@@ -131,9 +132,7 @@ export default function StructuredOutputsPage() {
   const [modelId, setModelId] = useState<LanguageModelId>(
     DEFAULT_LANGUAGE_MODEL,
   );
-  const [inputText, setInputText] = useState(
-    SCHEMAS["Filmanalyse"].exampleInput,
-  );
+  const [inputText, setInputText] = useState(SCHEMAS.Filmanalyse.exampleInput);
   const [output, setOutput] = useState<Record<string, unknown> | null>(null);
   const [rawJson, setRawJson] = useState("");
   const [loading, setLoading] = useState(false);

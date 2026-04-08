@@ -18,10 +18,7 @@ export const LANGUAGE_MODEL_OPTIONS = [
 
   // Reasoning-only models — no function calling / tool use
   { id: "deepseek/deepseek-r1", label: "DeepSeek R1 (no tools)" },
-  {
-    id: "deepseek/deepseek-v3.2-speciale",
-    label: "DeepSeek V3.2 Speciale (no tools)",
-  },
+  { id: "deepseek/deepseek-v3.2", label: "DeepSeek V3.2" },
 ] as const;
 
 export const EMBEDDING_MODEL_OPTIONS = [
@@ -68,7 +65,7 @@ export const MODEL_PRICING: Partial<
   "anthropic/claude-haiku-4.5": { input: 0.8, output: 4.0 },
   "google/gemini-2.5-flash-lite": { input: 0.075, output: 0.3 },
   "deepseek/deepseek-r1": { input: 0.55, output: 2.19 },
-  "deepseek/deepseek-v3.2-speciale": { input: 0.27, output: 1.1 },
+  "deepseek/deepseek-v3.2": { input: 0.28, output: 0.42 },
 };
 
 export function calculateCost(
