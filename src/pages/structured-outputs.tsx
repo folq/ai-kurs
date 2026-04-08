@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PageShell } from "@/components/layout/PageShell";
 import { UsageStats } from "@/components/shared/UsageStats";
 import { StructuredOutputsTheory } from "@/components/theory/StructuredOutputsTheory";
@@ -19,6 +19,7 @@ import {
   LANGUAGE_MODEL_OPTIONS,
   type LanguageModelId,
 } from "@/lib/model-selectors";
+import { parseSseStream } from "@/lib/structured-output-stream-lines";
 import { prepareModelJsonText } from "@/lib/thinking-json";
 
 type StructuredOutputErrorJson = {
@@ -224,6 +225,25 @@ const SCHEMAS = {
 
 type SchemaName = keyof typeof SCHEMAS;
 
+function AutoScrollPre({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  const ref = useRef<HTMLPreElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  });
+  return (
+    <pre ref={ref} className={className}>
+      {children}
+    </pre>
+  );
+}
+
 export default function StructuredOutputsPage() {
   const [schemaName, setSchemaName] = useState<SchemaName>("Filmanalyse");
   const [modelId, setModelId] = useState<LanguageModelId>(
@@ -237,34 +257,44 @@ export default function StructuredOutputsPage() {
   const [usage, setUsage] = useState<{
     promptTokens: number;
     completionTokens: number;
+    reasoningTokens?: number;
   } | null>(null);
   const [durationMs, setDurationMs] = useState<number | null>(null);
   const [mode, setMode] = useState<"full" | "streaming">("full");
+  const [thinking, setThinking] = useState(false);
   const [analyzeError, setAnalyzeError] = useState<string | null>(null);
   const [thinkingSteps, setThinkingSteps] = useState<string[]>([]);
   const [debugModelText, setDebugModelText] = useState<string | null>(null);
+  const [providerReasoningText, setProviderReasoningText] = useState("");
+  const [rawModelText, setRawModelText] = useState<string | null>(null);
+  const [thinkingDurationMs, setThinkingDurationMs] = useState<number | null>(
+    null,
+  );
 
-  const handleSchemaChange = (name: string) => {
-    const schema = SCHEMAS[name as SchemaName];
-    setSchemaName(name as SchemaName);
-    setInputText(schema.exampleInput);
+  const resetResults = () => {
     setOutput(null);
     setRawJson("");
     setUsage(null);
     setAnalyzeError(null);
     setThinkingSteps([]);
     setDebugModelText(null);
+    setProviderReasoningText("");
+    setRawModelText(null);
+    setThinkingDurationMs(null);
+  };
+
+  const handleSchemaChange = (name: string) => {
+    const schema = SCHEMAS[name as SchemaName];
+    setSchemaName(name as SchemaName);
+    setInputText(schema.exampleInput);
+    resetResults();
   };
 
   const analyze = async () => {
     if (!inputText.trim()) return;
     setLoading(true);
-    setOutput(null);
-    setRawJson("");
     setDurationMs(null);
-    setAnalyzeError(null);
-    setThinkingSteps([]);
-    setDebugModelText(null);
+    resetResults();
 
     try {
       const startTime = Date.now();
@@ -273,7 +303,12 @@ export default function StructuredOutputsPage() {
         const res = await fetch("/api/structured-outputs/stream", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: inputText, schemaName, modelId }),
+          body: JSON.stringify({
+            text: inputText,
+            schemaName,
+            modelId,
+            thinking,
+          }),
         });
 
         if (!res.ok) {
@@ -302,35 +337,60 @@ export default function StructuredOutputsPage() {
           return;
         }
 
-        const decoder = new TextDecoder();
-        let accumulated = "";
+        let streamJsonText = "";
         let streamParsed: Record<string, unknown> | null = null;
+        let streamError: string | null = null;
+        let reasoningStartTime: number | null = null;
+        let firstTextDeltaTime: number | null = null;
 
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          accumulated += decoder.decode(value, { stream: true });
-          setRawJson(accumulated);
-          const { thinkingSegments, jsonCandidate } =
-            prepareModelJsonText(accumulated);
-          if (thinkingSegments.length > 0) {
-            setThinkingSteps(thinkingSegments);
-          }
-          try {
-            const parsed = JSON.parse(jsonCandidate) as Record<string, unknown>;
-            streamParsed = parsed;
-            setOutput(parsed);
-          } catch {
-            // partial JSON, keep accumulating
+        for await (const event of parseSseStream(reader)) {
+          if (event.type === "reasoning") {
+            if (reasoningStartTime === null) {
+              reasoningStartTime = Date.now();
+            }
+            setProviderReasoningText((p) => p + event.text);
+          } else if (event.type === "text-delta") {
+            if (firstTextDeltaTime === null && reasoningStartTime !== null) {
+              firstTextDeltaTime = Date.now();
+              setThinkingDurationMs(firstTextDeltaTime - reasoningStartTime);
+            }
+            streamJsonText += event.text;
+            setRawJson(streamJsonText);
+            const { thinkingSegments, jsonCandidate } =
+              prepareModelJsonText(streamJsonText);
+            if (thinkingSegments.length > 0) {
+              setThinkingSteps(thinkingSegments);
+            }
+            try {
+              const parsed = JSON.parse(jsonCandidate) as Record<
+                string,
+                unknown
+              >;
+              streamParsed = parsed;
+              setOutput(parsed);
+            } catch {
+              /* partial JSON */
+            }
+          } else if (event.type === "finish" && event.usage) {
+            setUsage(event.usage);
+          } else if (event.type === "error") {
+            streamError = event.message;
           }
         }
 
-        setDurationMs(Date.now() - startTime);
-        setUsage(null); // streaming may not return usage in text stream
+        if (reasoningStartTime !== null && firstTextDeltaTime === null) {
+          setThinkingDurationMs(Date.now() - reasoningStartTime);
+        }
 
-        const finalPrep = prepareModelJsonText(accumulated);
+        setDurationMs(Date.now() - startTime);
+        setRawModelText(streamJsonText || null);
+
+        const finalPrep = prepareModelJsonText(streamJsonText);
         if (finalPrep.thinkingSegments.length > 0) {
           setThinkingSteps(finalPrep.thinkingSegments);
+        }
+        if (streamError) {
+          setAnalyzeError(streamError);
         }
         if (!streamParsed) {
           try {
@@ -341,11 +401,14 @@ export default function StructuredOutputsPage() {
             setOutput(parsed);
             setRawJson(JSON.stringify(parsed, null, 2));
           } catch {
-            if (accumulated.trim()) {
+            if (streamJsonText.trim()) {
               setAnalyzeError(
-                "Kunne ikke tolke ferdig strøm som JSON. Sjekk rå tekst under — tenkeblokker er forsøkt fjernet.",
+                streamError ??
+                  "Kunne ikke tolke ferdig strøm som JSON. Sjekk rå tekst under.",
               );
-              setDebugModelText(finalPrep.jsonCandidate || accumulated);
+              setDebugModelText(finalPrep.jsonCandidate || streamJsonText);
+            } else if (streamError) {
+              setAnalyzeError(streamError);
             }
           }
         } else {
@@ -355,11 +418,23 @@ export default function StructuredOutputsPage() {
         const res = await fetch("/api/structured-outputs/analyze", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: inputText, schemaName, modelId }),
+          body: JSON.stringify({
+            text: inputText,
+            schemaName,
+            modelId,
+            thinking,
+          }),
         });
         const data = (await res.json()) as StructuredOutputErrorJson & {
           output?: Record<string, unknown>;
-          usage?: { promptTokens: number; completionTokens: number };
+          usage?: {
+            promptTokens: number;
+            completionTokens: number;
+            reasoningTokens?: number;
+          };
+          reasoning?: { text: string }[];
+          reasoningText?: string | null;
+          rawModelText?: string;
         };
         setDurationMs(Date.now() - startTime);
         if (!res.ok || data.error) {
@@ -383,6 +458,18 @@ export default function StructuredOutputsPage() {
         setOutput(data.output);
         setRawJson(JSON.stringify(data.output, null, 2));
         setUsage(data.usage ?? null);
+        const reasoningFromApi =
+          typeof data.reasoningText === "string" && data.reasoningText.trim()
+            ? data.reasoningText.trim()
+            : Array.isArray(data.reasoning) && data.reasoning.length > 0
+              ? data.reasoning.map((r) => r.text).join("\n---\n")
+              : "";
+        setProviderReasoningText(reasoningFromApi);
+        setRawModelText(
+          typeof data.rawModelText === "string" && data.rawModelText.length > 0
+            ? data.rawModelText
+            : null,
+        );
       }
     } catch (error) {
       const message =
@@ -397,6 +484,8 @@ export default function StructuredOutputsPage() {
   };
 
   const currentSchema = SCHEMAS[schemaName];
+  const hasReasoning =
+    providerReasoningText.trim().length > 0 || thinkingSteps.length > 0;
 
   return (
     <PageShell
@@ -449,6 +538,23 @@ export default function StructuredOutputsPage() {
                     Strømming
                   </Button>
                 </div>
+              </div>
+              <div>
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm">Thinking mode</Label>
+                  <Button
+                    variant={thinking ? "default" : "outline"}
+                    size="sm"
+                    className="text-xs h-7 px-3"
+                    onClick={() => setThinking((t) => !t)}
+                  >
+                    {thinking ? "På" : "Av"}
+                  </Button>
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  Sender providerOptions for å aktivere utvidet tenking /
+                  resonnering. Vis resonneringstekst i sanntid og token-bruk.
+                </p>
               </div>
               <div>
                 <Label className="text-sm">Velg skjema</Label>
@@ -523,22 +629,56 @@ export default function StructuredOutputsPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              {thinkingSteps.length > 0 && (
+              {/* Live / final reasoning panel */}
+              {(hasReasoning || (loading && thinking)) && (
                 <div className="rounded-lg border border-teal-600/25 bg-teal-500/5 px-3 py-2 space-y-2">
-                  <Label className="text-xs text-teal-800 dark:text-teal-200 uppercase tracking-wide">
-                    Modellens tenking / resonnering
-                  </Label>
-                  {thinkingSteps.map((step, i) => (
-                    <pre
-                      // biome-ignore lint/suspicious/noArrayIndexKey: stable order from model
-                      key={`think-${i}`}
-                      className="text-xs font-mono whitespace-pre-wrap break-words text-foreground/90 max-h-48 overflow-y-auto"
-                    >
-                      {step}
-                    </pre>
-                  ))}
+                  <div className="flex items-center gap-2">
+                    <Label className="text-xs text-teal-800 dark:text-teal-200 uppercase tracking-wide">
+                      Modellens tenking / resonnering
+                    </Label>
+                    {thinkingDurationMs != null && (
+                      <span className="text-[10px] text-teal-700 dark:text-teal-300 font-mono">
+                        {(thinkingDurationMs / 1000).toFixed(1)}s
+                      </span>
+                    )}
+                    {loading &&
+                      providerReasoningText.length > 0 &&
+                      thinkingDurationMs === null && (
+                        <span className="text-[10px] text-teal-700 dark:text-teal-300 font-mono animate-pulse">
+                          tenker...
+                        </span>
+                      )}
+                  </div>
+                  {providerReasoningText.trim() && (
+                    <AutoScrollPre className="text-xs font-mono whitespace-pre-wrap break-words text-foreground/90 max-h-60 overflow-y-auto">
+                      {providerReasoningText}
+                    </AutoScrollPre>
+                  )}
+                  {thinkingSteps.length > 0 && (
+                    <div className="space-y-1">
+                      <Label className="text-[10px] text-muted-foreground uppercase tracking-wide">
+                        Fra tenke-tagger i modelltekst
+                      </Label>
+                      {thinkingSteps.map((step, i) => (
+                        <pre
+                          // biome-ignore lint/suspicious/noArrayIndexKey: stable order from model
+                          key={`think-${i}`}
+                          className="text-xs font-mono whitespace-pre-wrap break-words text-foreground/90 max-h-48 overflow-y-auto"
+                        >
+                          {step}
+                        </pre>
+                      ))}
+                    </div>
+                  )}
+                  {loading && !providerReasoningText.trim() && thinking && (
+                    <p className="text-xs text-muted-foreground italic">
+                      Venter på resonneringsdata fra modellen...
+                    </p>
+                  )}
                 </div>
               )}
+
+              {/* Error display */}
               {analyzeError && !loading && (
                 <div
                   role="alert"
@@ -557,21 +697,34 @@ export default function StructuredOutputsPage() {
                   </pre>
                 </details>
               )}
-              {!output && !loading && !analyzeError && (
+
+              {/* Empty state */}
+              {!output && !loading && !analyzeError && !rawJson && (
                 <p className="text-sm text-muted-foreground text-center py-12">
                   Kjør utvinningen for å se strukturert resultat her.
                 </p>
               )}
-              {loading && (
+
+              {/* Loading placeholder (only when no streaming content yet) */}
+              {loading && !rawJson && !providerReasoningText.trim() && (
                 <p className="text-sm text-muted-foreground text-center py-12">
                   Henter ut strukturerte data...
                 </p>
               )}
+
+              {/* Live JSON buildup during streaming */}
               {mode === "streaming" && rawJson && !output && (
-                <pre className="p-3 bg-muted rounded-md text-xs font-mono overflow-x-auto whitespace-pre max-h-[400px] overflow-y-auto">
-                  {rawJson}
-                </pre>
+                <div>
+                  <Label className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1 block">
+                    JSON bygges opp...
+                  </Label>
+                  <AutoScrollPre className="p-3 bg-muted rounded-md text-xs font-mono overflow-x-auto whitespace-pre max-h-[400px] overflow-y-auto">
+                    {rawJson}
+                  </AutoScrollPre>
+                </div>
               )}
+
+              {/* Formatted output */}
               {output && !showRaw && (
                 <div className="space-y-3">
                   {Object.entries(output).map(([key, value]) => (
@@ -586,16 +739,33 @@ export default function StructuredOutputsPage() {
                   ))}
                 </div>
               )}
+
+              {/* Raw JSON view */}
               {output && showRaw && (
                 <pre className="p-3 bg-muted rounded-md text-xs font-mono overflow-x-auto whitespace-pre max-h-[400px] overflow-y-auto">
                   {rawJson}
                 </pre>
               )}
+
+              {/* Raw model text (collapsible) */}
+              {rawModelText && !analyzeError && !loading && (
+                <details className="rounded-lg border border-foreground/15 bg-muted/40 px-3 py-2 text-sm">
+                  <summary className="cursor-pointer text-muted-foreground select-none">
+                    Rå modelltekst (<code className="text-xs">text</code>)
+                  </summary>
+                  <pre className="mt-2 text-xs font-mono whitespace-pre-wrap break-words max-h-64 overflow-y-auto">
+                    {rawModelText}
+                  </pre>
+                </details>
+              )}
+
+              {/* Usage stats */}
               {usage && (
                 <div className="mt-4 pt-3 border-t">
                   <UsageStats
                     promptTokens={usage.promptTokens}
                     completionTokens={usage.completionTokens}
+                    reasoningTokens={usage.reasoningTokens}
                     modelId={modelId}
                     durationMs={durationMs ?? undefined}
                   />
