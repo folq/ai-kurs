@@ -12,12 +12,14 @@ When recommending, mention the genre, year, and a brief reason why the user migh
 export const POST = validateRequest(
   promptingChatBodySchema,
   async ({ messages, systemPrompt, temperature, maxTokens, modelId }) => {
+    const capped =
+      maxTokens === undefined ? 1024 : maxTokens > 0 ? maxTokens : undefined;
     const result = streamText({
       model: getModel(modelId ?? DEFAULT_LANGUAGE_MODEL),
       system: systemPrompt || defaultSystemPrompt,
       messages: await convertToModelMessages(messages),
       temperature: temperature ?? 0.7,
-      maxOutputTokens: maxTokens ?? 1024,
+      ...(capped != null ? { maxOutputTokens: capped } : {}),
       experimental_telemetry: { isEnabled: true },
     });
 
