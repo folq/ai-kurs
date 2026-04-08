@@ -1,6 +1,6 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { PageShell } from "@/components/layout/PageShell";
 import { ModelComparison } from "@/components/prompting/ModelComparison";
 import { UsageStats } from "@/components/shared/UsageStats";
@@ -117,12 +117,13 @@ export default function PromptingPage() {
     }
   }, [status]);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: scroll when transcript updates (incl. streaming), not only when length changes
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  // biome-ignore lint/correctness/useExhaustiveDependencies: scroll when transcript or usage row changes height
+  useLayoutEffect(() => {
+    const el = scrollRef.current;
+    if (el) {
+      el.scrollTop = el.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, streamStats]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

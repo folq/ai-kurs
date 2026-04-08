@@ -1,6 +1,13 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { PageShell } from "@/components/layout/PageShell";
 import { UsageStats } from "@/components/shared/UsageStats";
 import { AgentTheory } from "@/components/theory/AgentTheory";
@@ -166,12 +173,13 @@ export default function AgentPage() {
     fetchFavorites();
   }, [fetchFavorites]);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: scroll when transcript updates (incl. streaming), not only when length changes
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  // biome-ignore lint/correctness/useExhaustiveDependencies: scroll when transcript or usage row changes height
+  useLayoutEffect(() => {
+    const el = scrollRef.current;
+    if (el) {
+      el.scrollTop = el.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, streamStats]);
 
   useEffect(() => {
     if (status === "ready" && messages.length > 0) {
