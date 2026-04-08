@@ -9,15 +9,13 @@ import {
   structuredOutputSchemaByName,
 } from "@/lib/schemas";
 import { buildStructuredOutputErrorPayload } from "@/lib/structured-output-failure";
-import { getStructuredOutputSystem } from "@/lib/structured-output-prompt";
-import { getThinkingProviderOptions } from "@/lib/thinking-provider-options";
+import { STRUCTURED_OUTPUT_SYSTEM } from "@/lib/structured-output-prompt";
 import { validateRequest } from "@/lib/validate-api";
 
 async function analyzeWithSchema(
   text: string,
   schemaName: SchemaName,
   modelId: LanguageModelId,
-  thinking: boolean,
 ) {
   const prompt = `Analyze the following text and extract structured information:\n\n${text}`;
   const model = getModel(modelId);
@@ -25,11 +23,10 @@ async function analyzeWithSchema(
 
   const result = await generateText({
     model,
-    system: getStructuredOutputSystem(thinking),
+    system: STRUCTURED_OUTPUT_SYSTEM,
     output: Output.object({ schema }),
     prompt,
     experimental_telemetry: { isEnabled: true },
-    ...(thinking ? { providerOptions: getThinkingProviderOptions() } : {}),
   });
 
   return {
@@ -43,14 +40,9 @@ async function analyzeWithSchema(
 
 export const POST = validateRequest(
   analyzeBodySchema,
-  async ({ text, schemaName, modelId, thinking }) => {
+  async ({ text, schemaName, modelId }) => {
     try {
-      const result = await analyzeWithSchema(
-        text,
-        schemaName,
-        modelId,
-        thinking,
-      );
+      const result = await analyzeWithSchema(text, schemaName, modelId);
       return Response.json(result);
     } catch (error) {
       console.error("Structured output error:", error);
