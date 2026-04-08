@@ -44,8 +44,9 @@ export function StructuredOutputsTheory() {
           <div className="text-sm leading-relaxed">
             <strong>Streaming structured output</strong> —{" "}
             <code>streamText</code> med <code>Output.object</code> bygger JSON
-            gradvis i stedet for alt på en
-            gang. Gir raskere opplevd responstid.
+            gradvis. API-et strømmer NDJSON-linjer (<code>reasoning</code>,{" "}
+            <code>text</code>, <code>finish</code> med bruk) slik at du kan vise
+            provider-resonnering og ferdig strukturert resultat parallelt.
           </div>
         </div>
       </section>
@@ -130,9 +131,8 @@ export function StructuredOutputsTheory() {
               Profile&quot; med navn, kjente roller, sjangre; eller &quot;Movie
               Comparison&quot; med to filmer og forskjeller). Det skal ha minst
               en <code className="bg-foreground/5 px-1 rounded">z.enum()</code>,
-              et{" "}
-              <code className="bg-foreground/5 px-1 rounded">z.array()</code>,
-              og en{" "}
+              et <code className="bg-foreground/5 px-1 rounded">z.array()</code>
+              , og en{" "}
               <code className="bg-foreground/5 px-1 rounded">
                 z.number().min().max()
               </code>
