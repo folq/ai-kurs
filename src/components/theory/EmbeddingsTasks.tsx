@@ -43,14 +43,12 @@ export function EmbeddingsTasks() {
             UI
           </span>
         </div>
-        <h3 className="font-semibold text-sm mb-1">
-          1. Semantisk magi
-        </h3>
+        <h3 className="font-semibold text-sm mb-1">1. Semantisk magi</h3>
         <p className="text-sm text-foreground/80 leading-relaxed">
-          Søk etter &quot;filmer om ensomhet i verdensrommet&quot; og
-          sammenlign semantisk vs keyword-resultater. Observer at semantisk
-          finner relevante filmer selv uten eksakte ordmatcher, mens keyword
-          kan komme tomhendt tilbake.
+          Søk etter &quot;filmer om ensomhet i verdensrommet&quot; og sammenlign
+          semantisk vs keyword-resultater. Observer at semantisk finner
+          relevante filmer selv uten eksakte ordmatcher, mens keyword kan komme
+          tomhendt tilbake.
         </p>
         <p className="text-xs text-foreground/50 mt-2 italic">
           Læringsmål: Semantisk søk forstår mening, ikke bare ord.
@@ -63,13 +61,11 @@ export function EmbeddingsTasks() {
             UI
           </span>
         </div>
-        <h3 className="font-semibold text-sm mb-1">
-          2. Finn grensene
-        </h3>
+        <h3 className="font-semibold text-sm mb-1">2. Finn grensene</h3>
         <p className="text-sm text-foreground/80 leading-relaxed">
-          Prøv søk der keyword slår semantisk (f.eks. eksakt tittel,
-          spesifikke årstall). Finn minst ett eksempel av hvert. Skriv ned:
-          når er hvilken metode best?
+          Prøv søk der keyword slår semantisk (f.eks. eksakt tittel, spesifikke
+          årstall). Finn minst ett eksempel av hvert. Skriv ned: når er hvilken
+          metode best?
         </p>
         <p className="text-xs text-foreground/50 mt-2 italic">
           Læringsmål: Begge tilnærminger har styrker; hybrid er ofte best i
@@ -87,9 +83,9 @@ export function EmbeddingsTasks() {
           3. 3D-utforskning og anbefalinger
         </h3>
         <p className="text-sm text-foreground/80 leading-relaxed">
-          Bruk 3D-visualiseringen til å identifisere klynger av filmer.
-          Klikk på filmer i ulike deler av rommet og observer anbefalingene.
-          Stemmer klyngene med sjanger, eller fanger de noe dypere?
+          Bruk 3D-visualiseringen til å identifisere klynger av filmer. Klikk på
+          filmer i ulike deler av rommet og observer anbefalingene. Stemmer
+          klyngene med sjanger, eller fanger de noe dypere?
         </p>
         <p className="text-xs text-foreground/50 mt-2 italic">
           Læringsmål: Embeddings fanger semantiske relasjoner som går utover
@@ -103,15 +99,13 @@ export function EmbeddingsTasks() {
             Kode
           </span>
         </div>
-        <h3 className="font-semibold text-sm mb-1">
-          4. Anbefalingsforklaring
-        </h3>
+        <h3 className="font-semibold text-sm mb-1">4. Anbefalingsforklaring</h3>
         <p className="text-sm text-foreground/80 leading-relaxed">
           Bygg en &quot;Hvorfor denne anbefalingen?&quot;-komponent som vises
           når man klikker en anbefalt film. Bruk structured outputs (
           <code className="bg-foreground/5 px-1 rounded">generateObject</code>{" "}
-          med et Zod-schema) til å generere en forklaring av likheten —
-          felles temaer, lignende stemning, overlappende sjangre.
+          med et Zod-schema) til å generere en forklaring av likheten — felles
+          temaer, lignende stemning, overlappende sjangre.
         </p>
         <p className="text-xs text-foreground/50 mt-2 italic">
           Læringsmål: Kombinere AI-features (embeddings + structured outputs),
@@ -135,19 +129,19 @@ export function EmbeddingsTasks() {
         <p className="text-sm text-foreground/80 leading-relaxed">
           Start med å få AI-assistenten din til å forklare konseptet{" "}
           <em>reranking</em>: Hva er det? Hvorfor er det nyttig i en
-          søke-pipeline? Hvordan skiller det seg fra den opprinnelige
-          scoringen (f.eks. cosine similarity)? Forstå hvorfor første-steg-søk
-          (retrieval) ikke alltid gir optimal rangering.
+          søke-pipeline? Hvordan skiller det seg fra den opprinnelige scoringen
+          (f.eks. cosine similarity)? Forstå hvorfor første-steg-søk (retrieval)
+          ikke alltid gir optimal rangering.
         </p>
         <p className="text-sm text-foreground/80 leading-relaxed mt-2">
           Implementer deretter et reranking-steg som tar de semantiske
-          søkeresultatene og bruker en LLM til å vurdere og sortere dem på
-          nytt basert på relevans til den opprinnelige spørringen. Vis de
-          rerankede resultatene i en ny kolonne eller som en toggle i UI-et.
+          søkeresultatene og bruker en LLM til å vurdere og sortere dem på nytt
+          basert på relevans til den opprinnelige spørringen. Vis de rerankede
+          resultatene i en ny kolonne eller som en toggle i UI-et.
         </p>
         <p className="text-xs text-foreground/50 mt-2 italic">
-          Læringsmål: Forstå hvorfor første-steg-søk (retrieval) ikke alltid
-          gir optimal ranking, og hvordan en andre vurdering (reranking) kan
+          Læringsmål: Forstå hvorfor første-steg-søk (retrieval) ikke alltid gir
+          optimal ranking, og hvordan en andre vurdering (reranking) kan
           forbedre relevansen.
         </p>
         <p className="text-xs text-foreground/50 mt-1">

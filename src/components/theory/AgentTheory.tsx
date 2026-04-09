@@ -7,10 +7,11 @@ export function AgentTheory() {
           De fleste kjenner LLM-er som avanserte tekstgeneratorer — du stiller
           et spørsmål og får et svar. En AI-agent tar dette et stort skritt
           videre: det er et system som fungerer som en{" "}
-          <strong>autonom problemløser</strong>. Mens en vanlig chatbot forventer
-          at du leder samtalen steg for steg, kan du gi en agent et overordnet
-          mål. Agenten er i stand til å planlegge, bryte ned komplekse problemer
-          i mindre deloppgaver, og jobbe seg systematisk gjennom dem.
+          <strong>autonom problemløser</strong>. Mens en vanlig chatbot
+          forventer at du leder samtalen steg for steg, kan du gi en agent et
+          overordnet mål. Agenten er i stand til å planlegge, bryte ned
+          komplekse problemer i mindre deloppgaver, og jobbe seg systematisk
+          gjennom dem.
         </p>
         <p className="text-sm text-foreground/80 leading-relaxed mt-3">
           Men for at en AI faktisk skal kunne <em>gjøre</em> noe — og ikke bare
@@ -25,8 +26,7 @@ export function AgentTheory() {
           For at agenten skal kunne utføre faktiske handlinger, gir vi den
           tilgang til verktøy gjennom API-er. Dette kan være alt fra å søke på
           nettet, gjøre utregninger, eller hente informasjon fra en database.
-          Mekanismen som gjør dette mulig kalles{" "}
-          <strong>tool calling</strong>.
+          Mekanismen som gjør dette mulig kalles <strong>tool calling</strong>.
         </p>
         <div className="bg-teal-50 rounded-lg p-5 mt-4 space-y-3">
           <p className="text-sm font-medium">
@@ -49,8 +49,8 @@ export function AgentTheory() {
           </div>
           <p className="text-sm text-foreground/70 leading-relaxed">
             Denne syklusen gjentas automatisk helt til agenten har oppnådd målet
-            ditt. Det er dette som kobler AI-ens språkforståelse direkte til våre
-            egne systemer.
+            ditt. Det er dette som kobler AI-ens språkforståelse direkte til
+            våre egne systemer.
           </p>
         </div>
       </section>

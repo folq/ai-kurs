@@ -128,11 +128,12 @@ async function main() {
   const BATCH_SIZE = 20;
   for (let i = 0; i < allMovies.length; i += BATCH_SIZE) {
     const batch = allMovies.slice(i, i + BATCH_SIZE);
-    const texts = batch.map(
-      (m) => `${m.title} (${m.genre}): ${m.description}`,
-    );
+    const texts = batch.map((m) => `${m.title} (${m.genre}): ${m.description}`);
 
-    const { embeddings } = await embedMany({ model: embeddingModel, values: texts });
+    const { embeddings } = await embedMany({
+      model: embeddingModel,
+      values: texts,
+    });
 
     for (let j = 0; j < batch.length; j++) {
       const hex = float32ToHex(embeddings[j]);

@@ -177,6 +177,7 @@ function MovieDot({
         : 0;
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: react-three-fiber meshes are interactive 3D elements.
     <mesh
       ref={ref}
       position={[point.x * 5, point.y * 5, point.z * 5]}

@@ -119,8 +119,7 @@ export function AgentTasks() {
           </li>
           <li>
             Bytt til en <strong>dyr modell</strong> (f.eks. Claude Opus 4.6
-            eller GPT-5.4), tøm chatten, og send{" "}
-            <em>nøyaktig samme prompt</em>.
+            eller GPT-5.4), tøm chatten, og send <em>nøyaktig samme prompt</em>.
           </li>
           <li>
             Sammenlign query-argumentene: Hvilken modell laget den mest
@@ -194,8 +193,8 @@ export function AgentTasks() {
         </p>
         <ul className="text-sm text-foreground/80 leading-relaxed mt-2 list-disc pl-5 space-y-1.5">
           <li>
-            &quot;Snakk som en pirat&quot; — og be den deretter anbefale
-            filmer. Holder den seg i karakter?
+            &quot;Snakk som en pirat&quot; — og be den deretter anbefale filmer.
+            Holder den seg i karakter?
           </li>
           <li>
             &quot;Jeg synes du snakker for hverdagslig. Snakk overdrevent
@@ -223,8 +222,8 @@ export function AgentTasks() {
           6. Human-in-the-loop: sikkerhet via beskrivelser
         </h3>
         <p className="text-sm text-foreground/80 leading-relaxed">
-          Bruk verktøybeskrivelsene i sidebaren til å styre agentens oppførsel
-          — uten å endre kode:
+          Bruk verktøybeskrivelsene i sidebaren til å styre agentens oppførsel —
+          uten å endre kode:
         </p>
         <ol className="text-sm text-foreground/80 leading-relaxed mt-2 list-decimal pl-5 space-y-1.5">
           <li>
