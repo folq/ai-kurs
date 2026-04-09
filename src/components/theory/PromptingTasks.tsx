@@ -91,12 +91,12 @@ export function PromptingTasks() {
         <p className="text-sm text-foreground/80 leading-relaxed">
           Bruk Modellsammenligning med 3–4 modeller. Test med ulike typer
           filmspørsmål — et faktabasert (f.eks. &laquo;Hvilke filmer vant
-          Gullpalmen på 2020-tallet?&raquo;), et kreativt (f.eks.
-          &laquo;Pitch en originalfilm som blander noir og sci-fi&raquo;) og et
-          som krever et kort, konsist svar (f.eks. &laquo;Anbefal én
-          skrekk&shy;film på under 90 minutter&raquo;). Kjør judge for hvert.
-          Vinner den &laquo;sterkeste&raquo; modellen hver gang, eller avhenger
-          det av oppgavetypen?
+          Gullpalmen på 2020-tallet?&raquo;), et kreativt (f.eks. &laquo;Pitch
+          en originalfilm som blander noir og sci-fi&raquo;) og et som krever et
+          kort, konsist svar (f.eks. &laquo;Anbefal én skrekk&shy;film på under
+          90 minutter&raquo;). Kjør judge for hvert. Vinner den
+          &laquo;sterkeste&raquo; modellen hver gang, eller avhenger det av
+          oppgavetypen?
         </p>
       </div>
 
@@ -126,10 +126,10 @@ export function PromptingTasks() {
         </h3>
         <p className="text-sm text-foreground/80 leading-relaxed">
           Be om filmanbefalinger i Modellsammenligning. Les svarene selv og lag
-          din egen rangering <em>før</em> du trykker &laquo;Kjør
-          judge&raquo;. Hvilken modell ga de beste filmtipsene? Sammenlign din
-          vurdering med dommerens — hvor er dere enige og uenige? Prøv å
-          formulere hvorfor dommeren vurderte annerledes.
+          din egen rangering <em>før</em> du trykker &laquo;Kjør judge&raquo;.
+          Hvilken modell ga de beste filmtipsene? Sammenlign din vurdering med
+          dommerens — hvor er dere enige og uenige? Prøv å formulere hvorfor
+          dommeren vurderte annerledes.
         </p>
       </div>
 

@@ -7,9 +7,7 @@ import { semanticSearch } from "./embeddings";
 
 export type AgentToolName = keyof typeof DEFAULT_TOOL_DESCRIPTIONS;
 
-export function buildAgentTools(
-  overrides?: Partial<Record<string, string>>,
-) {
+export function buildAgentTools(overrides?: Partial<Record<string, string>>) {
   const desc = { ...DEFAULT_TOOL_DESCRIPTIONS, ...overrides };
 
   return {
@@ -79,9 +77,10 @@ export function buildAgentTools(
         if (existing)
           return { message: `${movie.title} is already in favorites` };
 
-        db.prepare(
-          "INSERT INTO favorites (movie_id, note) VALUES (?, ?)",
-        ).run(movieId, note ?? null);
+        db.prepare("INSERT INTO favorites (movie_id, note) VALUES (?, ?)").run(
+          movieId,
+          note ?? null,
+        );
         return { message: `Added ${movie.title} to favorites` };
       },
     }),

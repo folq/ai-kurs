@@ -7,7 +7,14 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**", "!!**/.next", "!!**/out", "!!**/build", "!!**/coverage"]
+    "includes": [
+      "**",
+      "!!**/.next",
+      "!!**/out",
+      "!!**/build",
+      "!!**/coverage",
+      "!!**/.superpowers"
+    ]
   },
   "formatter": {
     "enabled": true,

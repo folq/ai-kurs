@@ -55,7 +55,7 @@ export function getLanguageModelGroups(): LanguageModelProviderGroup[] {
   const providerIds = [...byProvider.keys()].sort((a, b) => a.localeCompare(b));
   return providerIds.map((providerId) => {
     const models = [...(byProvider.get(providerId) ?? [])].sort(
-      (a, b) => a.tier - b.tier
+      (a, b) => a.tier - b.tier,
     );
     return {
       providerId,
@@ -77,17 +77,17 @@ export const EMBEDDING_MODEL_OPTIONS = [
 ] as const;
 
 const LANGUAGE_MODEL_IDS = LANGUAGE_MODEL_OPTIONS.map(
-  (option) => option.id
+  (option) => option.id,
 ) as [
   (typeof LANGUAGE_MODEL_OPTIONS)[number]["id"],
-  ...(typeof LANGUAGE_MODEL_OPTIONS)[number]["id"][]
+  ...(typeof LANGUAGE_MODEL_OPTIONS)[number]["id"][],
 ];
 
 const EMBEDDING_MODEL_IDS = EMBEDDING_MODEL_OPTIONS.map(
-  (option) => option.id
+  (option) => option.id,
 ) as [
   (typeof EMBEDDING_MODEL_OPTIONS)[number]["id"],
-  ...(typeof EMBEDDING_MODEL_OPTIONS)[number]["id"][]
+  ...(typeof EMBEDDING_MODEL_OPTIONS)[number]["id"][],
 ];
 
 export const languageModelSelectorSchema = z.enum(LANGUAGE_MODEL_IDS);
@@ -96,7 +96,8 @@ export const embeddingModelSelectorSchema = z.enum(EMBEDDING_MODEL_IDS);
 export type LanguageModelId = z.infer<typeof languageModelSelectorSchema>;
 export type EmbeddingModelId = z.infer<typeof embeddingModelSelectorSchema>;
 
-export const DEFAULT_LANGUAGE_MODEL: LanguageModelId = "anthropic/claude-haiku-4.5";
+export const DEFAULT_LANGUAGE_MODEL: LanguageModelId =
+  "anthropic/claude-haiku-4.5";
 export const DEFAULT_EMBEDDING_MODEL: EmbeddingModelId =
   "openai/text-embedding-3-small";
 
@@ -131,7 +132,7 @@ export const MODEL_PRICING: Partial<
 export function calculateCost(
   modelId: string,
   promptTokens: number,
-  completionTokens: number
+  completionTokens: number,
 ): number | null {
   const pricing = MODEL_PRICING[modelId as LanguageModelId];
   if (!pricing) return null;

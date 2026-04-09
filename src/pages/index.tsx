@@ -9,12 +9,7 @@ const sections = [
     title: "Prompting",
     description:
       "Lær hvordan systemprompter former AI-ens oppførsel. Eksperimenter med ulike promptstrategier og parametere som temperatur for å styre hvordan AI-en anbefaler filmer.",
-    concepts: [
-      "Systemprompter",
-      "Temperatur",
-      "Maks tokens",
-      "Promptmønstre",
-    ],
+    concepts: ["Systemprompter", "Temperatur", "Maks tokens", "Promptmønstre"],
     color: "bg-teal-50 border-teal-300",
   },
   {
@@ -37,12 +32,7 @@ const sections = [
     title: "Embeddings og vektorsøk",
     description:
       "Forstå hvordan tekstembeddings fanger mening som vektorer. Sammenlign semantisk søk (finn filmer etter konsept) mot tradisjonell nøkkelordmatching side om side.",
-    concepts: [
-      "Embeddings",
-      "Vektorlikhet",
-      "sqlite-vec",
-      "Kosinusavstand",
-    ],
+    concepts: ["Embeddings", "Vektorlikhet", "sqlite-vec", "Kosinusavstand"],
     color: "bg-cornflower-100 border-cornflower-300",
   },
   {
@@ -65,9 +55,9 @@ export default function HomePage() {
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
           Et praktisk kurs som utforsker fire viktige områder innen
-          AI-integrasjon, bygget rundt en app for å oppdage filmer og
-          TV-serier. Hver seksjon introduserer et konsept du kan eksperimentere
-          med direkte.
+          AI-integrasjon, bygget rundt en app for å oppdage filmer og TV-serier.
+          Hver seksjon introduserer et konsept du kan eksperimentere med
+          direkte.
         </p>
       </div>
 

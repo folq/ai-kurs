@@ -65,13 +65,13 @@ export function StructuredOutputsTasks() {
           2. Streaming vs full generering
         </h3>
         <p className="text-sm text-foreground/80 leading-relaxed">
-          Analyser samme tekst med begge moduser. Observer forskjellen i
-          opplevd hastighet. Prøv med en lang og en kort input. Når
-          foretrekker du hvilken?
+          Analyser samme tekst med begge moduser. Observer forskjellen i opplevd
+          hastighet. Prøv med en lang og en kort input. Når foretrekker du
+          hvilken?
         </p>
         <p className="text-xs text-foreground/50 mt-2 italic">
-          Læringsmål: Trade-off mellom UX (rask synlig respons) og
-          datakomplett output.
+          Læringsmål: Trade-off mellom UX (rask synlig respons) og datakomplett
+          output.
         </p>
       </div>
 
@@ -88,12 +88,12 @@ export function StructuredOutputsTasks() {
           Velg <strong>Innholdsklassifisering</strong> under «Velg skjema» på
           workshop-fanen. Test med tre ulike input-typer: en filmanmeldelse, et
           handlingssammendrag og et spørsmål. Observer at AI-en automatisk
-          klassifiserer typen og tilpasser feltene. Prøv med tvetydige tekster
-          — kan du lure den?
+          klassifiserer typen og tilpasser feltene. Prøv med tvetydige tekster —
+          kan du lure den?
         </p>
         <p className="text-xs text-foreground/50 mt-2 italic">
-          Læringsmål: Dynamiske schemas med discriminated unions; AI-en
-          velger riktig &quot;gren&quot; basert på input.
+          Læringsmål: Dynamiske schemas med discriminated unions; AI-en velger
+          riktig &quot;gren&quot; basert på input.
         </p>
       </div>
 
@@ -103,16 +103,13 @@ export function StructuredOutputsTasks() {
             Kode
           </span>
         </div>
-        <h3 className="font-semibold text-sm mb-1">
-          4. Lag et eget schema
-        </h3>
+        <h3 className="font-semibold text-sm mb-1">4. Lag et eget schema</h3>
         <p className="text-sm text-foreground/80 leading-relaxed">
           Design og implementer et nytt Zod-schema (f.eks. &quot;Actor
           Profile&quot; med navn, kjente roller, sjangre; eller &quot;Movie
-          Comparison&quot; med to filmer og forskjeller). Det skal ha minst
-          en <code className="bg-foreground/5 px-1 rounded">z.enum()</code>,
-          et <code className="bg-foreground/5 px-1 rounded">z.array()</code>
-          , og en{" "}
+          Comparison&quot; med to filmer og forskjeller). Det skal ha minst en{" "}
+          <code className="bg-foreground/5 px-1 rounded">z.enum()</code>, et{" "}
+          <code className="bg-foreground/5 px-1 rounded">z.array()</code>, og en{" "}
           <code className="bg-foreground/5 px-1 rounded">
             z.number().min().max()
           </code>
@@ -125,8 +122,7 @@ export function StructuredOutputsTasks() {
           praksis.
         </p>
         <p className="text-xs text-foreground/50 mt-1">
-          Fil:{" "}
-          <FilePathCopy path="src/lib/schemas.ts" />
+          Fil: <FilePathCopy path="src/lib/schemas.ts" />
         </p>
       </div>
 
@@ -152,9 +148,8 @@ export function StructuredOutputsTasks() {
         </p>
         <p className="text-xs text-foreground/50 mt-1">
           Filer: Ny komponent i{" "}
-          <FilePathCopy path="src/components/structured-outputs/" />, koble
-          til i{" "}
-          <FilePathCopy path="src/pages/structured-outputs.tsx" />
+          <FilePathCopy path="src/components/structured-outputs/" />, koble til
+          i <FilePathCopy path="src/pages/structured-outputs.tsx" />
         </p>
       </div>
     </div>
