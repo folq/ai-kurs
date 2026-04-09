@@ -105,9 +105,38 @@ export function EmbeddingsTasks() {
           <span className="text-xs font-semibold bg-amber-100 text-amber-800 px-2 py-0.5 rounded">
             Kode
           </span>
+          <span className="text-xs text-foreground/50">~60 min</span>
+        </div>
+        <h3 className="font-semibold text-sm mb-1">
+          4. Anbefalingsforklaring
+        </h3>
+        <p className="text-sm text-foreground/80 leading-relaxed">
+          Bygg en &quot;Hvorfor denne anbefalingen?&quot;-komponent som vises
+          når man klikker en anbefalt film. Bruk structured outputs (
+          <code className="bg-foreground/5 px-1 rounded">generateObject</code>{" "}
+          med et Zod-schema) til å generere en forklaring av likheten —
+          felles temaer, lignende stemning, overlappende sjangre.
+        </p>
+        <p className="text-xs text-foreground/50 mt-2 italic">
+          Læringsmål: Kombinere AI-features (embeddings + structured outputs),
+          komponent-komposisjon, UX-design.
+        </p>
+        <p className="text-xs text-foreground/50 mt-1">
+          Filer: Ny komponent i{" "}
+          <FilePathCopy path="src/components/embeddings/" />, nytt schema i{" "}
+          <FilePathCopy path="src/lib/schemas.ts" />, ny API-route eller utvid{" "}
+          <FilePathCopy path="src/pages/api/embeddings/similar.ts" />
+        </p>
+      </div>
+
+      <div className="bg-card border border-border rounded-lg p-5">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-xs font-semibold bg-amber-100 text-amber-800 px-2 py-0.5 rounded">
+            Kode
+          </span>
           <span className="text-xs text-foreground/50">~30 min</span>
         </div>
-        <h3 className="font-semibold text-sm mb-1">4. Reranking</h3>
+        <h3 className="font-semibold text-sm mb-1">5. Reranking</h3>
         <p className="text-sm text-foreground/80 leading-relaxed">
           Start med å få AI-assistenten din til å forklare konseptet{" "}
           <em>reranking</em>: Hva er det? Hvorfor er det nyttig i en
@@ -127,42 +156,8 @@ export function EmbeddingsTasks() {
           forbedre relevansen.
         </p>
         <p className="text-xs text-foreground/50 mt-1">
-          Filer:{" "}
-          <FilePathCopy path="src/pages/api/embeddings/search.ts" /> for
-          backend,{" "}
-          <FilePathCopy path="src/pages/embeddings.tsx" /> for UI
-        </p>
-      </div>
-
-      <div className="bg-card border border-border rounded-lg p-5">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-xs font-semibold bg-amber-100 text-amber-800 px-2 py-0.5 rounded">
-            Kode
-          </span>
-          <span className="text-xs text-foreground/50">~60 min</span>
-        </div>
-        <h3 className="font-semibold text-sm mb-1">
-          5. Anbefalingsforklaring
-        </h3>
-        <p className="text-sm text-foreground/80 leading-relaxed">
-          Bygg en &quot;Hvorfor denne anbefalingen?&quot;-komponent som
-          vises når man klikker en anbefalt film. Bruk structured outputs (
-          <code className="bg-foreground/5 px-1 rounded">
-            generateObject
-          </code>{" "}
-          med et Zod-schema) til å generere en forklaring av likheten —
-          felles temaer, lignende stemning, overlappende sjangre.
-        </p>
-        <p className="text-xs text-foreground/50 mt-2 italic">
-          Læringsmål: Kombinere AI-features (embeddings + structured
-          outputs), komponent-komposisjon, UX-design.
-        </p>
-        <p className="text-xs text-foreground/50 mt-1">
-          Filer: Ny komponent i{" "}
-          <FilePathCopy path="src/components/embeddings/" />, nytt schema i{" "}
-          <FilePathCopy path="src/lib/schemas.ts" />, ny API-route eller
-          utvid{" "}
-          <FilePathCopy path="src/pages/api/embeddings/similar.ts" />
+          Filer: <FilePathCopy path="src/pages/api/embeddings/search.ts" /> for
+          backend, <FilePathCopy path="src/pages/embeddings.tsx" /> for UI
         </p>
       </div>
     </div>
