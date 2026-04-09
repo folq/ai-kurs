@@ -276,9 +276,15 @@ export function AgentTasks() {
           Læringsmål: Tool-design (beskrivelser er avgjørende!), Zod
           input-schemas, SQL-spørringer.
         </p>
-        <p className="text-xs text-foreground/50 mt-1">
-          Fil: <FilePathCopy path="src/lib/agent-tools.ts" />. Tips: Prøv å gi
-          verktøyet en dårlig beskrivelse og se hva som skjer.
+        <p className="text-xs text-foreground/50 mt-1 flex flex-wrap items-baseline gap-x-1 gap-y-1">
+          <span>Filer:</span>
+          <FilePathCopy path="src/lib/agent-tools.ts" />
+          <span aria-hidden>,</span>
+          <FilePathCopy path="src/lib/agent-tool-descriptions.ts" />
+          <span aria-hidden>,</span>
+          <FilePathCopy path="src/pages/agent.tsx" />
+          <span className="basis-full" />
+          <span>Tips: Prøv å gi verktøyet en dårlig beskrivelse og se hva som skjer.</span>
         </p>
       </div>
     </div>
