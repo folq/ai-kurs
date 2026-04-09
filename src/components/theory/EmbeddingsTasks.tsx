@@ -38,11 +38,10 @@ export function EmbeddingsTasks() {
   return (
     <div className="max-w-2xl space-y-4">
       <div className="bg-card border border-border rounded-lg p-5">
-        <div className="flex items-center gap-2 mb-2">
+        <div className="mb-2">
           <span className="text-xs font-semibold bg-teal-100 text-teal-800 px-2 py-0.5 rounded">
             UI
           </span>
-          <span className="text-xs text-foreground/50">~5 min</span>
         </div>
         <h3 className="font-semibold text-sm mb-1">
           1. Semantisk magi
@@ -59,11 +58,10 @@ export function EmbeddingsTasks() {
       </div>
 
       <div className="bg-card border border-border rounded-lg p-5">
-        <div className="flex items-center gap-2 mb-2">
+        <div className="mb-2">
           <span className="text-xs font-semibold bg-teal-100 text-teal-800 px-2 py-0.5 rounded">
             UI
           </span>
-          <span className="text-xs text-foreground/50">~10 min</span>
         </div>
         <h3 className="font-semibold text-sm mb-1">
           2. Finn grensene
@@ -80,11 +78,10 @@ export function EmbeddingsTasks() {
       </div>
 
       <div className="bg-card border border-border rounded-lg p-5">
-        <div className="flex items-center gap-2 mb-2">
+        <div className="mb-2">
           <span className="text-xs font-semibold bg-teal-100 text-teal-800 px-2 py-0.5 rounded">
             UI
           </span>
-          <span className="text-xs text-foreground/50">~15 min</span>
         </div>
         <h3 className="font-semibold text-sm mb-1">
           3. 3D-utforskning og anbefalinger
@@ -101,11 +98,10 @@ export function EmbeddingsTasks() {
       </div>
 
       <div className="bg-card border border-border rounded-lg p-5">
-        <div className="flex items-center gap-2 mb-2">
+        <div className="mb-2">
           <span className="text-xs font-semibold bg-amber-100 text-amber-800 px-2 py-0.5 rounded">
             Kode
           </span>
-          <span className="text-xs text-foreground/50">~60 min</span>
         </div>
         <h3 className="font-semibold text-sm mb-1">
           4. Anbefalingsforklaring
@@ -130,11 +126,10 @@ export function EmbeddingsTasks() {
       </div>
 
       <div className="bg-card border border-border rounded-lg p-5">
-        <div className="flex items-center gap-2 mb-2">
+        <div className="mb-2">
           <span className="text-xs font-semibold bg-amber-100 text-amber-800 px-2 py-0.5 rounded">
             Kode
           </span>
-          <span className="text-xs text-foreground/50">~30 min</span>
         </div>
         <h3 className="font-semibold text-sm mb-1">5. Reranking</h3>
         <p className="text-sm text-foreground/80 leading-relaxed">
