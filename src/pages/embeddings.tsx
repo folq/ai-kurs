@@ -10,18 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  DEFAULT_EMBEDDING_MODEL,
-  EMBEDDING_MODEL_OPTIONS,
-  type EmbeddingModelId,
-} from "@/lib/model-selectors";
+import { DEFAULT_EMBEDDING_MODEL } from "@/lib/model-selectors";
 
 const EmbeddingsScatter = dynamic(
   () => import("@/components/embeddings/EmbeddingsScatter"),
@@ -73,9 +62,6 @@ export default function EmbeddingsPage() {
   const [query, setQuery] = useState("");
   const [semanticResults, setSemanticResults] = useState<Movie[]>([]);
   const [keywordResults, setKeywordResults] = useState<Movie[]>([]);
-  const [embeddingModelId, setEmbeddingModelId] = useState<EmbeddingModelId>(
-    DEFAULT_EMBEDDING_MODEL,
-  );
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [favorites, setFavorites] = useState<Set<number>>(new Set());
@@ -130,7 +116,7 @@ export default function EmbeddingsPage() {
       body: JSON.stringify({
         movieId: selectedMovieId,
         query: queryInSpace.query,
-        embeddingModel: embeddingModelId,
+        embeddingModel: DEFAULT_EMBEDDING_MODEL,
       }),
       signal: ac.signal,
     })
@@ -150,7 +136,7 @@ export default function EmbeddingsPage() {
         if (!ac.signal.aborted) setQueryDistanceLoading(false);
       });
     return () => ac.abort();
-  }, [selectedMovieId, queryInSpace, embeddingModelId]);
+  }, [selectedMovieId, queryInSpace]);
 
   const handleSelectMovie = useCallback(async (id: number | null) => {
     setHighlightedSimilarId(null);
@@ -218,7 +204,7 @@ export default function EmbeddingsPage() {
           body: JSON.stringify({
             query: trimmed,
             limit: 8,
-            embeddingModel: embeddingModelId,
+            embeddingModel: DEFAULT_EMBEDDING_MODEL,
           }),
         }),
         fetchFavorites(),
@@ -285,24 +271,6 @@ export default function EmbeddingsPage() {
           placeholder='Prøv: "mørk sci-fi om bevissthet" eller "feelgood-komedie om vennskap"'
           className="max-w-xl"
         />
-        <Select
-          value={embeddingModelId}
-          onValueChange={(v) => setEmbeddingModelId(v as EmbeddingModelId)}
-        >
-          <SelectTrigger className="w-56">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {EMBEDDING_MODEL_OPTIONS.map((model) => (
-              <SelectItem key={model.id} value={model.id}>
-                {model.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Badge variant="outline" className="self-center">
-          Embeddings: {embeddingModelId}
-        </Badge>
         <Button onClick={search} disabled={loading || !query.trim()}>
           {loading ? "Søker..." : "Søk"}
         </Button>
